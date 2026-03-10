@@ -34,6 +34,17 @@
 
 # Executables
 *.exe
+
+# Ignorar configuraciones de Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Ignorar carpetas generadas por compilación
+bin/
+obj/
 *.out
 *.app
 
