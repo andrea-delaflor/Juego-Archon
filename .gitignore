@@ -43,7 +43,7 @@
 *.VC.opendb
 
 # Ignorar carpetas generadas por compilación
-bin/
+
 obj/
 *.out
 *.app
