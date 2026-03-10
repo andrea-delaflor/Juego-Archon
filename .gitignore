@@ -103,3 +103,12 @@ ipch/
 [Rr]elease/
 x64/
 .vs/
+
+x64/
+[Dd]ebug/
+[Rr]elease/
+*.tlog
+*.obj
+*.pdb
+*.exe
+.vs/
