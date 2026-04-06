@@ -30,7 +30,7 @@
 *.lai
 *.la
 *.a
-*.lib
+
 
 # Executables
 *.exe
@@ -97,7 +97,6 @@ ipch/
 *.VC.opendb
 
 # Carpetas de compilación y temporales
-[Bb]in/
 [Oo]bj/
 [Dd]ebug/
 [Rr]elease/
