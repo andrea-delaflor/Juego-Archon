@@ -19,11 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Mundo.cpp" />
     <ClCompile Include="..\src\Pieza.cpp" />
-    <ClCompile Include="..\src\prueba 1.cpp" />
     <ClCompile Include="..\src\Tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Mundo.h" />
     <ClInclude Include="..\src\Pieza.h" />
     <ClInclude Include="..\src\Tablero.h" />
   </ItemGroup>
