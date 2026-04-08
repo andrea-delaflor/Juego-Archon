@@ -1,13 +1,30 @@
+#include "ETSIDI.h"
+#include "glut.h"
 
-#include <iostream>
+void onDibujo() {
+    glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-int main() {
-    std::cout << "====================================" << std::endl;
-    std::cout << "   PRUEBA DE RAMAS - JUEGO ARCHON   " << std::endl;
-    std::cout << "====================================" << std::endl;
+    // Dibujar un cuadrado simple en el centro
+    glBegin(GL_QUADS);
+    glColor3f(1, 1, 1); // Blanco
+    glVertex2f(-0.5, -0.5);
+    glVertex2f(0.5, -0.5);
+    glVertex2f(0.5, 0.5);
+    glVertex2f(-0.5, 0.5);
+    glEnd();
 
-    std::cout << "\nSi estas viendo esto, el archivo prueba.cpp" << std::endl;
-    std::cout << "se ha creado y sincronizado correctamente." << std::endl;
+    glutSwapBuffers();
+}
 
+int main(int argc, char* argv[]) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(800, 600);
+    glutCreateWindow("Prueba Archon");
+
+    glutDisplayFunc(onDibujo);
+
+    glutMainLoop();
     return 0;
 }
