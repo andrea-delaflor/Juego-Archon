@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\prueba 1.cpp" />
+    <ClCompile Include="..\src\prueba2.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
