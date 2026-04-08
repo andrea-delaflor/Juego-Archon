@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\prueba 1.cpp" />
     <ClCompile Include="Pieza.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Tablero.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
