@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Documents\GitHub\Juego-Archon\src\casilla.cpp" />
     <ClCompile Include="..\src\prueba 1.cpp" />
     <ClCompile Include="..\src\prueba2.cpp" />
     <ClCompile Include="..\src\Tablero.cpp" />
