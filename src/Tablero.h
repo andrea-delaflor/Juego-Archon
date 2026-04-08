@@ -3,8 +3,10 @@
 
 class Tablero {
 public:
-    Tablero();
-    void dibuja();
+    // Dibujamos pasando el valor de luz (0.0 a 1.0)
+    void dibuja(float luminosidad);
+
 private:
-    float ladoCasilla;
+    bool esPowerPoint(int i, int j);
+    bool esCasillaVariable(int i, int j);
 };

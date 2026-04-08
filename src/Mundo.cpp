@@ -1,31 +1,24 @@
 #include "Mundo.h"
 #include "glut.h"
+#include <math.h>
 
-
+// Objeto global y variable de luz
 Mundo mundo;
+float valorLuz = 0.5f;
+float angulo = 0.0f;
 
-
-void glueDibuja() { 
-	mundo.dibuja(); 
-}
-
-void glueMueve(int v) {
+// Funciones de enlace para GLUT
+void glueDibuja() { mundo.dibuja(); }
+void glueTimer(int v) {
 	mundo.mueve();
 	glutPostRedisplay();
-	glutTimerFunc(20, glueMueve, 0);
-}
-void glueTeclado(unsigned char t, int x, int y) { mundo.tecla(t); }
-
-void Mundo::inicializa() {
-	//CARGAR PIEZAS E IMAGENES
+	glutTimerFunc(50, glueTimer, 0); // Se llama cada 50ms
 }
 
 void Mundo::mueve() {
-	// LOGICA MOVIMIENTOS
-}
-
-void Mundo::tecla(unsigned char t) {
-	//CONTROLES
+	angulo += 0.05f; // Velocidad del ciclo de luz
+	// El seno oscila entre -1 y 1, lo pasamos a 0 y 1
+	valorLuz = (sin(angulo) + 1.0f) / 2.0f;
 }
 
 void Mundo::dibuja() {
@@ -33,28 +26,27 @@ void Mundo::dibuja() {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-12, 12, -12, 12);
+	gluOrtho2D(-6, 6, -6, 6); // Cámara ajustada al tablero de 9x9
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	tablero.dibuja();
+	tablero.dibuja(valorLuz);
 
 	glutSwapBuffers();
 }
 
+void Mundo::inicializa() {}
+
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
-	glutCreateWindow("Archon - ETSIDI");
+	glutInitWindowSize(800, 800);
+	glutCreateWindow("Archon ETSIDI - Ciclo de Luz");
 
-	
 	glutDisplayFunc(glueDibuja);
-	glutTimerFunc(20, glueMueve, 0);
-	glutKeyboardFunc(glueTeclado);
+	glutTimerFunc(50, glueTimer, 0);
 
 	mundo.inicializa();
-
 	glutMainLoop();
 	return 0;
 }
