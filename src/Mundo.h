@@ -3,11 +3,12 @@
 
 class Mundo {
 public:
-	void inicializa();
-	void dibuja();
-	void mueve();
-	void tecla(unsigned char t);
-
+    
+    void inicializa();
+    void mueve();
+    void dibuja();
 private:
-	Tablero tablero;
+    Tablero tablero;
+    float valorLuz;
+    float angulo;
 };
