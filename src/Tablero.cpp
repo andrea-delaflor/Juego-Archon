@@ -1,1 +1,0 @@
-//este es el cpp del tablero 
