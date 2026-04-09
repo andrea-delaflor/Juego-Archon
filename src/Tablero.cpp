@@ -1,6 +1,9 @@
 #include "Tablero.h"
 #include "glut.h"
 
+// COLUMNAS: i=0 (A) a i=8 (I)
+// FILAS: j=0  a j=8 
+
 bool Tablero::esPowerPoint(int i, int j) {
     // Los 5 puntos de poder (E5, A5, I5, E1, E9)
     if ((i == 4 && j == 4) || // Centro
@@ -37,8 +40,6 @@ bool Tablero::esVariable(int i, int j) {
 
 void Tablero::dibuja(float luminosidad) {
 	// Recorremos cada casilla del tablero
-	// COLUMNAS: i=0 (A) a i=8 (I)
-    // FILAS: j=0  a j=8 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
 
@@ -53,10 +54,14 @@ void Tablero::dibuja(float luminosidad) {
                 // LÓGICA DE ESQUINAS:
                 // Para que i=0 (A) sea negra y i=8 (I) sea blanca en j=0
                 // Usamos la paridad de (i+j) pero invertida según la columna
+
+				//(i + j) % 2 -> solo oscila entre 0 y 1, creando un patrón de tablero
                 if (i < 4) { // Parte izquierda (A, B, C, D)
+					//En la parte izquierda, las casillas blancas son las que tienen (i+j) impar
                     if ((i + j) % 2 != 0) glColor3f(1.0f, 1.0f, 1.0f); // Blanca
                     else glColor3f(0.0f, 0.05f, 0.15f);               // Negra
                 }
+				//En la parte derecha, las casillas blancas son las que tienen (i+j) par
                 else { // Parte derecha (F, G, H, I)
                     if ((i + j) % 2 == 0) glColor3f(1.0f, 1.0f, 1.0f); // Blanca
                     else glColor3f(0.0f, 0.05f, 0.15f);               // Negra
