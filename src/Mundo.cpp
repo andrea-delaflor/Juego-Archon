@@ -25,6 +25,12 @@ void Mundo::inicializa() {
 	//Inicializamos el valor de la luz y el ángulo para el parpadeo
     valorLuz = 0.5f;
     angulo = 0.0f;
+
+    // --- PRUEBA: Coordenada concreta (Fila 2, Columna 6) ---
+    // Esto corresponde a la casilla G7 en el tablero original
+    posPrueba.x = 6.0;
+    posPrueba.y = 2.0;
+    // ------------------------------------------------------
 }
 
 //Movemos el estado del mundo para crear el efecto de parpadeo suave en las casillas variables. 
@@ -45,6 +51,24 @@ void Mundo::dibuja() {
 
 	//Dibujamos el tablero pasando el valor de luz actual
     tablero.dibuja(valorLuz);
+
+    // ============================================================
+    // BLOQUE DE PRUEBA: DIBUJO DEL PUNTO ROJO (Basado en Vector2D)
+    // ============================================================
+
+    // Convertimos la coordenada del Vector2D (0 a 8) al mundo OpenGL (-4 a 4)
+    // Usamos los miembros .x y .y de tu struct Vector2D
+    float x_opengl = (float)posPrueba.x - 4.0f;
+    float y_opengl = 4.0f - (float)posPrueba.y; // Invertimos Y para que (0,0) sea arriba
+
+    // Definimos un tamaño de punto grande para que sea visible
+    glPointSize(20.0f);
+
+    glBegin(GL_POINTS);
+    glColor3f(1.0f, 0.0f, 0.0f); // Rojo puro
+    glVertex2f(x_opengl, y_opengl);
+    glEnd();
+    // ============================================================
 
     //Intercambia el lienzo oculto con el visible para mostrar el dibujo de golpe y sin parpadeos.
     glutSwapBuffers();
