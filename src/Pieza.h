@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include <string>
+#include "Vector2D.h"
 #include <vector>
-
-// i (columna), j (fila)
-using Posicion = std::pair<int, int>;   
+#include <iostream>
+#include <string>
 
 // Bando al que pertenece la pieza
 enum class Bando
@@ -40,94 +39,84 @@ class Pieza
 {
 public:
     Pieza(const std::string& nombre,
-        Bando              bando,
-        int                vidaMaxima,
-        float              velocidad,
-        int                poderAtaque,
-        float              velocidadAtaque,
-        float              alcance,
-        int                rangoMovimiento,
-        TipoArma           arma);
+        Bando _bando,
+        int _vidaMaxima,
+        float _velocidad,
+        int _poderAtaque,
+        float _velocidadAtaque,
+        float _alcance,
+        int _rangoMovimiento,
+        TipoArma _arma,
+        Vector2D _posInicial);
 
+    // --- Destructor y Seguridad ---
     virtual ~Pieza() = default;
 
-    // Prohibimos clonar una pieza ---> Pieza p2 = p1 (no se puede, usamos punteros)
+    // Bloqueamos la copia para usar siempre punteros (como en tu código original)
     Pieza(const Pieza&) = delete;
     Pieza& operator=(const Pieza&) = delete;
 
-    // ── Métodos virtuales puros (cada subclase los implementa) ──
+ 
+    // --- Métodos Virtuales Puros ---
+    // Usamos std::vector con tu Vector2D
+    virtual std::vector<Vector2D> obtenerMovimientosValidos(Tablero* tablero) = 0;
+    virtual TipoMovimiento obtenerTipoMovimiento() = 0;
+    virtual std::string obtenerNombreSprite() = 0;
+    virtual void dibuja() = 0; // Para el renderizado
 
-    // Devuelve las posiciones válidas a las que puede moverse
-    virtual std::vector<Posicion> obtenerMovimientosValidos(const Tablero& tablero) const = 0;
+    // Habilidad especial (con cuerpo vacío para que sea opcional)
+    virtual void usarHabilidadEspecial(Tablero* tablero) {}
 
-    // Tipo de movimiento de esta pieza
-    virtual TipoMovimiento obtenerTipoMovimiento() const = 0;
+    // --- Getters y Setters (Identidad y Posición) ---
+    std::string obtenerNombre() { return nombre; }
+    Bando obtenerBando() { return bando; }
 
-    // Nombre del sprite para el renderizador (ej: "luz_caballero")
-    virtual std::string obtenerNombreSprite() const = 0;
+    Vector2D obtenerPosicion() { return posicion; }
+    void establecerPosicion(Vector2D pos) { posicion = pos; }
 
-    // Habilidad especial — por defecto no hace nada
-    // Las subclases con habilidad (Fenix, Cambiaformas) la sobreescriben
-    virtual void usarHabilidadEspecial(Tablero& tablero) {}
+    // --- Gestión de Vida ---
+    int obtenerVida() { return vida; }
+    bool estaViva() { return viva; }
+    void establecerViva(bool _viva);
+    void recibirDanio(int cantidad);
+    void curar(int cantidad);
+    void restaurarVidaCompleta();
 
-    // ── Identidad ────────────────────────────────────────────
-    const std::string& obtenerNombre() const;
-    Bando              obtenerBando()  const;
+    // --- Atributos de Combate ---
+    float obtenerVelocidad() { return velocidad; }
+    int obtenerPoderAtaque() { return poderAtaque; }
+    float obtenerAlcance() { return alcance; }
+    int obtenerRangoMovimiento() { return rangoMovimiento; }
+    TipoArma obtenerArma() { return arma; }
 
-    // ── Posición en el tablero ───────────────────────────────
-    Posicion obtenerPosicion()                 const;
-    void     establecerPosicion(const Posicion& pos);
+    // --- Estado y Bonus ---
+    bool estaEncarcelada() { return encarcelada; }
+    void establecerEncarcelada(bool v) { encarcelada = v; }
+    float obtenerBonusCombate(Bando bandoCasilla);
 
-    // ── Vida ─────────────────────────────────────────────────
-    int     obtenerVida()       const;
-    int     obtenerVidaMaxima() const;
-    bool    estaViva()          const;
-    void    establecerViva(bool viva);
-
-    // Recibe daño — si la vida llega a 0 marca la pieza como muerta
-    void    recibirDanio(int cantidad);
-
-    // Cura una cantidad concreta (sin superar el máximo)
-    void    curar(int cantidad);
-
-    // Restaura la vida al máximo (HealSpell / inicio de arena)
-    void    restaurarVidaCompleta();
-
-    // ── Atributos de combate ─────────────────────────────────
-    float    obtenerVelocidad()        const;
-    int      obtenerPoderAtaque()      const;
-    float    obtenerVelocidadAtaque()  const;   // Ataques por segundo en arena
-    float    obtenerAlcance()          const;   // Alcance del arma en la arena
-    int      obtenerRangoMovimiento()  const;   // Casillas por turno en tablero
-    TipoArma obtenerArma()             const;
-
-    // ── Estado especial ──────────────────────────────────────
-    bool estaEncarcelada()               const;
-    void establecerEncarcelada(bool v);
-
-    // ── Bonus de combate por color de casilla ────────────────
-    // Devuelve multiplicador: 1.25 en casilla propia, 0.85 en contraria
-    float obtenerBonusCombate(Bando bandoCasilla) const;
-
-    // ── Debug ────────────────────────────────────────────────
-    virtual std::string aTexto() const;
+    // --- Debug ---
+    virtual void imprimir();
 
 protected:
     // Atributos protegidos — accesibles para subclases
     // (Cambiaformas los necesita para copiar stats del rival)
-    std::string m_nombre;
-    Bando       m_bando;
-    Posicion    m_posicion;
+    std::string nombre;
+    Bando bando;
+    Vector2D posicion;
 
-    int         m_vida;
-    int         m_vidaMaxima;
-    bool        m_viva;
-    bool        m_encarcelada;
+    int vida;
+    int vidaMaxima;
+    bool viva;
 
-    float       m_velocidad;
-    int         m_poderAtaque;
-    float       m_velocidadAtaque;
-    float       m_alcance;
-    int         m_rangoMovimiento;
-    TipoArma    m_arma;
+
+    // Estado especial
+    bool encarcelada;
+
+    // Estadísticas de combate y tablero
+    float velocidad;        // Para el orden de turno o movimiento
+    int poderAtaque;        // Daño que hace
+    float velocidadAtaque;  // Rapidez en la arena de combate
+    float alcance;          // Distancia de ataque
+    int rangoMovimiento;    // Cuántas casillas mueve en el tablero
+    TipoArma arma;          // Tipo de ataque (MELEE, MAGIA, etc.)
 };
