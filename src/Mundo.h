@@ -17,4 +17,6 @@ private:
     // --- AÑADIR PARA LA PRUEBA ---
     Vector2D posPrueba; // Tu struct Vector2D 
     // -----------------------------
+    // otra prueba:
+    Vector2D posCirculo;
 };

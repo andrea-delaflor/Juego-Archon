@@ -31,6 +31,9 @@ void Mundo::inicializa() {
     posPrueba.x = 6.0;
     posPrueba.y = 2.0;
     // ------------------------------------------------------
+    // NUEVA: Posición del círculo amarillo (Casilla D6)
+    posCirculo.x = 3.0;
+    posCirculo.y = 5.0;
 }
 
 //Movemos el estado del mundo para crear el efecto de parpadeo suave en las casillas variables. 
@@ -69,7 +72,19 @@ void Mundo::dibuja() {
     glVertex2f(x_opengl, y_opengl);
     glEnd();
     // ============================================================
+    // Convertimos la posición de Vector2D al mundo OpenGL
+    float x_yellow = (float)posCirculo.x - 4.0f;
+    float y_yellow = 4.0f - (float)posCirculo.y;
 
+    // Dibujamos el círculo (usando la misma técnica que los PowerPoints)
+    glColor3f(1.0f, 1.0f, 0.0f); // Amarillo
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < 30; i++) {
+        float theta = 2.0f * 3.1415926f * float(i) / 30.0f;
+        // Radio de 0.3f para que quede centrado en la casilla
+        glVertex2f(x_yellow + 0.3f * cosf(theta), y_yellow + 0.3f * sinf(theta));
+    }
+    glEnd();
     //Intercambia el lienzo oculto con el visible para mostrar el dibujo de golpe y sin parpadeos.
     glutSwapBuffers();
 }
