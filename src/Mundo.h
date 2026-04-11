@@ -17,9 +17,7 @@ private:
     // --- AÑADIR PARA LA PRUEBA ---
     Vector2D posPrueba; // Tu struct Vector2D 
     // -----------------------------
-<<<<<<< Updated upstream
+    // 
     // otra prueba:
-=======
->>>>>>> Stashed changes
     Vector2D posCirculo;
 };
