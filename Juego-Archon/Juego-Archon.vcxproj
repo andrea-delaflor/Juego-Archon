@@ -27,6 +27,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\Mundo.h" />
     <ClInclude Include="..\src\Pieza.h" />
+    <ClInclude Include="..\src\PiezaTest.h" />
     <ClInclude Include="..\src\Tablero.h" />
     <ClInclude Include="..\src\Vector2D.h" />
   </ItemGroup>

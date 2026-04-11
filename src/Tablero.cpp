@@ -58,7 +58,7 @@ void Tablero::dibuja(float luminosidad) {
                     else {
                         //Damero normal donde (0,0) es negro
                         if ((i + j) % 2 != 0) glColor3f(1.0f, 1.0f, 1.0f);
-                        else glColor3f(0.0f, 0.05f, 0.15f);
+                        else glColor3f(0.0f, 0.0f, 0.0f);
 					}
 				}
 				else if (i > 4) { //LADO DERECHO: (F, G, H, I)
@@ -95,4 +95,5 @@ void Tablero::dibuja(float luminosidad) {
             }
         }
     }
+    glColor3f(1.0f, 1.0f, 1.0f);
 }

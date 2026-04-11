@@ -8,6 +8,7 @@ struct Vector2D
 {
 	double x{};
 	double y{};
+	Vector2D(double _x = 0.0, double _y = 0.0) : x(_x), y(_y) {}
 	double modulo() const; //modulo del vector
 	double argumento() const; //argumento del vector
 	Vector2D unitario() const; //devuelve un vector unitario
@@ -15,6 +16,7 @@ struct Vector2D
 	Vector2D operator + (const Vector2D&) const; //suma de vectores
 	double operator *(const Vector2D&) const; // producto escalar
 	Vector2D operator *(double) const; // producto por un escalar
+	
 };
 
 inline double Vector2D::modulo() const
