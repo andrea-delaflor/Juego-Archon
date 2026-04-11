@@ -1,6 +1,7 @@
 #include "Mundo.h"
 #include "glut.h"
 #include <math.h>
+#include "Vector2D.h"
 
 Mundo mundo;
 
@@ -26,14 +27,13 @@ void Mundo::inicializa() {
     valorLuz = 0.5f;
     angulo = 0.0f;
 
-    // --- PRUEBA: Coordenada concreta (Fila 2, Columna 6) ---
-    // Esto corresponde a la casilla G7 en el tablero original
-    posPrueba.x = 6.0;
-    posPrueba.y = 2.0;
-    // ------------------------------------------------------
-    // NUEVA: Posición del círculo amarillo (Casilla D6)
-    posCirculo.x = 3.0;
-    posCirculo.y = 5.0;
+
+    //---------------PRUEBA PIEZATEST-------------------
+    // Creamos una pieza cian en la casilla (0,0)
+    piezaLuz = new PiezaTest({ 0.0, 0.0 }, Bando::LUZ);
+
+    // Creamos una pieza magenta en la casilla (8,8)
+    piezaOscuridad = new PiezaTest({ 8.0, 8.0 }, Bando::OSCURIDAD);
 
 }
 
@@ -43,6 +43,8 @@ void Mundo::mueve() {
     angulo += 0.05f;
 	//Calculamos el nuevo valor de la luz usando una función seno para que oscile entre 0 y 1. Usamos forma cíclica para que el parpadeo sea suave y continuo
     valorLuz = (sin(angulo) + 1.0f) / 2.0f; // Oscilación entre 0 y 1
+
+   
 }
 
 void Mundo::dibuja() {
@@ -56,46 +58,18 @@ void Mundo::dibuja() {
 	//Dibujamos el tablero pasando el valor de luz actual
     tablero.dibuja(valorLuz);
 
-    // ============================================================
-    // BLOQUE DE PRUEBA: DIBUJO DEL PUNTO ROJO (Basado en Vector2D)
-    // ============================================================
+    
+    // ================PRUEBA PIEZATEST ====================
 
-    // Convertimos la coordenada del Vector2D (0 a 8) al mundo OpenGL (-4 a 4)
-    // Usamos los miembros .x y .y de tu struct Vector2D
-    float x_opengl = (float)posPrueba.x - 4.0f;
-    float y_opengl = 4.0f - (float)posPrueba.y; // Invertimos Y para que (0,0) sea arriba
-
-    // Definimos un tamaño de punto grande para que sea visible
-    glPointSize(20.0f);
-
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 0.0f, 0.0f); // Rojo puro
-    glVertex2f(x_opengl, y_opengl);
-    glEnd();
-    // ============================================================
-
-    // Convertimos la posición de Vector2D al mundo OpenGL
-    float x_yellow = (float)posCirculo.x - 4.0f;
-    float y_yellow = 4.0f - (float)posCirculo.y;
-
-
-    // NUEVO: DIBUJO DEL CÍRCULO AMARILLO
-    // ============================================================
-
-    // Convertimos la posición de Vector2D al mundo OpenGL
-    float x_yellow = (float)posCirculo.x - 4.0f;
-    float y_yellow = 4.0f - (float)posCirculo.y;
-
-
-    // Dibujamos el círculo (usando la misma técnica que los PowerPoints)
-    glColor3f(1.0f, 1.0f, 0.0f); // Amarillo
-    glBegin(GL_POLYGON);
-    for (int i = 0; i < 30; i++) {
-        float theta = 2.0f * 3.1415926f * float(i) / 30.0f;
-        // Radio de 0.3f para que quede centrado en la casilla
-        glVertex2f(x_yellow + 0.3f * cosf(theta), y_yellow + 0.3f * sinf(theta));
+    if (piezaLuz != nullptr) {
+        piezaLuz->dibuja(); // Esto ya hace la conversión interna a OpenGL
     }
-    glEnd();
+
+    if (piezaOscuridad != nullptr) {
+        piezaOscuridad->dibuja();
+    }
+    //-------------------------------------------------------------
+   
     //Intercambia el lienzo oculto con el visible para mostrar el dibujo de golpe y sin parpadeos.
     glutSwapBuffers();
 }
@@ -113,6 +87,7 @@ int main(int argc, char* argv[]) {
 
 	//Inicializamos el mundo y comenzamos el bucle principal de GLUT
     mundo.inicializa();
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glutMainLoop();
     return 0;
 }
