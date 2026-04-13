@@ -3,6 +3,8 @@
 #include <math.h>
 #include "Vector2D.h"
 
+//Instancia global del mundo para que las funciones de glut puedan acceder a él
+
 Mundo mundo;
 
 //Funciones de glut
