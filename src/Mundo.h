@@ -12,12 +12,11 @@ public:
     void dibuja();
 private:
     Tablero tablero;
-    float valorLuz;
-    float angulo;
+    float valorLuz = 0.5f; // Añade el = 0.5f
+    float angulo = 0.0f;   // Añade el = 0.0f
 
-    // --- Declaramos punteros a Pieza para hacer la prueba de PiezaTest ---
-        // Usamos la clase base Pieza* para aprovechar el polimorfismo
+    
     Pieza* piezaLuz = nullptr;
     Pieza* piezaOscuridad = nullptr;
-    //--------------------------------------------------------
+    
 };
