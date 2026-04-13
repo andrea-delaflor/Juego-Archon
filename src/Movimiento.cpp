@@ -1,7 +1,7 @@
 #include "Movimiento.h"
 #include "Pieza.h"
 #include "Tablero.h"
-//cambio
+//cambio1
 
 
 std::vector<Vector2D> Movimiento::calcularTerrestre(Pieza* pieza, Tablero* tablero) {
