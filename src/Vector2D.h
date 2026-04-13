@@ -1,6 +1,4 @@
 #pragma once
-// Vector2D.h
-#pragma once
 
 #include<cmath>
 
