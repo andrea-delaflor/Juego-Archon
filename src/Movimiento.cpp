@@ -28,22 +28,22 @@ void Movimiento::expandirDireccion(Pieza* pieza, Tablero* tablero,
         int ni = i + di * paso;
         int nj = j + dj * paso;
 
-		// Verificamos si la nueva posición es válida en el tablero
+        // Verificamos si la nueva posición es válida en el tablero
         if (!tablero->posicionValida(ni, nj)) break;
 
         Pieza* ocupante = tablero->obtenerOcupante(ni, nj);
 
         if (ocupante == nullptr) {
-			// Vacía: válida
+            // Vacía: válida
             movimientos.push_back(Vector2D(ni, nj));
         }
         else if (ocupante->bando != pieza->bando) {
-			// Enemiga: válida, pero bloquea el camino, paramos después de añadirla
+            // Enemiga: válida, pero bloquea el camino, paramos después de añadirla
             movimientos.push_back(Vector2D(ni, nj));
             break;
         }
         else {
-			// Aliada: bloquea el camino, no es válida, paramos sin añadir
+            // Aliada: bloquea el camino, no es válida, paramos sin añadir
             break;
         }
     }
