@@ -2,6 +2,7 @@
 #include "glut.h"
 #include <math.h>
 #include "Vector2D.h"
+#include <iostream>
 
 //Instancia global del mundo para que las funciones de glut puedan acceder a él
 
@@ -28,6 +29,7 @@ void Mundo::inicializa() {
 	//Inicializamos el valor de la luz y el ángulo para el parpadeo
     valorLuz = 0.5f;
     angulo = 0.0f;
+    
 
     //---------------PRUEBA PIEZATEST-------------------
         // Creamos una pieza cian en la casilla (0,0)
@@ -35,6 +37,26 @@ void Mundo::inicializa() {
 
     // Creamos una pieza magenta en la casilla (8,8)
     piezaOscuridad = new PiezaTest({ 8.0, 8.0 }, Bando::OSCURIDAD);
+
+    //prueba Golem
+    // Vamos a crear el golem en una posicion inicial-----> lo ponemos donde queramos
+    piezaLuz = new GolemL(Vector2D(6, 4));
+
+    // guardamos la pos de la pieza
+    tablero.colocarPieza(6, 4, piezaLuz);
+
+    //Aqui es donde llamamos a nuestra clase de Movimientos para ver a donde se puede mover
+    std::vector<Vector2D> movimientos = piezaLuz->obtenerMovimientosValidos(&tablero);
+
+    // Imprimimos el resultado en la consola
+    std::cout << "--- TEST DE MOVIMIENTO ---" << std::endl;
+    std::cout << "El Golem esta en (4,4). Rango: 2. Tipo: Terrestre." << std::endl;
+    std::cout << "Casillas alcanzables calculadas: " << movimientos.size() << std::endl;
+
+    for (auto& pos : movimientos) {
+        std::cout << " -> Puede ir a: (" << pos.x << ", " << pos.y << ")" << std::endl;
+    }
+
 
 }
 
