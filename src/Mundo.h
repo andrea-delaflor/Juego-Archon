@@ -6,6 +6,7 @@
 #include "Raton.h"
 #include "GolemL.h"
 #include "MagoL.h"
+#include "BrujaO.h"
 
 class Mundo {
 public:
