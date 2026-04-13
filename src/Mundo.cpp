@@ -29,34 +29,31 @@ void Mundo::inicializa() {
 	//Inicializamos el valor de la luz y el ángulo para el parpadeo
     valorLuz = 0.5f;
     angulo = 0.0f;
-    
+
+    piezasLuz.clear();
+    piezasOscuridad.clear();
+
+    // Creamos las piezas de la LUZ
+    piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
+    piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
 
     //---------------PRUEBA PIEZATEST-------------------
         // Creamos una pieza cian en la casilla (0,0)
-    piezaLuz = new PiezaTest({ 0.0, 0.0 }, Bando::LUZ);
+    //piezaLuz = new PiezaTest({ 0.0, 0.0 }, Bando::LUZ);
 
     // Creamos una pieza magenta en la casilla (8,8)
-    piezaOscuridad = new PiezaTest({ 8.0, 8.0 }, Bando::OSCURIDAD);
+   // piezaOscuridad = new PiezaTest({ 8.0, 8.0 }, Bando::OSCURIDAD);
 
-    //prueba Golem
-    // Vamos a crear el golem en una posicion inicial-----> lo ponemos donde queramos
-    piezaLuz = new GolemL(Vector2D(6, 4));
+    //prueba 
+   // piezaLuz = new GolemL(Vector2D(6, 4));
+    //piezaLuz = new MagoL(Vector2D(1, 4)); // Por ejemplo en la columna 1
 
     // guardamos la pos de la pieza
-    tablero.colocarPieza(6, 4, piezaLuz);
-
-    //Aqui es donde llamamos a nuestra clase de Movimientos para ver a donde se puede mover
-    std::vector<Vector2D> movimientos = piezaLuz->obtenerMovimientosValidos(&tablero);
-
-    // Imprimimos el resultado en la consola
-    std::cout << "--- TEST DE MOVIMIENTO ---" << std::endl;
-    std::cout << "El Golem esta en (4,4). Rango: 2. Tipo: Terrestre." << std::endl;
-    std::cout << "Casillas alcanzables calculadas: " << movimientos.size() << std::endl;
-
-    for (auto& pos : movimientos) {
-        std::cout << " -> Puede ir a: (" << pos.x << ", " << pos.y << ")" << std::endl;
+    for (auto p : piezasLuz) {
+        tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
     }
 
+  
 
 }
 
@@ -90,13 +87,21 @@ void Mundo::dibuja() {
     raton.dibuja();
 
     // 3. Piezas
-    if (piezaLuz) piezaLuz->dibuja();
-    if (piezaOscuridad) piezaOscuridad->dibuja();
+    for (auto p : piezasLuz) {
+        if (p->estaViva()) p->dibuja();
+    }
+
+    for (auto p : piezasOscuridad) {
+        if (p->estaViva()) p->dibuja();
+    }
 
     glutSwapBuffers();
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
+    // Solo actuamos si se presiona el botón izquierdo
+    if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
+
     // 1. Actualizamos la casilla donde se ha hecho click
     raton.actualizaPosicion(x, y, 800, 800);
     Vector2D c = raton.casilla;
@@ -106,20 +111,31 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
     // ESTADO A: No hay nada seleccionado (Primer Click)
     if (seleccionada == nullptr) {
-        // Miramos si en la casilla 'c' hay alguna de nuestras piezas de prueba
-        if (piezaLuz && (int)piezaLuz->obtenerPosicion().x == (int)c.x && (int)piezaLuz->obtenerPosicion().y == (int)c.y) {
-            seleccionada = piezaLuz;
-        }
-        else if (piezaOscuridad && (int)piezaOscuridad->obtenerPosicion().x == (int)c.x && (int)piezaOscuridad->obtenerPosicion().y == (int)c.y) {
-            seleccionada = piezaOscuridad;
+        // En lugar de piezaLuz o piezaOscuridad, preguntamos al tablero quién está ahí
+        Pieza* piezaEnCasilla = tablero.obtenerOcupante((int)c.x, (int)c.y);
+
+        if (piezaEnCasilla != nullptr) {
+            seleccionada = piezaEnCasilla;
+
+            // --- INFO EN CONSOLA ---
+            std::vector<Vector2D> movimientos = seleccionada->obtenerMovimientosValidos(&tablero);
+
+            std::cout << "\n===============================" << std::endl;
+            std::cout << "SELECCIONADO: " << seleccionada->obtenerNombre() << std::endl;
+            std::cout << "Bando: " << (seleccionada->obtenerBando() == Bando::LUZ ? "LUZ" : "OSCURIDAD") << std::endl;
+            std::cout << "Rango: " << seleccionada->obtenerRangoMovimiento() << std::endl;
+            std::cout << "Casillas validas: " << movimientos.size() << std::endl;
+
+            for (auto& pos : movimientos) {
+                std::cout << " -> Puede ir a: (" << (int)pos.x << ", " << (int)pos.y << ")" << std::endl;
+            }
+            std::cout << "===============================" << std::endl;
         }
     }
-    // ESTADO B: Ya hay una pieza seleccionada (Segundo Click)
+    // ESTADO B: Ya hay una pieza seleccionada (Segundo Click: Intentar mover)
     else {
-        // 1. Obtenemos los movimientos que dicta tu lógica de Movimiento.cpp
         std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
 
-        // 2. Comprobamos si la casilla donde hemos hecho el segundo click está en la lista
         bool esDestinoValido = false;
         for (auto& v : validos) {
             if ((int)v.x == (int)c.x && (int)v.y == (int)c.y) {
@@ -128,20 +144,30 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             }
         }
 
-        // 3. Si es válido, movemos la pieza
         if (esDestinoValido) {
+            // 1. IMPORTANTE: Quitar la pieza de la posición antigua en la matriz del tablero
+            Vector2D posAntigua = seleccionada->obtenerPosicion();
+            tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
+
+            // 2. Actualizar la posición de la pieza
             seleccionada->establecerPosicion(c);
+
+            // 3. Colocar la pieza en la nueva posición del tablero
+            tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
+
+            std::cout << "LOG: Movimiento realizado con exito." << std::endl;
+        }
+        else {
+            std::cout << "LOG: Movimiento no permitido." << std::endl;
         }
 
-        // 4. Pase lo que pase (se mueva o no), liberamos la selección para el siguiente turno
+        // Liberamos la selección
         seleccionada = nullptr;
     }
 
-    // Forzamos a redibujar para que el movimiento se vea al instante
+    // Forzamos a redibujar
     glutPostRedisplay();
-}
-
-void glueRaton(int button, int state, int x, int y) {
+}void glueRaton(int button, int state, int x, int y) {
     // Solo actuamos cuando se PULSA (state == 0) el botón IZQUIERDO (button == 0)
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         // 1. Decirle al objeto raton que calcule la casilla

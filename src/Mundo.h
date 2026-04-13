@@ -5,6 +5,7 @@
 #include "PiezaTest.h"
 #include "Raton.h"
 #include "GolemL.h"
+#include "MagoL.h"
 
 class Mundo {
 public:
@@ -17,11 +18,10 @@ public:
     Pieza* seleccionada = nullptr; // Puntero a la pieza que queremos mover
 private:
     Tablero tablero;
-    float valorLuz = 0.5f; // Añade el = 0.5f
-    float angulo = 0.0f;   // Añade el = 0.0f
+    float valorLuz = 0.5f; 
+    float angulo = 0.0f;   
 
     
-    Pieza* piezaLuz = nullptr;
-    Pieza* piezaOscuridad = nullptr;
-    
+    std::vector<Pieza*> piezasLuz;
+    std::vector<Pieza*> piezasOscuridad;
 };
