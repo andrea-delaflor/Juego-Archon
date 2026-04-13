@@ -4,7 +4,7 @@
 #include "ETSIDI.h"
 
 namespace ETSIDI { class Sprite; }
-// MAGO: Bando de la LUZ ---- DELEGACIÓN
+
 class MagoL : public Pieza {
 private:
     ETSIDI::Sprite* sprite;
@@ -22,8 +22,7 @@ public:
             pos)
     
         {
-            // CARGAMOS EL SPRITE AQUÍ DENTRO
-            // He usado la ruta que pusiste antes
+            // CARGAMOS EL SPRITE 
             sprite = new ETSIDI::Sprite("imagenes/alumnos/delegacion2.png", 0, 0, 0.9f, 0.9f);
         }
 
@@ -35,8 +34,6 @@ public:
     
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TELETRANSPORTE; }
 
-
-    // Imagen o identificador
     std::string obtenerNombreSprite() override { return "luz_mago"; }
 
     void dibuja() override;

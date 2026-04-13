@@ -1,8 +1,14 @@
 #pragma once
 #include "Pieza.h"
 #include "glut.h"
+#include "ETSIDI.h"
+
+namespace ETSIDI { class Sprite; }
 
 class BrujaO : public Pieza {
+private:
+    ETSIDI::Sprite* sprite;
+
 public:
     BrujaO(Vector2D pos) :
         Pieza("Bruja Oscuridad", Bando::OSCURIDAD,
@@ -15,7 +21,15 @@ public:
             TipoArma::VENENO,
             pos)
     {
+        // CARGAMOS EL SPRITE 
+        sprite = new ETSIDI::Sprite("imagenes/profes/direccion.png", 0, 0, 0.9f, 0.9f);
     }
+
+    // El destructor para que no haya fugas de memoria
+    virtual ~BrujaO() {
+        delete sprite;
+    }
+
 
     // Al ser TELETRANSPORTE, usará la lógica de Movimiento.cpp automáticamente
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TELETRANSPORTE; }
