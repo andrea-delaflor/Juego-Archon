@@ -49,31 +49,89 @@ void Mundo::mueve() {
 }
 
 void Mundo::dibuja() {
-	//Limpiamos la pantalla y el buffer de profundidad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //Resetea el punto de vista
     glLoadIdentity();
-	//Configuramos una vista ortográfica (2D) centrada en el tablero
-    gluOrtho2D(-6, 6, -6, 6); // Ajuste de cámara
+    gluOrtho2D(-6, 6, -6, 6);
 
-	//Dibujamos el tablero pasando el valor de luz actual
+    // 1. Tablero de fondo
     tablero.dibuja(valorLuz);
 
-    
-    // ================PRUEBA PIEZATEST ====================
-
-    if (piezaLuz != nullptr) {
-        piezaLuz->dibuja(); // Esto ya hace la conversión interna a OpenGL
+    // 2. Ratón con cambio de color
+    // Si hay algo seleccionado, pintamos el recuadro de AMARILLO, si no, de ROJO
+    if (seleccionada != nullptr) {
+        // Podemos añadir un método a Raton para cambiar color o hacerlo aquí
+        glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
     }
-
-    if (piezaOscuridad != nullptr) {
-        piezaOscuridad->dibuja();
+    else {
+        glColor3f(1.0f, 0.0f, 0.0f); // Rojo (Normal)
     }
-    //-------------------------------------------------------------
-   
-    //Intercambia el lienzo oculto con el visible para mostrar el dibujo de golpe y sin parpadeos.
+    raton.dibuja();
+
+    // 3. Piezas
+    if (piezaLuz) piezaLuz->dibuja();
+    if (piezaOscuridad) piezaOscuridad->dibuja();
+
     glutSwapBuffers();
 }
+
+void Mundo::clickRaton(int button, int state, int x, int y) {
+    // 1. Actualizamos la casilla donde se ha hecho click
+    raton.actualizaPosicion(x, y, 800, 800);
+    Vector2D c = raton.casilla;
+
+    // Si el click es fuera del tablero, no hacemos nada
+    if (c.x == -1) return;
+
+    // ESTADO A: No hay nada seleccionado (Primer Click)
+    if (seleccionada == nullptr) {
+        // Miramos si en la casilla 'c' hay alguna de nuestras piezas de prueba
+        if (piezaLuz && (int)piezaLuz->obtenerPosicion().x == (int)c.x && (int)piezaLuz->obtenerPosicion().y == (int)c.y) {
+            seleccionada = piezaLuz;
+        }
+        else if (piezaOscuridad && (int)piezaOscuridad->obtenerPosicion().x == (int)c.x && (int)piezaOscuridad->obtenerPosicion().y == (int)c.y) {
+            seleccionada = piezaOscuridad;
+        }
+    }
+    // ESTADO B: Ya hay una pieza seleccionada (Segundo Click)
+    else {
+        // 1. Obtenemos los movimientos que dicta tu lógica de Movimiento.cpp
+        std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
+
+        // 2. Comprobamos si la casilla donde hemos hecho el segundo click está en la lista
+        bool esDestinoValido = false;
+        for (auto& v : validos) {
+            if ((int)v.x == (int)c.x && (int)v.y == (int)c.y) {
+                esDestinoValido = true;
+                break;
+            }
+        }
+
+        // 3. Si es válido, movemos la pieza
+        if (esDestinoValido) {
+            seleccionada->establecerPosicion(c);
+        }
+
+        // 4. Pase lo que pase (se mueva o no), liberamos la selección para el siguiente turno
+        seleccionada = nullptr;
+    }
+
+    // Forzamos a redibujar para que el movimiento se vea al instante
+    glutPostRedisplay();
+}
+
+void glueRaton(int button, int state, int x, int y) {
+    // Solo actuamos cuando se PULSA (state == 0) el botón IZQUIERDO (button == 0)
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        // 1. Decirle al objeto raton que calcule la casilla
+        // Pasamos 800, 800 que es el tamaño de tu ventana en el main
+        mundo.clickRaton(button, state, x, y);
+    }
+}
+
+void mousePasivo(int x, int y) {
+    mundo.raton.actualizaPosicion(x, y, 800, 800);
+}
+
 
 int main(int argc, char* argv[]) {
 	//Inicializamos GLUT y creamos la ventana
@@ -81,10 +139,15 @@ int main(int argc, char* argv[]) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 800);
     glutCreateWindow("Archon - ETSIDI");
+    
 
 	//Registramos las funciones de dibujo y temporizador
     glutDisplayFunc(glueDibuja);
+    glutMouseFunc(glueRaton);
+    glutPassiveMotionFunc(mousePasivo);
     glutTimerFunc(50, glueTimer, 0);
+ 
+    
 
 	//Inicializamos el mundo y comenzamos el bucle principal de GLUT
     mundo.inicializa();
