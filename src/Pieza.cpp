@@ -1,93 +1,96 @@
-﻿#pragma once
-#include "Vector2D.h"
+﻿#include "Pieza.h"
+#include "Tablero.h"
 #include "Movimiento.h"
-#include <vector>
-#include <string>
+#include <iostream>
 
-enum class Bando { LUZ, OSCURIDAD };
-enum class TipoMovimiento { TERRESTRE, VOLADOR, TELETRANSPORTE };
-enum class TipoArma {
-    CUERPO_A_CUERPO, PROYECTIL, BOLA_DE_FUEGO,
-    RAYO, FLECHA, VENENO, MAGIA
-};
+Pieza::Pieza(const std::string& _nombre,
+    Bando _bando,
+    int _vidaMaxima,
+    float _velocidad,
+    int _poderAtaque,
+    float _velocidadAtaque,
+    float _alcance,
+    int _rangoMovimiento,
+    TipoArma _arma,
+    Vector2D _posInicial)
+{
+    nombre = _nombre;
+    bando = _bando;
+    vidaMaxima = _vidaMaxima;
+    vida = _vidaMaxima;
+    viva = true;
+    velocidad = _velocidad;
+    poderAtaque = _poderAtaque;
+    velocidadAtaque = _velocidadAtaque;
+    alcance = _alcance;
+    rangoMovimiento = _rangoMovimiento;
+    arma = _arma;
+    posicion = _posInicial;
+    encarcelada = false;
+}
 
+// logica del movimiento
+std::vector<Vector2D> Pieza::obtenerMovimientosValidos(Tablero* tablero) {
+    Movimiento motor;
+    TipoMovimiento miTipo = this->obtenerTipoMovimiento();
 
+    if (miTipo == TipoMovimiento::TERRESTRE) {
+        return motor.calcularTerrestre(this, tablero);
+    }
+    else if (miTipo == TipoMovimiento::VOLADOR) {
+        return motor.calcularVolador(this, tablero);
+    }
+    else if (miTipo == TipoMovimiento::TELETRANSPORTE) {
+        return motor.calcularTeletransporte(this, tablero);
+    }
 
-class Tablero;
+    return std::vector<Vector2D>();
+}
 
-class Pieza {
+// vida y el daño
+void Pieza::recibirDanio(int cantidad) {
+    if (!viva) return;
+    if (cantidad < 0) cantidad = 0;
 
-public:
+    vida -= cantidad;
+    if (vida <= 0) {
+        vida = 0;
+        viva = false;
+    }
+}
 
-    // Objeto Movimiento — vive dentro de cada Pieza
-    Movimiento movimiento;
-    friend class Movimiento;
+void Pieza::curar(int cantidad) {
+    if (!viva || cantidad <= 0) return;
 
-    Pieza(const std::string& _nombre,
-        Bando _bando,
-        int _vidaMaxima,
-        float _velocidad,
-        int _poderAtaque,
-        float _velocidadAtaque,
-        float _alcance,
-        int _rangoMovimiento,
-        TipoArma _arma,
-        Vector2D _posInicial);
+    vida += cantidad;
+    if (vida > vidaMaxima) {
+        vida = vidaMaxima;
+    }
+}
 
-    virtual ~Pieza() = default;
-    Pieza(const Pieza&) = delete;
-    Pieza& operator=(const Pieza&) = delete;
+void Pieza::restaurarVidaCompleta() {
+    vida = vidaMaxima;
+    viva = true;
+}
 
-    // ── Métodos virtuales puros ──────────────────────────────
-    virtual std::string obtenerNombreSprite() = 0;
-    virtual void dibuja() = 0;
-    virtual void usarHabilidadEspecial(Tablero* tablero) {}
+void Pieza::establecerViva(bool _viva) {
+    viva = _viva;
+    if (viva && vida <= 0) vida = 1;
+}
 
-    
-    virtual std::vector<Vector2D> obtenerMovimientosValidos(Tablero* tablero) = 0;
+float Pieza::obtenerBonusCombate(Bando bandoCasilla) {
+    if (bandoCasilla == bando) return 1.25f;
+    return 0.85f;
+}
 
-    // ── Getters ──────────────────────────────────────────────
-    std::string obtenerNombre() { return nombre; }
-    Bando       obtenerBando() { return bando; }
-    Vector2D    obtenerPosicion() { return posicion; }
-    int         obtenerVida() { return vida; }
-    bool        estaViva() { return viva; }
-    int         obtenerRangoMovimiento() { return rangoMovimiento; }
-    TipoArma    obtenerArma() { return arma; }
-    float       obtenerAlcance() { return alcance; }
-    int         obtenerPoderAtaque() { return poderAtaque; }
-    bool        estaEncarcelada() { return encarcelada; }
+// imprimir
+void Pieza::imprimir() {
+    std::cout << "Pieza: " << nombre
+        << " | Bando: " << (bando == Bando::LUZ ? "LUZ" : "OSCURIDAD")
+        << " | Vida: " << vida << "/" << vidaMaxima
+        << " | Pos: (" << posicion.x << "," << posicion.y << ")";
 
-    // ── Setters ──────────────────────────────────────────────
-    void establecerPosicion(Vector2D pos) { posicion = pos; }
-    void establecerEncarcelada(bool v) { encarcelada = v; }
-    void establecerViva(bool _viva);
-
-    // ── Gestión de vida ──────────────────────────────────────
-    void  recibirDanio(int cantidad);
-    void  curar(int cantidad);
-    void  restaurarVidaCompleta();
-    float obtenerBonusCombate(Bando bandoCasilla);
-
-    virtual void imprimir();
-
-        
-private:
-    std::string nombre;
-    Bando       bando;
-    Vector2D    posicion;
-    int         vida;
-    int         vidaMaxima;
-    bool        viva;
-    bool        encarcelada;
-    float       velocidad;
-    int         poderAtaque;
-    float       velocidadAtaque;
-    float       alcance;
-    int         rangoMovimiento;
-    TipoArma    arma;
-
-  
-
-
-};
+    if (!viva) std::cout << " [ELIMINADA]";
+    if (encarcelada) std::cout << " [EN PRISION]";
+    std::cout << std::endl;
+}
