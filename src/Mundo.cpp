@@ -67,7 +67,13 @@ void Mundo::dibuja() {
     glLoadIdentity();
     gluOrtho2D(-6, 6, -6, 6);
 
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     // 1. Tablero de fondo
+    
     tablero.dibuja(valorLuz);
 
     // 2. Ratón con cambio de color
@@ -82,6 +88,12 @@ void Mundo::dibuja() {
     raton.dibuja();
 
     // 3. Piezas
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glColor3ub(255, 255, 255);
+
     for (auto p : piezasLuz) {
         if (p->estaViva()) p->dibuja();
     }
@@ -90,6 +102,8 @@ void Mundo::dibuja() {
         if (p->estaViva()) p->dibuja();
     }
 
+
+    glDisable(GL_TEXTURE_2D);
     glutSwapBuffers();
 }
 
