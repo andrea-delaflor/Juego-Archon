@@ -1,5 +1,45 @@
 #include "Tablero.h"
+#include "Pieza.h"
 #include "glut.h"
+
+
+// --- Constructor ---
+Tablero::Tablero() {
+    // Inicializamos todas las casillas a vacío (nullptr)
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            casillas[i][j] = nullptr;
+        }
+    }
+}
+
+// --- ¿La coordenada está dentro del 9x9? ---
+bool Tablero::posicionValida(int i, int j) {
+    if (i >= 0 && i < 9 && j >= 0 && j < 9) {
+        return true;
+    }
+    return false;
+}
+
+// --- ¿Quién hay en esta casilla? ---
+Pieza* Tablero::obtenerOcupante(int i, int j) {
+    // Si nos preguntan por un sitio fuera del mapa, devolvemos nulo por seguridad
+    if (!posicionValida(i, j)) {
+        return nullptr;
+    }
+    return casillas[i][j];
+}
+
+// --- Para inicializar el juego ---
+void Tablero::colocarPieza(int i, int j, Pieza* p) {
+    if (posicionValida(i, j)) {
+        casillas[i][j] = p;
+        if (p != nullptr) {
+            p->establecerPosicion(Vector2D(i, j)); // Sincronizamos la pieza
+        }
+    }
+}
+
 
 //COLUMNAS: i=0 (A) a i=8 (I)
 //FILAS: j=0  a j=8 

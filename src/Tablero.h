@@ -1,15 +1,30 @@
 #pragma once
 #include "ETSIDI.h"
 
+// Promesa al compilador para no tener dependencias circulares
+class Pieza; 
+
 class Tablero {
 public:
+    // Constructor para inicializar el tablero vacío
+    Tablero();
+
     // Dibuja el tablero pasando la luminosidad actual (0.0 a 1.0)
     void dibuja(float luminosidad);
 
+    // --- NUEVAS FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
+    bool posicionValida(int i, int j);
+    Pieza* obtenerOcupante(int i, int j);
+    void colocarPieza(int i, int j, Pieza* p); // Para poder meter las fichas
+
 private:
-	//Punto de poder : E5, A5, I5, E1, E9
+    // La matriz real del juego. Guarda punteros a las piezas.
+    // Si en una casilla no hay nadie, guardará "nullptr"
+    Pieza* casillas[9][9];
+
+    // Punto de poder : E5, A5, I5, E1, E9
     bool esPowerPoint(int i, int j);
 
-	// Casillas variables: Cruz central + diagonales
+    // Casillas variables: Cruz central + diagonales
     bool esVariable(int i, int j);
 };
