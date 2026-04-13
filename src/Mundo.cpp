@@ -33,27 +33,22 @@ void Mundo::inicializa() {
     piezasLuz.clear();
     piezasOscuridad.clear();
 
-    // Creamos las piezas de la LUZ
+    // --- BANDO DE LA LUZ ---
     piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
     piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
 
-    //---------------PRUEBA PIEZATEST-------------------
-        // Creamos una pieza cian en la casilla (0,0)
-    //piezaLuz = new PiezaTest({ 0.0, 0.0 }, Bando::LUZ);
+    // --- BANDO DE LA OSCURIDAD ---
+ 
+    piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
 
-    // Creamos una pieza magenta en la casilla (8,8)
-   // piezaOscuridad = new PiezaTest({ 8.0, 8.0 }, Bando::OSCURIDAD);
-
-    //prueba 
-   // piezaLuz = new GolemL(Vector2D(6, 4));
-    //piezaLuz = new MagoL(Vector2D(1, 4)); // Por ejemplo en la columna 1
-
-    // guardamos la pos de la pieza
+     // guardamos la pos de la pieza
     for (auto p : piezasLuz) {
         tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
     }
 
-  
+    for (auto p : piezasOscuridad) {
+        tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
+    }
 
 }
 
