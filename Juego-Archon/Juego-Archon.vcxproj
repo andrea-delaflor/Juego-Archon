@@ -19,20 +19,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Mago.cpp" />
+    <ClCompile Include="..\src\ArquerasL.cpp" />
+    <ClCompile Include="..\src\BansheeO.cpp" />
+    <ClCompile Include="..\src\BasiliscoO.cpp" />
+    <ClCompile Include="..\src\BrujaO.cpp" />
+    <ClCompile Include="..\src\DjiniL.cpp" />
+    <ClCompile Include="..\src\DragonO.cpp" />
+    <ClCompile Include="..\src\FenixL.cpp" />
+    <ClCompile Include="..\src\GolemL.cpp" />
+    <ClCompile Include="..\src\MagoL.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
     <ClCompile Include="..\src\Mundo.cpp" />
     <ClCompile Include="..\src\Pieza.cpp" />
+    <ClCompile Include="..\src\Raton.cpp" />
     <ClCompile Include="..\src\Tablero.cpp" />
+    <ClCompile Include="..\src\TrollO.cpp" />
     <ClCompile Include="..\src\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Mago.h" />
+    <ClInclude Include="..\src\ArqueraL.h" />
+    <ClInclude Include="..\src\BansheeO.h" />
+    <ClInclude Include="..\src\BasiliscoO.h" />
+    <ClInclude Include="..\src\BrujaO.h" />
+    <ClInclude Include="..\src\DjiniL.h" />
+    <ClInclude Include="..\src\DragonO.h" />
+    <ClInclude Include="..\src\FenixL.h" />
+    <ClInclude Include="..\src\GolemL.h" />
+    <ClInclude Include="..\src\MagoL.h" />
     <ClInclude Include="..\src\Movimiento.h" />
     <ClInclude Include="..\src\Mundo.h" />
     <ClInclude Include="..\src\Pieza.h" />
     <ClInclude Include="..\src\PiezaTest.h" />
+    <ClInclude Include="..\src\Raton.h" />
     <ClInclude Include="..\src\Tablero.h" />
+    <ClInclude Include="..\src\TrollO.h" />
     <ClInclude Include="..\src\Vector2D.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
