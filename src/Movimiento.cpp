@@ -2,7 +2,7 @@
 #include "Pieza.h"
 #include "Tablero.h"
 
-// ── calcularTerrestre ────────────────────────────────────────
+// ── calcularTerrestre ──
 std::vector<Vector2D> Movimiento::calcularTerrestre(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 
@@ -15,12 +15,12 @@ std::vector<Vector2D> Movimiento::calcularTerrestre(Pieza* pieza, Tablero* table
     return movimientos;
 }
 
-// Helper privado — avanza en UNA dirección hasta obstáculo o borde
+// Avanza una dirección hasta obstáculo o borde
 void Movimiento::expandirDireccion(Pieza* pieza, Tablero* tablero,
     int di, int dj,
     std::vector<Vector2D>& movimientos) {
 
-    // USAMOS LOS GETTERS PÚBLICOS
+    // accede a atributos protegidos
     int i = (int)pieza->obtenerPosicion().x;
     int j = (int)pieza->obtenerPosicion().y;
     int rango = pieza->obtenerRangoMovimiento();
@@ -30,39 +30,39 @@ void Movimiento::expandirDireccion(Pieza* pieza, Tablero* tablero,
         int ni = i + di * paso;
         int nj = j + dj * paso;
 
-        // Fuera del tablero → paramos
+        // verificamos si la nueva pieza es válida en el tablero
         if (!tablero->posicionValida(ni, nj)) break;
 
         Pieza* ocupante = tablero->obtenerOcupante(ni, nj);
 
         if (ocupante == nullptr) {
-            // Vacía → válida, seguimos
+            // si esta vacía es valida
             movimientos.push_back(Vector2D(ni, nj));
         }
         else if (ocupante->obtenerBando() != miBando) {
-            // Enemiga → válida pero paramos (habrá combate)
+            // válida,enemiga bloquea camino,  se para despues de añadir
             movimientos.push_back(Vector2D(ni, nj));
             break;
         }
         else {
-            // Aliada → bloqueada, paramos sin añadirla
+            //  valida, aliada bloquea camino, paramos sin añadir
             break;
         }
     }
 }
 
-// ── calcularVolador ──────────────────────────────────────────
+// ── calcularVolador ───
 std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 
-    // USAMOS LOS GETTERS PÚBLICOS
+    // accede a atributos protegidos 
     int i = (int)pieza->obtenerPosicion().x;
     int j = (int)pieza->obtenerPosicion().y;
     int rango = pieza->obtenerRangoMovimiento();
     Bando miBando = pieza->obtenerBando();
 
     // Cuadrado completo de rango en las 8 direcciones
-    // Las voladoras ignoran obstáculos — solo miramos el destino
+    // Las voladoras ignoran obstáculos  solo miramos punto final
     for (int di = -rango; di <= rango; di++) {
         for (int dj = -rango; dj <= rango; dj++) {
 
@@ -75,7 +75,7 @@ std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero
 
             Pieza* ocupante = tablero->obtenerOcupante(ni, nj);
 
-            // Vacía o enemiga → válida
+            // Vacía o enemiga : válido
             if (ocupante == nullptr || ocupante->obtenerBando() != miBando)
                 movimientos.push_back(Vector2D(ni, nj));
         }
@@ -84,16 +84,16 @@ std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero
     return movimientos;
 }
 
-// ── calcularTeletransporte ───────────────────────────────────
+// ── calcularTeletransporte ────
 std::vector<Vector2D> Movimiento::calcularTeletransporte(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 
-    // USAMOS LOS GETTERS PÚBLICOS
+    
     int miX = (int)pieza->obtenerPosicion().x;
     int miY = (int)pieza->obtenerPosicion().y;
     Bando miBando = pieza->obtenerBando();
 
-    // Recorremos las 81 casillas del tablero entero
+    
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
 
@@ -102,7 +102,7 @@ std::vector<Vector2D> Movimiento::calcularTeletransporte(Pieza* pieza, Tablero* 
 
             Pieza* ocupante = tablero->obtenerOcupante(i, j);
 
-            // Vacía o enemiga → válida
+            
             if (ocupante == nullptr || ocupante->obtenerBando() != miBando)
                 movimientos.push_back(Vector2D(i, j));
         }

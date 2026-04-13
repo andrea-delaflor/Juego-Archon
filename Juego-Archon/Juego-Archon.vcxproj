@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Mago.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
     <ClCompile Include="..\src\Mundo.cpp" />
     <ClCompile Include="..\src\Pieza.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="..\src\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Mago.h" />
     <ClInclude Include="..\src\Movimiento.h" />
     <ClInclude Include="..\src\Mundo.h" />
     <ClInclude Include="..\src\Pieza.h" />
