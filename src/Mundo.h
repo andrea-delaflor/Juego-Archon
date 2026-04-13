@@ -15,10 +15,19 @@ private:
     float valorLuz;
     float angulo;
 
+<<<<<<< Updated upstream
 
     // --- Declaramos punteros a Pieza para hacer la prueba de PiezaTest ---
     // Usamos la clase base Pieza* para aprovechar el polimorfismo
     Pieza* piezaLuz = nullptr;
     Pieza* piezaOscuridad = nullptr;
     //--------------------------------------------------------
+=======
+    // --- AÑADIR PARA LA PRUEBA ---
+    Vector2D posPrueba; // Tu struct Vector2D 
+    // -----------------------------
+
+    // otra prueba:
+    Vector2D posCirculo;
+>>>>>>> Stashed changes
 };
