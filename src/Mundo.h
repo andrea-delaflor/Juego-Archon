@@ -12,7 +12,7 @@
 
 class Mundo {
 public:
-    
+
     void inicializa();
     void mueve();
     void dibuja();
@@ -21,10 +21,10 @@ public:
     Pieza* seleccionada = nullptr; // Puntero a la pieza que queremos mover
 private:
     Tablero tablero;
-    float valorLuz = 0.5f; 
-    float angulo = 0.0f;   
+    float valorLuz = 0.5f;
+    float angulo = 0.0f;
 
-    
+
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;
 };
