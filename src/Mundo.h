@@ -9,6 +9,9 @@
 #include "BrujaO.h"
 #include "DragonO.h"
 #include"DjiniL.h"
+#include "ArqueraL.h"
+#include "BasiliscoO.h"
+
 
 class Mundo {
 public:
