@@ -26,21 +26,23 @@ public:
         TipoArma _arma,
         Vector2D _posInicial);
 
-    virtual ~Pieza() = default; 
+    virtual ~Pieza() = default;
 
     Pieza(const Pieza&) = delete;
     Pieza& operator=(const Pieza&) = delete;
+    //actualiza la trayectoria
+    void actualizar(float dt);
 
-    // ── Métodos virtuales puros ──────────────────────────────
+    // ── Métodos virtuales puros ─
     virtual std::string obtenerNombreSprite() = 0;
     virtual void dibuja() = 0;
     virtual TipoMovimiento obtenerTipoMovimiento() = 0; // Obliga a los hijos a decir qué son
     virtual void usarHabilidadEspecial(Tablero* tablero) {}
 
-   
+
     std::vector<Vector2D> obtenerMovimientosValidos(Tablero* tablero);
 
-    // ── Getters ──────────────────────────────────────────────
+    // ── Getters ─
     std::string obtenerNombre() { return nombre; }
     Bando       obtenerBando() { return bando; }
     Vector2D    obtenerPosicion() { return posicion; }
@@ -52,12 +54,15 @@ public:
     int         obtenerPoderAtaque() { return poderAtaque; }
     bool        estaEncarcelada() { return encarcelada; }
 
-    // ── Setters ──────────────────────────────────────────────
-    void establecerPosicion(Vector2D pos) { posicion = pos; }
+    Vector2D    obtenerPosicionVisual() { return posicionVisual; } // Posición suave
+    bool        estaAnimando() { return animando; }
+
+    // ── Setters ──
+    void establecerPosicion(Vector2D pos);
     void establecerEncarcelada(bool v) { encarcelada = v; }
     void establecerViva(bool _viva);
 
-    // ── Gestión de vida ──────────────────────────────────────
+    // ── Gestión de vida ──
     void  recibirDanio(int cantidad);
     void  curar(int cantidad);
     void  restaurarVidaCompleta();
@@ -80,5 +85,6 @@ protected:
     int         rangoMovimiento;
     TipoArma    arma;
 
-   
+    Vector2D    posicionVisual; // Coordenadas para el dibujo 
+    bool        animando;       // Indica si la pieza se está desplazando
 };

@@ -5,6 +5,8 @@
 class Tablero;
 class Pieza;
 
+//esto no sirve para la animacion
+enum class TipoTrayectoria { TERRESTRE, VOLADOR, TELETRANSPORTE };
 
 class Movimiento {
 public:
@@ -17,6 +19,8 @@ public:
 
     // Cualquier casilla del tablero, sin límite de distancia
     std::vector<Vector2D> calcularTeletransporte(Pieza* pieza, Tablero* tablero);
+
+    TipoTrayectoria obtenerTipoTrayectoria(Pieza* pieza); //para el tipo de movimientp
 
 private:
 
