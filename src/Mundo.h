@@ -7,6 +7,8 @@
 #include "GolemL.h"
 #include "MagoL.h"
 #include "BrujaO.h"
+#include "DragonO.h"
+#include"DjiniL.h"
 
 class Mundo {
 public:
