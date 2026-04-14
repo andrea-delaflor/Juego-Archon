@@ -66,13 +66,20 @@ void Mundo::mueve() {
 
 void Mundo::dibuja() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // --- RESETEO PROFUNDO DE OPENGL ---
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(-6, 6, -6, 6);
 
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     // 1. Tablero de fondo
     
