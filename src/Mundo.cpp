@@ -38,6 +38,7 @@ void Mundo::inicializa() {
     piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
 	piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
     piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
+    piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
     
 
     // --- BANDO DE LA OSCURIDAD ---
@@ -46,6 +47,7 @@ void Mundo::inicializa() {
 	piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
     piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
     piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
+    piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
 
      // guardamos la pos de la pieza
     for (auto p : piezasLuz) {

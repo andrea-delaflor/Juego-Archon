@@ -9,6 +9,8 @@
 #include "BrujaO.h"
 #include "DragonO.h"
 #include"DjiniL.h"
+#include"FenixL.h"
+#include"BansheeO.h"
 #include "ArqueraL.h"
 #include "BasiliscoO.h"
 #include "TrollO.h"
