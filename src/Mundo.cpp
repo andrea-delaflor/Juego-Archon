@@ -45,6 +45,7 @@ void Mundo::inicializa() {
     piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
 	piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
     piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
+    piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
 
      // guardamos la pos de la pieza
     for (auto p : piezasLuz) {

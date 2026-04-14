@@ -6,8 +6,8 @@ void TrollO::dibuja() {
     float x_gl = (float)posicion.x - 4.0f;
     float y_gl = 4.0f - (float)posicion.y;
 
-    // Color del Troll —--> Rojo oscuro (por ahora)
-    glColor3f(0.8f, 0.1f, 0.1f);
+    // Color del Troll —--> Morado (por ahora)
+    glColor3f(0.7f, 0.5f, 0.9f);
 
     // Lo hacemos en forma de triangulo por ahora
     glBegin(GL_TRIANGLES);
