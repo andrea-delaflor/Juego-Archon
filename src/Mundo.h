@@ -11,7 +11,7 @@
 #include"DjiniL.h"
 #include "ArqueraL.h"
 #include "BasiliscoO.h"
-
+#include "TrollO.h"
 
 class Mundo {
 public:
