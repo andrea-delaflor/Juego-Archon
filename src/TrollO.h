@@ -1,8 +1,10 @@
 #pragma once
 #include "Pieza.h"
 #include "glut.h"
+#include "ETSIDI.h"
 
 //Troll ----->Bando oscuridad
+namespace ETSIDI { class Sprite; }
 
 class TrollO : public Pieza {
 public:
@@ -18,6 +20,13 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        // CARGAMOS EL SPRITE 
+        sprite = new ETSIDI::Sprite("imagenes/profes/orgaestadistica.png", 0, 0, 0.9f, 0.9f);
+    }
+
+    // El destructor para que no haya fugas de memoria
+    virtual ~TrollO() {
+        delete sprite;
     }
 
    // le indicamos a Pieza el Tipo de Movimiento que usa
