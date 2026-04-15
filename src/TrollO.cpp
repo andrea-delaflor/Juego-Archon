@@ -2,17 +2,30 @@
 
 void TrollO::dibuja() {
 
-    //Convertir de coordenadas tablero a las de Glut
-    float x_gl = (float)posicion.x - 4.0f;
-    float y_gl = 4.0f - (float)posicion.y;
+    actualizar(0.016f);
 
-    // Color del Troll —--> Morado (por ahora)
-    glColor3f(0.7f, 0.5f, 0.9f);
+    if (sprite != nullptr) {
 
-    // Lo hacemos en forma de triangulo por ahora
-    glBegin(GL_TRIANGLES);
-    glVertex2f(x_gl, y_gl + 0.38f);  
-    glVertex2f(x_gl - 0.38f, y_gl - 0.38f);  
-    glVertex2f(x_gl + 0.38f, y_gl - 0.38f); 
-    glEnd();
+        Vector2D vPos = obtenerPosicionVisual();
+
+        float x_gl = (float)vPos.x - 4.0f;
+        float y_gl = 4.0f - (float)vPos.y;
+
+        glPushMatrix();
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+
+        sprite->setPos(x_gl, y_gl);
+
+        sprite->setSize(0.9f, 0.9f);
+
+        sprite->draw();
+
+        glPopAttrib();
+        glPopMatrix();
+    }
 }
