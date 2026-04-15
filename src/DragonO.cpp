@@ -2,7 +2,7 @@
 
 void DragonO::dibuja() {
     // Actualizamos la posición en cada frame de dibujo (aprox 60fps)
-    actualizar(0.016f);
+    actualizar(0.005f);
 
     if (sprite != nullptr) {
         // Usamos la posición visual para el desplazamiento suave

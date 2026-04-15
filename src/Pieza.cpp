@@ -34,7 +34,7 @@ Pieza::Pieza(const std::string& _nombre,
 }
 
 //Para ir actualizando la taryectoria
-void Pieza::actualizar(float dt) {
+void Pieza::actualizar(float velocidadtrayectoria) {
     // Si la visual es distinta a la lógica, es que debe moverse
     Vector2D dir = posicion - posicionVisual;
 
@@ -44,9 +44,10 @@ void Pieza::actualizar(float dt) {
     if (dist > 0.01f) {
         // En lugar de dt, usamos un valor fijo pequeño para que se mueva
         // cada vez que se dibuja. 
-        float velocidadAnimacion = 0.0005f;
-        posicionVisual.x += dir.x * velocidadAnimacion;
-        posicionVisual.y += dir.y * velocidadAnimacion;
+        //float velocidadAnimacion = 0.0005f;
+        
+        posicionVisual.x += dir.x * velocidadtrayectoria;
+        posicionVisual.y += dir.y * velocidadtrayectoria;
     }
     else {
         posicionVisual = posicion;
