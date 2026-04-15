@@ -29,7 +29,7 @@ Pieza::Pieza(const std::string& _nombre,
 
     posicion = _posInicial;
     posicionVisual = _posInicial; // Al inicio están en el mismo sitio
-    animando = false;
+    animando = false;                       //animado nos sirve para en el metodo actualizar cuando dejar de calcular el movimiento
     encarcelada = false;
 }
 

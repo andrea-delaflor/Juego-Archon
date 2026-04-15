@@ -18,13 +18,7 @@ void FenixL::dibuja() {
 
         sprite->setPos(x_gl, y_gl);
 
-        // Efecto visual extra: Si está animando, que sea un poco más grande (vuelo)      
-        if (animando) {
-            sprite->setSize(0.9f, 0.9f);
-        }
-        else {
-            sprite->setSize(0.9f, 0.9f);
-        }
+        sprite->setSize(0.9f, 0.9f);
 
         sprite->draw();
 
