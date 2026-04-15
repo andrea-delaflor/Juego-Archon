@@ -1,27 +1,31 @@
-#include"DragonO.h"
-
-DragonO::DragonO(Vector2D posInicial)
-    : Pieza("Dragon", Bando::OSCURIDAD, 150, 4.0f, 30, 0.8f, 2.0f, 4, TipoArma::BOLA_DE_FUEGO, posInicial)
-{
-    sprite = new ETSIDI::Sprite(obtenerNombreSprite().c_str(), 0, 0, 0.8f, 0.8f);
-}
-
-DragonO::~DragonO() {
-    delete sprite;
-}
-
-std::string DragonO::obtenerNombreSprite() {
-    return "imagenes/profes/mecanica.png";
-}
+#include "DragonO.h"
 
 void DragonO::dibuja() {
-    float x_pantalla = posicion.x - 4.0f;
-    float y_pantalla = 4.0f - posicion.y;
+    // Actualizamos la posición en cada frame de dibujo (aprox 60fps)
+    actualizar(0.016f);
 
-    sprite->setPos(x_pantalla, y_pantalla);
-    sprite->draw();
-}
+    if (sprite != nullptr) {
+        // Usamos la posición visual para el desplazamiento suave
+        Vector2D vPos = obtenerPosicionVisual();
 
-TipoMovimiento DragonO::obtenerTipoMovimiento() {
-    return TipoMovimiento::VOLADOR;
+        float x_gl = (float)vPos.x - 4.0f;
+        float y_gl = 4.0f - (float)vPos.y;
+
+        glPushMatrix();
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+
+        sprite->setPos(x_gl, y_gl);
+        sprite->setSize(0.8f, 0.8f); // Tamaño original
+        sprite->draw();
+
+        glPopAttrib();
+        glPopMatrix();
+    }
+    // Forzamos a que el sistema vuelva a dibujar para ver el movimiento
+    glutPostRedisplay();
 }

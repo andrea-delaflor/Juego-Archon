@@ -1,17 +1,37 @@
 #pragma once
 #include "Pieza.h"
-#include "ETSIDI.h" 
+#include "glut.h"
+#include "ETSIDI.h"
+
+namespace ETSIDI { class Sprite; }
 
 class DjiniL : public Pieza {
-public:
-    DjiniL(Vector2D posInicial);
-    ~DjiniL() override;
-
-    std::string obtenerNombreSprite() override;
-    void dibuja() override;
-    TipoMovimiento obtenerTipoMovimiento() override;
-
 private:
     ETSIDI::Sprite* sprite;
+
+public:
+    DjiniL(Vector2D posInicial) :
+        Pieza("Djinni", Bando::LUZ,
+            100,    // vida
+            5.0f,   // velocidad
+            20,     // poder de ataque
+            1.0f,   // velocidad de ataque
+            3.0f,   // alcance
+            4,      // rango de movimiento
+            TipoArma::MAGIA,
+            posInicial)
+    {
+        // Ruta de imagen original del Djinn
+        sprite = new ETSIDI::Sprite("imagenes/alumnos/crea2.png", 0, 0, 0.8f, 0.8f);
+    }
+
+    virtual ~DjiniL() {
+        delete sprite;
+    }
+
+    TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
+    std::string obtenerNombreSprite() override { return "luz_djinn"; }
+
+    void dibuja() override;
 };
 

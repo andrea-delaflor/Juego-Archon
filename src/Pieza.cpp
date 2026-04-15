@@ -44,7 +44,7 @@ void Pieza::actualizar(float dt) {
     if (dist > 0.01f) {
         // En lugar de dt, usamos un valor fijo pequeño para que se mueva
         // cada vez que se dibuja. 
-        float velocidadAnimacion = 0.05f;
+        float velocidadAnimacion = 0.0005f;
         posicionVisual.x += dir.x * velocidadAnimacion;
         posicionVisual.y += dir.y * velocidadAnimacion;
     }
