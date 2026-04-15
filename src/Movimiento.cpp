@@ -2,6 +2,12 @@
 #include "Pieza.h"
 #include "Tablero.h"
 
+// que trayectoria se usa en funcion de que pieza es
+TipoTrayectoria Movimiento::obtenerTipoTrayectoria(Pieza* pieza) {
+    
+    return (TipoTrayectoria)pieza->obtenerTipoMovimiento();
+}
+
 // ── calcularTerrestre ──
 std::vector<Vector2D> Movimiento::calcularTerrestre(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;

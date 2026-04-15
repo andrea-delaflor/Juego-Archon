@@ -2,6 +2,7 @@
 #include "Tablero.h"
 #include "Movimiento.h"
 #include <iostream>
+#include<cmath>
 
 Pieza::Pieza(const std::string& _nombre,
     Bando _bando,
@@ -25,8 +26,45 @@ Pieza::Pieza(const std::string& _nombre,
     alcance = _alcance;
     rangoMovimiento = _rangoMovimiento;
     arma = _arma;
+
     posicion = _posInicial;
+    posicionVisual = _posInicial; // Al inicio están en el mismo sitio
+    animando = false;                       //animado nos sirve para en el metodo actualizar cuando dejar de calcular el movimiento
     encarcelada = false;
+}
+
+//Para ir actualizando la taryectoria
+void Pieza::actualizar(float dt) {
+    // Si la visual es distinta a la lógica, es que debe moverse
+    Vector2D dir = posicion - posicionVisual;
+
+    // Calculamos la distancia
+    float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+
+    if (dist > 0.01f) {
+        // En lugar de dt, usamos un valor fijo pequeño para que se mueva
+        // cada vez que se dibuja. 
+        float velocidadAnimacion = 0.05f;
+        posicionVisual.x += dir.x * velocidadAnimacion;
+        posicionVisual.y += dir.y * velocidadAnimacion;
+    }
+    else {
+        posicionVisual = posicion;
+    }
+}
+
+void Pieza::establecerPosicion(Vector2D pos) {
+    posicion = pos;
+
+    // Si la pieza se teletransporta, la visual salta de inmediato
+    if (obtenerTipoMovimiento() == TipoMovimiento::TELETRANSPORTE) {
+        posicionVisual = pos;
+        animando = false;
+    }
+    else {
+        // Si es terrestre o volador, activamos la transición suave
+        animando = true;
+    }
 }
 
 // logica del movimiento
