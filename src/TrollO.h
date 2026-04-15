@@ -7,6 +7,8 @@
 namespace ETSIDI { class Sprite; }
 
 class TrollO : public Pieza {
+private:
+    ETSIDI::Sprite* sprite;
 public:
 
     TrollO(Vector2D pos) :

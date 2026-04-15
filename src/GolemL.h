@@ -1,10 +1,15 @@
 #pragma once
 #include "Pieza.h"
 #include "glut.h"
+#include "ETSIDI.h"
 
 //GOLEM ----> Bando de la LUZ
 
+namespace ETSIDI { class Sprite; }
+
 class GolemL : public Pieza {
+private:
+    ETSIDI::Sprite* sprite;
 public:
 
     GolemL(Vector2D pos) :
@@ -18,6 +23,13 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        // CARGAMOS EL SPRITE 
+        sprite = new ETSIDI::Sprite("imagenes/alumnos/motostudent2.png", 0, 0, 0.9f, 0.9f);
+    }
+
+    // El destructor para que no haya fugas de memoria
+    virtual ~GolemL() {
+        delete sprite;
     }
 
     // Le comunicamos a nuestra Pieza.cpp que se trata de una Pieza tipo TERRESTRE-----> clase Moviemiento
