@@ -1,25 +1,30 @@
 #include "GolemL.h"
-#include "glut.h" // Añadimos esto para poder usar los comandos de OpenGL
 
 void GolemL::dibuja() {
-    // 1. APAGAMOS LAS TEXTURAS TEMPORALMENTE PARA DIBUJAR FORMAS PURAS
-    glDisable(GL_TEXTURE_2D);
+    actualizar(0.016f);
 
-    //Convertir de coordenadas tablero a las de Glut
-    float x_gl = (float)posicion.x - 4.0f;
-    float y_gl = 4.0f - (float)posicion.y;
+    if (sprite != nullptr) {
 
-    //color pieza (Cian)
-    glColor3f(0.0f, 1.0f, 1.0f);
+        Vector2D vPos = obtenerPosicionVisual();
 
-    //Forma Golem ---->Por ahora cuadrado
-    glBegin(GL_QUADS);
-    glVertex2f(x_gl - 0.35f, y_gl - 0.35f);
-    glVertex2f(x_gl + 0.35f, y_gl - 0.35f);
-    glVertex2f(x_gl + 0.35f, y_gl + 0.35f);
-    glVertex2f(x_gl - 0.35f, y_gl + 0.35f);
-    glEnd();
+        float x_gl = (float)vPos.x - 4.0f;
+        float y_gl = 4.0f - (float)vPos.y;
 
-    // 2. VOLVEMOS A ENCENDER LAS TEXTURAS PARA NO ROMPER LAS DEMÁS FICHAS
-    glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+
+        sprite->setPos(x_gl, y_gl);
+
+        sprite->setSize(0.9f, 0.9f);
+
+        sprite->draw();
+
+        glPopAttrib();
+        glPopMatrix();
+    }
 }
