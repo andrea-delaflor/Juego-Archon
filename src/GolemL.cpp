@@ -1,7 +1,7 @@
 #include "GolemL.h"
 
 void GolemL::dibuja() {
-    actualizar(0.016f);
+    actualizar(0.0005f);
 
     if (sprite != nullptr) {
 

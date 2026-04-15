@@ -2,7 +2,7 @@
 
 #include"BansheeO.h"
 void BansheeO::dibuja() {
-    actualizar(0.016f);
+    actualizar(0.005f);
     if (sprite != nullptr) {
 
         Vector2D vPos = obtenerPosicionVisual();
