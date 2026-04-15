@@ -23,6 +23,7 @@
     <ClCompile Include="..\src\BansheeO.cpp" />
     <ClCompile Include="..\src\BasiliscoO.cpp" />
     <ClCompile Include="..\src\BrujaO.cpp" />
+    <ClCompile Include="..\src\Coordinador.cpp" />
     <ClCompile Include="..\src\DjiniL.cpp" />
     <ClCompile Include="..\src\DragonO.cpp" />
     <ClCompile Include="..\src\FenixL.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\src\BansheeO.h" />
     <ClInclude Include="..\src\BasiliscoO.h" />
     <ClInclude Include="..\src\BrujaO.h" />
+    <ClInclude Include="..\src\Coordinador.h" />
     <ClInclude Include="..\src\DjiniL.h" />
     <ClInclude Include="..\src\DragonO.h" />
     <ClInclude Include="..\src\FenixL.h" />
