@@ -1,27 +1,29 @@
-#include"DjiniL.h"
-
-DjiniL::DjiniL(Vector2D posInicial)
-    : Pieza("Djinni", Bando::LUZ, 100, 5.0f, 20, 1.0f, 3.0f, 4, TipoArma::MAGIA, posInicial)
-{
-    sprite = new ETSIDI::Sprite(obtenerNombreSprite().c_str(), 0, 0, 0.8f, 0.8f);
-}
-
-DjiniL::~DjiniL() {
-    delete sprite;
-}
-
-std::string DjiniL::obtenerNombreSprite() {
-    return "imagenes/alumnos/crea2.png";
-}
+#include "DjiniL.h"
 
 void DjiniL::dibuja() {
-    float x_pantalla = posicion.x - 4.0f;
-    float y_pantalla = 4.0f - posicion.y;
+    // Sincronización de la animación interna
+    actualizar(0.016f);
 
-    sprite->setPos(x_pantalla, y_pantalla);
-    sprite->draw();
-}
+    if (sprite != nullptr) {
+        Vector2D vPos = obtenerPosicionVisual();
 
-TipoMovimiento DjiniL::obtenerTipoMovimiento() {
-    return TipoMovimiento::VOLADOR;
+        float x_gl = (float)vPos.x - 4.0f;
+        float y_gl = 4.0f - (float)vPos.y;
+
+        glPushMatrix();
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+
+        sprite->setPos(x_gl, y_gl);
+        sprite->setSize(0.8f, 0.8f);
+        sprite->draw();
+
+        glPopAttrib();
+        glPopMatrix();
+    }
+    glutPostRedisplay();
 }
