@@ -11,7 +11,7 @@ private:
 
 public:
     MagoL(Vector2D pos) :
-        Pieza("Mago Luz", Bando::LUZ,
+        Pieza("Delegacion", Bando::LUZ,
             60,     // vida 
             2.5f,   // velocidad
             40,     // poder de ataque (mucha magia)
@@ -23,7 +23,7 @@ public:
     
         {
             // CARGAMOS EL SPRITE 
-            sprite = new ETSIDI::Sprite("imagenes/alumnos/delegacion2.png", 0, 0, 0.9f, 0.9f);
+            sprite = new ETSIDI::Sprite("imagenes/alumnos/magosinfondo1.png", 0, 0, 0.9f, 0.9f);
         }
 
         // El destructor para que no haya fugas de memoria

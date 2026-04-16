@@ -1,32 +1,79 @@
 #include "Coordinador.h"
 
 //constructor--->recordamos que hemos quitado el inicializa del mundo aqui es donde lo vamos a poner
-Coordinador::Coordinador() {
+Coordinador::Coordinador(): 
+    fondo("imagenes/fondoinicio.png", 0, 0, 20, 20) 
+    
+{
+   
     estado = INICIO;//ponemos este como primer estado 
     mundo.inicializa(estado);
 }
 
 //MAQUINA DE ESTADOS: el coordinador se encarga de gestionar qué se muestra en cada momento
-void Coordinador::dibuja() {
-
+void Coordinador::dibuja() 
+{  
     switch (estado) {
     case INICIO:
-        mundo.dibuja(estado);
 
-        // Capa de texto
-        ETSIDI::setTextColor(1, 1, 0); // Amarillo
-        ETSIDI::setFont("fuentes/bitwise.ttf", 40); // Ajusta la ruta y tamaño
-        ETSIDI::printxy("ARCHON", -2, 2);
+        // 1. Cámara (para que todo esté en su sitio)
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-        ETSIDI::setFont("fuentes/bitwise.ttf", 18);
-        ETSIDI::setTextColor(1, 1, 1); // Blanco
-        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -3, -4);
-        break;
+        // 2. Fondo
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f); 
+        fondo.draw();
+        glDisable(GL_TEXTURE_2D);
+
+		// 3. Título y texto 
+        glDisable(GL_LIGHTING);     // 1. Apagamos luces (para que no den sombra a las letras)
+        glDisable(GL_DEPTH_TEST);   // 2. Quitamos profundidad (para que nada las tape)
+        glDisable(GL_TEXTURE_2D);
+        
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Título ARCHON
+        ETSIDI::setTextColor(1.0, 0.9, 0.7); // Amarillo puro
+        ETSIDI::setFont("fuentes/games.ttf", 50); // Un poco más grande
+        ETSIDI::printxy("ARCHON:", -3, 2); // Lo subimos un poco más para que no roce el tablero
+
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Subtítulo
+        ETSIDI::setFont("fuentes/games.ttf", 20);
+        ETSIDI::printxy("Alumnos VS Profesores", -4.5, 0);
+
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Instrucción de abajo
+        ETSIDI::setTextColor(1, 1, 1); // Blanco puro
+        ETSIDI::setFont("fuentes/bitwise.ttf", 22);
+        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -6, -4);
+
+        glEnable(GL_DEPTH_TEST); // Lo reactivamos para el resto del juego
         break;
 
     case MENU:
-        //aqui vamos a dibujar las opciones del menu (jugar, instrucciones, etc..)
+	
+        // 1. Cámara (igual que en inicio)
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10, 10, -10, 10);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // 2. Dibujar fondo de MENU
+        glEnable(GL_TEXTURE_2D);
+        fondo.draw(); // 
+        glDisable(GL_TEXTURE_2D);
+
         break;
+      
 
     case JUEGO:
         mundo.dibuja(estado); // El mundo se dibuja con normalidad
@@ -65,6 +112,7 @@ void Coordinador::tecla(unsigned char key) {
     case INICIO:
         if (key == 13) { // 13 es la tecla Enter
             estado = MENU;
+            fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
         }
         break;
 
@@ -72,10 +120,12 @@ void Coordinador::tecla(unsigned char key) {
         if (key == '1') {
             // hay que configurar el mundo para un jugador + IA
             estado = JUEGO;
+            mundo.inicializa(estado);
         }
         else if (key == '2') {
             // configurar mundo para 2 jugadores
             estado = JUEGO;
+            mundo.inicializa(estado);
         }
         break;
 

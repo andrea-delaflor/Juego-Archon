@@ -12,7 +12,7 @@ private:
 
 public:
     BansheeO(Vector2D pos) :
-        Pieza("Bnashee Oscuridad", Bando::OSCURIDAD,
+        Pieza("Fisica", Bando::OSCURIDAD,
             50,     // vida 
             4.0f,   // velocidad
             35,     // poder de ataque (mucha magia)
@@ -24,7 +24,7 @@ public:
 
     {
         // PARA PONER LA IMAGEN
-        sprite = new ETSIDI::Sprite("imagenes/profes/fisica.png", 0, 0, 0.9f, 0.9f);
+        sprite = new ETSIDI::Sprite("imagenes/profes/bansheesinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
     // El destructor para que no haya fugas de memoria

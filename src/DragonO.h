@@ -11,7 +11,7 @@ private:
 
 public:
     DragonO(Vector2D posInicial) :
-        Pieza("Dragon", Bando::OSCURIDAD,
+        Pieza("Mecanica", Bando::OSCURIDAD,
             150,    // vida
             4.0f,   // velocidad
             30,     // poder de ataque
@@ -22,7 +22,7 @@ public:
             posInicial)
     {
         // Ruta de imagen original del dragón
-        sprite = new ETSIDI::Sprite("imagenes/profes/mecanica.png", 0, 0, 0.8f, 0.8f);
+        sprite = new ETSIDI::Sprite("imagenes/profes/dragonsinfondo.png", 0, 0, 0.8f, 0.8f);
     }
 
     virtual ~DragonO() {

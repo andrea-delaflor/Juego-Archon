@@ -11,7 +11,7 @@ private:
 
 public:
     BrujaO(Vector2D pos) :
-        Pieza("Bruja Oscuridad", Bando::OSCURIDAD,
+        Pieza("Direccion", Bando::OSCURIDAD,
             55,      // Vida (un poco menos que el mago, pero quizás más rápida)
             3.0f,    // Velocidad
             42,      // Poder de ataque
@@ -22,7 +22,7 @@ public:
             pos)
     {
         // CARGAMOS EL SPRITE 
-        sprite = new ETSIDI::Sprite("imagenes/profes/direccion.png", 0, 0, 0.9f, 0.9f);
+        sprite = new ETSIDI::Sprite("imagenes/profes/brujasinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
     // El destructor para que no haya fugas de memoria
