@@ -3,8 +3,8 @@
 #include "ETSIDI.h"
 #include "Vector2D.h"
 #include "Proyectil.h"
-#include <vector>  // Para poder hacer listas de elementos
-#include <string>  //Para guardar los textos de las rutas de las imágenes
+#include <vector>  //  Para poder hacer listas de elementos
+#include <string>  //  Para guardar los textos de las rutas de las imágenes
 #include <list>
 
 class Batalla {
@@ -38,10 +38,11 @@ private:
 
     ETSIDI::Sprite fondoArena;
 
-    // ALTERNAR ARENAS
-    std::vector<std::string> rutasArenas; 
+    // para las arenas
+    std::vector<std::string> rutasArenas; // Aquí guardaremos los nombres de los archivos de imagen
     int indiceArenaActual;                // Nos dice en qué arena de la lista estamos peleando ahora
 
+    //para los proyectiles
     std::list<Proyectil*> proyectiles;
     void generarDisparo(bool esJugador1);
 };

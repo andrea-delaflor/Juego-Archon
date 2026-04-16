@@ -55,6 +55,8 @@
     <ClInclude Include="..\src\Mundo.h" />
     <ClInclude Include="..\src\Pieza.h" />
     <ClInclude Include="..\src\PiezaTest.h" />
+    <ClInclude Include="..\src\Proyectil.h" />
+    <ClInclude Include="..\src\ProyectilHijos.h" />
     <ClInclude Include="..\src\Raton.h" />
     <ClInclude Include="..\src\Tablero.h" />
     <ClInclude Include="..\src\TrollO.h" />
