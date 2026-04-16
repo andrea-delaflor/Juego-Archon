@@ -51,6 +51,7 @@ void Pieza::actualizar(float velocidadtrayectoria) {
     }
     else {
         posicionVisual = posicion;
+        animando = false; //Con esto mandamos una señal a mundo para que pueda salir del estado ANIMANDO_MOVIMIENTO
     }
 }
 
