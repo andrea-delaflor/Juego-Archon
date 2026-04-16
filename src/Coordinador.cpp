@@ -62,7 +62,16 @@ void Coordinador::dibuja()
         break;
 
     case PAUSA:
-        mundo.dibuja(estado);
+        mundo.dibuja(estado); //recordamos que esto sirve para dibujar el tablero debajo--->hay q ver si queremos esto en batalla tambien
+        
+        //aqui lo que vamos a hacer es ajustar la camara porque sino se mueve lo que dibujemos cada vez q la ventana cambie de tamaño
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        
+        //dibujar el rectangulo traslucido de menu pausa
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
@@ -73,6 +82,39 @@ void Coordinador::dibuja()
         glVertex2f(-10.0f, 10.0f);
         glEnd();
         glDisable(GL_BLEND);
+
+        // Dibujamos un rectangulo verde que actua como boton reanudar partida
+        glColor3f(0.1f, 0.6f, 0.2f);
+        glBegin(GL_QUADS);
+        glVertex2f(-3.0f, 1.0f);
+        glVertex2f(3.0f, 1.0f);
+        glVertex2f(3.0f, 3.0f);
+        glVertex2f(-3.0f, 3.0f);
+        glEnd();
+
+        //dibujamos un rectangulo rojo que actua como boton abandonar partida
+        glColor3f(0.8f, 0.2f, 0.2f);
+        glBegin(GL_QUADS);
+        glVertex2f(-3.0f, -3.0f);
+        glVertex2f(3.0f, -3.0f);
+        glVertex2f(3.0f, -1.0f);
+        glVertex2f(-3.0f, -1.0f);
+        glEnd();
+
+        //escribimos nuestro texto en los "botones que hemos creado"
+        glDisable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        ETSIDI::setTextColor(1, 1, 1);
+
+        ETSIDI::setFont("fuentes/bitwise.ttf", 24);
+        ETSIDI::printxy("REANUDAR", -2.8f, 2.0f);
+        ETSIDI::printxy("EXIT", -1.8f, -2.8f);
+
+        //por ultimo agregamos el titulo del menu de pausa
+        ETSIDI::setFont("fuentes/games.ttf", 50);
+        ETSIDI::printxy("PAUSA", -2.5f, 6.0f);
+
+
         break;
 
     case BATALLA:
@@ -118,6 +160,7 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case BATALLA:
+        
         batalla.tecla(key);
         break;
     }
@@ -136,6 +179,24 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
         mundo.clickRaton(boton, estadoR, x, y);
         break;
     case PAUSA:
+        //porque queremos que el menu pausa se controle con el raton
+        if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
+             //esto como siempre lo de traducir coordenadas a las de OpenGL
+            float mouseX = ((float)x / 800.0f) * 20.0f - 10.0f;
+            float mouseY = ((1.0f - (float)y / 800.0f)) * 20.0f - 10.0f;
+
+            //Con esta función comprobamos que el raton ha hecho click en las coordenadas donde se encuentra nuestro boton verde 
+            if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
+                estado = JUEGO;
+            }
+
+            //lo mismo de arriba pero comprobando si son las coordenadas del botn rojo
+            else if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= -3.0f && mouseY <= -1.0f) {
+                estado = MENU;
+                fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
+                mundo.inicializa(0); // Reseteamos el mundo por si quieren echar otra partida
+            }
+        }
         break;
     case BATALLA:
         break;
