@@ -11,7 +11,7 @@ private:
 
 public:
     MagoL(Vector2D pos) :
-        Pieza("Mago Luz", Bando::LUZ,
+        Pieza("Delegacion", Bando::LUZ,
             60,     // vida 
             2.5f,   // velocidad
             40,     // poder de ataque (mucha magia)

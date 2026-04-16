@@ -12,7 +12,7 @@ private:
 
 public:
     BansheeO(Vector2D pos) :
-        Pieza("Bnashee Oscuridad", Bando::OSCURIDAD,
+        Pieza("Fisica", Bando::OSCURIDAD,
             50,     // vida 
             4.0f,   // velocidad
             35,     // poder de ataque (mucha magia)

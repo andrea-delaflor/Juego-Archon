@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Coordinador.h"
 
-//Instancia global del mundo para que las funciones de glut puedan acceder a él
+//Instancia global del mundo para que las funciones de glut puedan acceder a Ã©l
 
 //Mundo mundo;
 Coordinador coordinador; //cambiamos el que manda 
@@ -14,17 +14,17 @@ Coordinador coordinador; //cambiamos el que manda
 
 void glueDibuja() { coordinador.dibuja(); }
 
-//Función de temporizador para actualizar el mundo cada 50ms
+//FunciÃ³n de temporizador para actualizar el mundo cada 50ms
 void glueTimer(int v) {
-	//Calcula el nuevo valor de la luz y el ángulo para el parpadeo
+	//Calcula el nuevo valor de la luz y el Ã¡ngulo para el parpadeo
     coordinador.mueve();
 	//Solicita que se vuelva a dibujar la pantalla con el nuevo estado
     glutPostRedisplay();
-	//Vuelve a llamar a esta función después de 50ms para seguir actualizando
+	//Vuelve a llamar a esta funciÃ³n despuÃ©s de 50ms para seguir actualizando
     glutTimerFunc(50, glueTimer, 0); // Cada 50ms
 }
 
-//añadimos esta funcion glue para que funcionen las teclas
+//aÃ±adimos esta funcion glue para que funcionen las teclas
 void glueTeclado(unsigned char key, int x, int y) {
     coordinador.tecla(key);
 }
@@ -32,7 +32,7 @@ void glueTeclado(unsigned char key, int x, int y) {
 //Funciones de la clase Mundo
 
 void Mundo::inicializa() {
-	//Inicializamos el valor de la luz y el ángulo para el parpadeo
+	//Inicializamos el valor de la luz y el Ã¡ngulo para el parpadeo
     valorLuz = 0.5f;
     angulo = 0.0f;
 
@@ -72,12 +72,12 @@ void Mundo::inicializa() {
 
 //Movemos el estado del mundo para crear el efecto de parpadeo suave en las casillas variables. 
 void Mundo::mueve() {
-	//Incrementamos el ángulo para crear una oscilación suave
+	//Incrementamos el Ã¡ngulo para crear una oscilaciÃ³n suave
     angulo += 0.05f;
-	//Calculamos el nuevo valor de la luz usando una función seno para que oscile entre 0 y 1. Usamos forma cíclica para que el parpadeo sea suave y continuo
-    valorLuz = (sin(angulo) + 1.0f) / 2.0f; // Oscilación entre 0 y 1
+	//Calculamos el nuevo valor de la luz usando una funciÃ³n seno para que oscile entre 0 y 1. Usamos forma cÃ­clica para que el parpadeo sea suave y continuo
+    valorLuz = (sin(angulo) + 1.0f) / 2.0f; // OscilaciÃ³n entre 0 y 1
 
-    //Aqui vamos a controlar los turnos de cada bando y su animación en pantalla
+    //Aqui vamos a controlar los turnos de cada bando y su animaciÃ³n en pantalla
     switch (faseActual) {
     case ANIMANDO_MOVIMIENTO:
         //Se cumple si tenemos una pieza seleccionada y ha terminado de moverse por el tablero
@@ -128,10 +128,10 @@ void Mundo::dibuja() {
     
     tablero.dibuja(valorLuz);
 
-    // 2. Ratón con cambio de color
+    // 2. RatÃ³n con cambio de color
     // Si hay algo seleccionado, pintamos el recuadro de AMARILLO, si no, de ROJO
     if (seleccionada != nullptr) {
-        // Podemos añadir un método a Raton para cambiar color o hacerlo aquí
+        // Podemos aÃ±adir un mÃ©todo a Raton para cambiar color o hacerlo aquÃ­
         glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
     }
     else {
@@ -147,20 +147,63 @@ void Mundo::dibuja() {
     glColor3ub(255, 255, 255);
 
     for (auto p : piezasLuz) {
-        if (p->estaViva()) p->dibuja();
+        if (p != seleccionada) p->dibuja();
     }
-
     for (auto p : piezasOscuridad) {
-        if (p->estaViva()) p->dibuja();
+        if (p != seleccionada) p->dibuja();
     }
 
+    // Dibujamos la pieza seleccionada la ÃšLTIMA
+    if (seleccionada != nullptr && seleccionada->estaViva()) {
+        // Dibujamos
+        seleccionada->dibuja();
+    }
 
     glDisable(GL_TEXTURE_2D);
+
+    // --- BLOQUE DE PRUEBA: FLAG DE COMBATE ---
+    if (hayCombate && atacante != nullptr && defensor != nullptr) {
+        glDisable(GL_LIGHTING);
+
+        // Caja de texto superior
+        glColor3f(0.0f, 0.0f, 0.0f);
+        glBegin(GL_QUADS);
+            glVertex2f(-4.5f, 4.3f);
+            glVertex2f(4.5f, 4.3f);
+            glVertex2f(4.5f, 3.5f);
+            glVertex2f(-4.5f, 3.5f);
+        glEnd();
+
+        // Texto informativo
+        glColor3f(1.0f, 0.8f, 0.0f); // Dorado
+
+        // Creamos los strings de bando
+        std::string bAtacante = (atacante->obtenerBando() == Bando::LUZ) ? "Alumnos" : "Profesores";
+        std::string bDefensor = (defensor->obtenerBando() == Bando::LUZ) ? "Alumnos" : "Profesores";
+
+        // Formato: NOMBRE (BANDO) vs NOMBRE (BANDO)
+        // Ejemplo: Crea (Alumnos) VS DirecciÃ³n (Profesores)
+        std::string mensaje = "COMBATE: " + atacante->obtenerNombre() + " (" + bAtacante + ") VS " +
+            defensor->obtenerNombre() + " (" + bDefensor + ")";
+
+        // Calcular el centrado del texto
+        float anchoEstimado = mensaje.length() * 0.12f;
+        float xInicio = -(anchoEstimado / 2.0f);
+
+        // Dibujar el texto centrado
+        glColor3f(1.0f, 0.8f, 0.0f); // Dorado
+        glRasterPos2f(xInicio, 3.8f);
+
+        for (char c : mensaje) {
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+        }
+    }
+
     glutSwapBuffers();
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
-    // Solo actuamos si se presiona el botón izquierdo
+    // Solo actuamos si se presiona el botÃ³n izquierdo
     if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
 
     // 1. Actualizamos la casilla donde se ha hecho click
@@ -188,7 +231,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                     std::cout << "LOG: Seleccionada pieza de tu bando." << std::endl;
                 }
                 else {
-                    std::cout << "ERROR: ¡No es tu turno o no es tu ficha!" << std::endl;
+                    std::cout << "ERROR: Â¡No es tu turno o no es tu ficha!" << std::endl;
                 }
             }
         }
@@ -204,6 +247,31 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                 }
             }
 
+        if (esDestinoValido) {
+            // --- LÃ“GICA DE INTERACCIÃ“N, CHOQUE ---
+            Pieza* ocupanteDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
+
+            // 1. Quitamos la pieza de su posiciÃ³n actual en el tablero
+            Vector2D posAntigua = seleccionada->obtenerPosicion();
+            tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
+
+            // 2. Si hay un enemigo (CHOQUE), lo guardamos como defensor antes de "pisarlo"
+            if (ocupanteDestino != nullptr && ocupanteDestino->obtenerBando() != seleccionada->obtenerBando()) {
+                this->hayCombate = true;
+                this->atacante = seleccionada;
+                this->defensor = ocupanteDestino;
+                std::cout << "Iniciando combate..." << std::endl;
+            }
+            else {
+                std::cout << "Movimiento libre realizado." << std::endl;
+            }
+
+            // 3. Movemos la pieza a la nueva casilla (lÃ³gica y visualmente)
+            seleccionada->establecerPosicion(c);
+            tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
+        }
+        else {
+            std::cout << "Movimiento no permitido." << std::endl;
             if (esDestinoValido) {
                 // AActualizamos el tablero---->estamos tocando la parte logica del tablero
                 Vector2D posAntigua = seleccionada->obtenerPosicion();
@@ -214,7 +282,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
                 std::cout << "LOG: Movimiento valido. Empezando animacion..." << std::endl;
 
-                // ¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
+                // Â¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
                 faseActual = ANIMANDO_MOVIMIENTO;
             }
             else {
@@ -229,6 +297,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
         std::cout << "LOG: Espera a que termine la animacion..." << std::endl;
         break;
 
+        seleccionada = nullptr;
     case FIN_PARTIDA:
         // Si el juego termina no hacemos nada 
         break;
@@ -239,6 +308,12 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 }
 
 void glueRaton(int button, int state, int x, int y) {
+    // Solo actuamos cuando se PULSA (state == 0) el botÃ³n IZQUIERDO (button == 0)
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        // 1. Decirle al objeto raton que calcule la casilla
+        // Pasamos 800, 800 que es el tamaÃ±o de tu ventana en el main
+        mundo.clickRaton(button, state, x, y);
+    }
     coordinador.gestionaRaton(button, state, x, y);
     
 }

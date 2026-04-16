@@ -12,7 +12,7 @@ private:
 public:
 
     TrollO(Vector2D pos) :
-        Pieza("Troll Oscuridad", Bando::OSCURIDAD,
+        Pieza("Estadistica", Bando::OSCURIDAD,
             100,   // vida        
             1.5f,  // velocidad
             30,    // la duerza de Ataque
