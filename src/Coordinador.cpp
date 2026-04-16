@@ -16,11 +16,14 @@ void Coordinador::dibuja() {
                
         // Capa de texto
         ETSIDI::setTextColor(1, 1, 0); // Amarillo
-        ETSIDI::setFont("fuentes/bitwise.ttf", 40); // Ajusta la ruta y tamaño
-        ETSIDI::printxy("ARCHON", -3, 6); 
+        ETSIDI::setFont("fuentes/games.ttf", 40); // Ajusta la ruta y tamaño
+        ETSIDI::printxy("ARCHON:", -3, 7); 
+      //  ETSIDI::setTextColor(1, 1, 0); // Amarillo
+        ETSIDI::setFont("fuentes/games.ttf", 19); // Ajusta la ruta y tamaño
+        ETSIDI::printxy("Alumnos VS Profesores", -4.5, 6);
         
 
-        ETSIDI::setFont("fuentes/bitwise.ttf", 18);
+        ETSIDI::setFont("fuentes/bitwise.ttf", 19);
         ETSIDI::setTextColor(1, 1, 1); // Blanco
         ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -5, -7);
         break;
