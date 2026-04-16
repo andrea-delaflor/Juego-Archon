@@ -30,7 +30,18 @@ void Coordinador::tecla(unsigned char key) {
         if (key == 'p' || key == 'P') estado = PAUSA;
 		// else mundo.tecla(key); //hay que añadir esta función en el mundo para que pueda gestionar teclas durante el juego, como por ejemplo para activar habilidades especiales
     }
-    else if (estado == PAUSA) {
-        if (key == 'r' || key == 'R') estado = JUEGO; // Reanudar
+
+void Coordinador::mueve() {
+    switch (estado) {
+    case JUEGO:
+        mundo.mueve(); // Hace que la luz parpadee y las piezas caminen
+        break;
+
+    case BATALLA:
+        // escenarioBatalla.mueve();
+        break;
+
+        // En INICIO, MENU y PAUSA el tiempo del juego se congela
+        // porque no llamamos a mundo.mueve()
     }
 }
