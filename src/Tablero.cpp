@@ -3,7 +3,9 @@
 #include "glut.h"
 
 
-// --- Constructor ---
+//Parte logica del tablero
+
+// Inicializamos todas las "casillas" como vacias
 Tablero::Tablero() {
     // Inicializamos todas las casillas a vacío (nullptr)
     for (int i = 0; i < 9; i++) {
@@ -13,7 +15,7 @@ Tablero::Tablero() {
     }
 }
 
-// --- ¿La coordenada está dentro del 9x9? ---
+// con esto evitamos salirnos fuera del tablero
 bool Tablero::posicionValida(int i, int j) {
     if (i >= 0 && i < 9 && j >= 0 && j < 9) {
         return true;
@@ -21,7 +23,8 @@ bool Tablero::posicionValida(int i, int j) {
     return false;
 }
 
-// --- ¿Quién hay en esta casilla? ---
+// Con esto lo que hacemos es que cuando elijamos una posicion == casilla primero
+// determinamos si esta dentro del tablero y luego si esta libre
 Pieza* Tablero::obtenerOcupante(int i, int j) {
     // Si nos preguntan por un sitio fuera del mapa, devolvemos nulo por seguridad
     if (!posicionValida(i, j)) {
@@ -30,7 +33,9 @@ Pieza* Tablero::obtenerOcupante(int i, int j) {
     return casillas[i][j];
 }
 
-// --- Para inicializar el juego ---
+// Aqui es como hacemos que una casilla se ocupe----> p es nuestra pieza luego le pedimos que 
+// la coloque en una posicion y le mandamos a la propia pieza el donde esta para 
+// que ella misma se acuerde de donde esta 
 void Tablero::colocarPieza(int i, int j, Pieza* p) {
     if (posicionValida(i, j)) {
         casillas[i][j] = p;
@@ -40,6 +45,7 @@ void Tablero::colocarPieza(int i, int j, Pieza* p) {
     }
 }
 
+//Parte visual del tablero
 
 //COLUMNAS: i=0 (A) a i=8 (I)
 //FILAS: j=0  a j=8 

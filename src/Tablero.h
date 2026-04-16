@@ -18,9 +18,7 @@ public:
     void colocarPieza(int i, int j, Pieza* p); // Para poder meter las fichas
 
 private:
-    // La matriz real del juego. Guarda punteros a las piezas.
-    // Si en una casilla no hay nadie, guardará "nullptr"
-    Pieza* casillas[9][9];
+    Pieza* casillas[9][9]; //Matriz de punteros --> la usamos para determinar entre casilla ocupada y libre
 
     // Punto de poder : E5, A5, I5, E1, E9
     bool esPowerPoint(int i, int j);
