@@ -111,6 +111,9 @@ void Mundo::mueve() {
 
 void Mundo::dibuja(int estado) {
     
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, -1, 1); // Versión más robusta de Ortho
@@ -120,24 +123,27 @@ void Mundo::dibuja(int estado) {
 
 
    switch (estado) {
+       // 1. CONFIGURACIÓN DE CÁMARA (FUERA DEL SWITCH)
+       glMatrixMode(GL_PROJECTION);
+       glLoadIdentity();
+       // Usamos un rango amplio para no perder el tablero (de -10 a 10)
+       gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+       glMatrixMode(GL_MODELVIEW);
+       glLoadIdentity();
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        // Probamos con un rango más amplio (de -5 a 15) para asegurar que vemos el tablero
-        gluOrtho2D(-5.0, 15.0, -5.0, 15.0);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
+       // 2. DESACTIVAR TODO LO QUE PUEDA ESTORBAR
+       glDisable(GL_LIGHTING);   // Sin luces por ahora
+       glDisable(GL_DEPTH_TEST); // Que nada se tape por estar "detrás"
+       glDisable(GL_TEXTURE_2D); // El tablero base no necesita texturas de OpenGL
       
+
 
     case 0: // ESTADO INICIO (Coordinador::INICIO)
         // Aquí dibujamos algo artístico para la portada
-        glDisable(GL_TEXTURE_2D);
+        
         glColor3f(1.0f, 1.0f, 1.0f); // Fuerza color blanco
-        tablero.dibuja(1.0f);
+        tablero.dibuja(0.4f);
 
         // Si tienes una imagen de portada:
         // ETSIDI::drawSprite("imagenes/portada.png", -5, -5, 10, 10);
@@ -145,7 +151,7 @@ void Mundo::dibuja(int estado) {
 
     case 1: // ESTADO MENU
         // Dibujamos el tablero normal pero quizás sin el ratón rojo
-        tablero.dibuja(0.5f);
+        tablero.dibuja(1.0f);
         break;
 
     case 2: // ESTADO JUEGO (El que ya tenías hecho)
@@ -180,7 +186,7 @@ void Mundo::dibuja(int estado) {
         for (auto p : piezasLuz) p->dibuja();
         for (auto p : piezasOscuridad) p->dibuja();
         break;
-    }glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     
 

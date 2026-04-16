@@ -9,19 +9,20 @@ Coordinador::Coordinador() {
 //MAQUINA DE ESTADOS: el coordinador se encarga de gestionar qué se muestra en cada momento
 void Coordinador::dibuja() {
 
+   
     switch (estado) {
     case INICIO:
         mundo.dibuja(estado);
-
+               
         // Capa de texto
         ETSIDI::setTextColor(1, 1, 0); // Amarillo
         ETSIDI::setFont("fuentes/bitwise.ttf", 40); // Ajusta la ruta y tamaño
-        ETSIDI::printxy("ARCHON", -2, 2);
+        ETSIDI::printxy("ARCHON", -3, 6); 
+        
 
         ETSIDI::setFont("fuentes/bitwise.ttf", 18);
         ETSIDI::setTextColor(1, 1, 1); // Blanco
-        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -3, -4);
-        break;
+        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -5, -7);
         break;
 
     case MENU:
