@@ -11,7 +11,7 @@ private:
 
 public:
     BrujaO(Vector2D pos) :
-        Pieza("Bruja Oscuridad", Bando::OSCURIDAD,
+        Pieza("Direccion", Bando::OSCURIDAD,
             55,      // Vida (un poco menos que el mago, pero quizás más rápida)
             3.0f,    // Velocidad
             42,      // Poder de ataque

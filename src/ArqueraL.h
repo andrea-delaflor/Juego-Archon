@@ -11,7 +11,7 @@ private:
 
 public:
     ArqueraL(Vector2D pos) :
-        Pieza("Arquera", Bando::LUZ,
+        Pieza("Cetsidi", Bando::LUZ,
             50,          // Vida
             2.0f,        // Velocidad combate
             25,          // Poder de ataque

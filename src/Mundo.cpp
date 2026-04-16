@@ -24,19 +24,19 @@ void Mundo::inicializa(int estado) {
     for (auto p : piezasOscuridad) delete p;
     piezasLuz.clear();
     piezasOscuridad.clear();
-    tablero.vaciar(); // Asume que tienes un método para poner todas las casillas a nullptr
+    tablero.vaciar(); // Asume que tienes un mï¿½todo para poner todas las casillas a nullptr
 
     valorLuz = 0.5f;
     angulo = 0.0f;
     seleccionada = nullptr;
 
     switch (estado) {
-    case 0: // INICIO: No creamos nada, el tablero se queda vacío y limpio
+    case 0: // INICIO: No creamos nada, el tablero se queda vacï¿½o y limpio
         break;
     case 2: // MENU: 
         // ...
         break;
-        //Inicializamos el valor de la luz y el ángulo para el parpadeo
+        //Inicializamos el valor de la luz y el ï¿½ngulo para el parpadeo
         valorLuz = 0.5f;
         angulo = 0.0f;
     case 3:
@@ -74,12 +74,12 @@ void Mundo::inicializa(int estado) {
 
 //Movemos el estado del mundo para crear el efecto de parpadeo suave en las casillas variables. 
 void Mundo::mueve() {
-	//Incrementamos el ángulo para crear una oscilación suave
+	//Incrementamos el Ã¡ngulo para crear una oscilaciÃ³n suave
     angulo += 0.05f;
-	//Calculamos el nuevo valor de la luz usando una función seno para que oscile entre 0 y 1. Usamos forma cíclica para que el parpadeo sea suave y continuo
-    valorLuz = (sin(angulo) + 1.0f) / 2.0f; // Oscilación entre 0 y 1
+	//Calculamos el nuevo valor de la luz usando una funciÃ³n seno para que oscile entre 0 y 1. Usamos forma cÃ­clica para que el parpadeo sea suave y continuo
+    valorLuz = (sin(angulo) + 1.0f) / 2.0f; // OscilaciÃ³n entre 0 y 1
 
-    //Aqui vamos a controlar los turnos de cada bando y su animación en pantalla
+    //Aqui vamos a controlar los turnos de cada bando y su animaciÃ³n en pantalla
     switch (faseActual) {
     case ANIMANDO_MOVIMIENTO:
         //Se cumple si tenemos una pieza seleccionada y ha terminado de moverse por el tablero
@@ -116,14 +116,14 @@ void Mundo::dibuja(int estado) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-10, 10, -10, 10, -1, 1); // Versión más robusta de Ortho
+    glOrtho(-10, 10, -10, 10, -1, 1); // Versiï¿½n mï¿½s robusta de Ortho
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
 
    switch (estado) {
-       // 1. CONFIGURACIÓN DE CÁMARA (FUERA DEL SWITCH)
+       // 1. CONFIGURACIï¿½N DE Cï¿½MARA (FUERA DEL SWITCH)
        glMatrixMode(GL_PROJECTION);
        glLoadIdentity();
        // Usamos un rango amplio para no perder el tablero (de -10 a 10)
@@ -134,13 +134,13 @@ void Mundo::dibuja(int estado) {
 
        // 2. DESACTIVAR TODO LO QUE PUEDA ESTORBAR
        glDisable(GL_LIGHTING);   // Sin luces por ahora
-       glDisable(GL_DEPTH_TEST); // Que nada se tape por estar "detrás"
+       glDisable(GL_DEPTH_TEST); // Que nada se tape por estar "detrï¿½s"
        glDisable(GL_TEXTURE_2D); // El tablero base no necesita texturas de OpenGL
       
 
 
     case 0: // ESTADO INICIO (Coordinador::INICIO)
-        // Aquí dibujamos algo artístico para la portada
+        // Aquï¿½ dibujamos algo artï¿½stico para la portada
         
         glColor3f(1.0f, 1.0f, 1.0f); // Fuerza color blanco
         tablero.dibuja(0.4f);
@@ -150,11 +150,11 @@ void Mundo::dibuja(int estado) {
         break;
 
     case 1: // ESTADO MENU
-        // Dibujamos el tablero normal pero quizás sin el ratón rojo
+        // Dibujamos el tablero normal pero quizï¿½s sin el ratï¿½n rojo
         tablero.dibuja(1.0f);
         break;
 
-    case 2: // ESTADO JUEGO (El que ya tenías hecho)
+    case 2: // ESTADO JUEGO (El que ya tenï¿½as hecho)
         tablero.dibuja(valorLuz);
 
         // Dibujamos las piezas
@@ -163,14 +163,14 @@ void Mundo::dibuja(int estado) {
         for (auto p : piezasOscuridad) if (p->estaViva()) p->dibuja();
         glDisable(GL_TEXTURE_2D);
 
-        raton.dibuja(); // Aquí sí queremos ver el ratón
+        raton.dibuja(); // Aquï¿½ sï¿½ queremos ver el ratï¿½n
         break;
 
     case 3: // ESTADO PAUSA
         tablero.dibuja(0.3f); // Tablero sombreado
 
         if (seleccionada != nullptr) {
-            // Podemos añadir un método a Raton para cambiar color o hacerlo aquí
+            // Podemos aï¿½adir un mï¿½todo a Raton para cambiar color o hacerlo aquï¿½
             glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
         }
         else {
@@ -195,7 +195,7 @@ void Mundo::dibuja(int estado) {
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
-    // Solo actuamos si se presiona el botón izquierdo
+    // Solo actuamos si se presiona el botÃ³n izquierdo
     if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
 
     // 1. Actualizamos la casilla donde se ha hecho click
@@ -223,7 +223,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                     std::cout << "LOG: Seleccionada pieza de tu bando." << std::endl;
                 }
                 else {
-                    std::cout << "ERROR: ¡No es tu turno o no es tu ficha!" << std::endl;
+                    std::cout << "ERROR: Â¡No es tu turno o no es tu ficha!" << std::endl;
                 }
             }
         }
@@ -239,6 +239,31 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                 }
             }
 
+        if (esDestinoValido) {
+            // --- LÃ“GICA DE INTERACCIÃ“N, CHOQUE ---
+            Pieza* ocupanteDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
+
+            // 1. Quitamos la pieza de su posiciÃ³n actual en el tablero
+            Vector2D posAntigua = seleccionada->obtenerPosicion();
+            tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
+
+            // 2. Si hay un enemigo (CHOQUE), lo guardamos como defensor antes de "pisarlo"
+            if (ocupanteDestino != nullptr && ocupanteDestino->obtenerBando() != seleccionada->obtenerBando()) {
+                this->hayCombate = true;
+                this->atacante = seleccionada;
+                this->defensor = ocupanteDestino;
+                std::cout << "Iniciando combate..." << std::endl;
+            }
+            else {
+                std::cout << "Movimiento libre realizado." << std::endl;
+            }
+
+            // 3. Movemos la pieza a la nueva casilla (lÃ³gica y visualmente)
+            seleccionada->establecerPosicion(c);
+            tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
+        }
+        else {
+            std::cout << "Movimiento no permitido." << std::endl;
             if (esDestinoValido) {
                 // AActualizamos el tablero---->estamos tocando la parte logica del tablero
                 Vector2D posAntigua = seleccionada->obtenerPosicion();
@@ -249,7 +274,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
                 std::cout << "LOG: Movimiento valido. Empezando animacion..." << std::endl;
 
-                // ¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
+                // Â¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
                 faseActual = ANIMANDO_MOVIMIENTO;
             }
             else {
@@ -264,6 +289,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
         std::cout << "LOG: Espera a que termine la animacion..." << std::endl;
         break;
 
+        seleccionada = nullptr;
     case FIN_PARTIDA:
         // Si el juego termina no hacemos nada 
         break;
