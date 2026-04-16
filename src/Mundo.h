@@ -14,11 +14,10 @@
 #include "ArqueraL.h"
 #include "BasiliscoO.h"
 #include "TrollO.h"
+#include <vector>
 
 class Mundo {
 public:
-    //creamos los estados del juego:
-
     enum FaseJuego {
         TURNO_LUZ,
         TURNO_OSCURIDAD,
@@ -28,20 +27,26 @@ public:
 
     FaseJuego faseActual = TURNO_LUZ;
 
-    Mundo();          // Constructor
+    Mundo();
     ~Mundo();
 
     void inicializa(int estado);
     void mueve();
     void dibuja(int estado);
     void clickRaton(int button, int state, int x, int y);
-    Raton raton;               // Objeto que calcula la casilla
-    Pieza* seleccionada = nullptr; // Puntero a la pieza que queremos mover
-    bool hayCombate = false; // El flag para salir a la pantalla de lucha
+
+    void finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate);
+
+    Raton raton;
+    Pieza* seleccionada = nullptr;
+
+    bool hayCombate = false;
     Pieza* atacante = nullptr;
     Pieza* defensor = nullptr;
-    Pieza* posibleDefensor = nullptr; // Posible defensor para que el flag salte despues de que acabe la animacion de la pieza
-    void resetCombate() { hayCombate = false; atacante = defensor = nullptr; }  // Método para limpiar el flag tras leerlo
+    Pieza* posibleDefensor = nullptr;
+
+    void resetCombate() { hayCombate = false; atacante = defensor = nullptr; }
+
 private:
     Tablero tablero;
     float valorLuz = 0.5f;
@@ -49,4 +54,7 @@ private:
 
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;
+
+    // ¡NUEVO! Función interna segura para borrar una pieza y que desaparezca gráficamente
+    void eliminarPieza(Pieza* p);
 };
