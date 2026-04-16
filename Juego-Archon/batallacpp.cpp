@@ -1,7 +1,7 @@
 #include "batalla.h"
 #include "glut.h" 
-#include "ProyectilHijos.h"
 #include <iostream>
+#include "ProyectilHijos.h"
 
 // CONSTRUCTOR: Prepara las variables iniciales
 Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
@@ -39,7 +39,7 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
 
-    // ALTERNAR ARENAS
+    //  ALTERNAR ARENAS
     // Sumamos 1 al índice. El símbolo % (módulo) hace que si llegamos al final de la lista,
     // vuelva automáticamente a 0 en lugar de dar error. ¡Así es un bucle infinito!
     indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
@@ -49,7 +49,7 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
 
     std::cout << "Cargando Arena número: " << indiceArenaActual << std::endl;
 
-    //para no acumular disparos anteiores
+    //para que no se guarden proyectiles de la ronda anterior
     for (auto p : proyectiles) delete p;
     proyectiles.clear();
 }
@@ -93,6 +93,7 @@ void Batalla::dibuja() {
     ETSIDI::printxy("DEFENSOR: PULSA ENTER PARA GANAR", 1, 8);
     ETSIDI::printxy("PULSA 'E' PARA EMPATE (MUEREN LOS DOS)", -5, 7);
 
+
     for (auto p : proyectiles) {
         p->dibuja();
     }
@@ -133,40 +134,15 @@ void Batalla::mueve() {
     // Comprobar fin de batalla
     if (hp1 <= 0) { terminado = true; ganador = l2; perdedor = l1; }
     else if (hp2 <= 0) { terminado = true; ganador = l1; perdedor = l2; }
+
 }
 
-
 // TECLA: Lee lo que pulsas
-/*void Batalla::tecla(unsigned char key) {
-    if (key == ' ') {
-        hp2 = 0;
-        ganador = l1;
-        perdedor = l2;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 13) {
-        hp1 = 0;
-        ganador = l2;
-        perdedor = l1;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 'e' || key == 'E') {
-        hp1 = 0;
-        hp2 = 0;
-        ganador = nullptr;
-        perdedor = nullptr;
-        empate = true;
-        terminado = true;
-    }
-}*/
-
 void Batalla::tecla(unsigned char key) {
     if (key == ' ') generarDisparo(true);  // Espacio: Atacante dispara
     if (key == 13)  generarDisparo(false); // Enter: Defensor dispara
 
-    // boton de escape
+    // Si quieres mantener el botón de escape o debug:
     if (key == 'e') { terminado = true; empate = true; }
 }
 
