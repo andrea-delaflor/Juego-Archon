@@ -11,7 +11,7 @@ private:
     Mundo mundo;
 
 public:
-    Coordinador() { estado = INICIO; } // Empezamos en la pantalla de inicio
+    Coordinador();
 
     void tecla(unsigned char key);
     void dibuja();
