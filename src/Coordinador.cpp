@@ -3,14 +3,25 @@
 //constructor--->recordamos que hemos quitado el inicializa del mundo aqui es donde lo vamos a poner
 Coordinador::Coordinador() {
     estado = INICIO;//ponemos este como primer estado 
-    mundo.inicializa();
+    mundo.inicializa(estado);
 }
 
 //MAQUINA DE ESTADOS: el coordinador se encarga de gestionar qué se muestra en cada momento
 void Coordinador::dibuja() {
+
     switch (estado) {
     case INICIO:
-        //aqui dibujariamos la pantalla de inicio ---> la portada
+        mundo.dibuja(estado);
+
+        // Capa de texto
+        ETSIDI::setTextColor(1, 1, 0); // Amarillo
+        ETSIDI::setFont("fuentes/bitwise.ttf", 40); // Ajusta la ruta y tamaño
+        ETSIDI::printxy("ARCHON", -2, 2);
+
+        ETSIDI::setFont("fuentes/bitwise.ttf", 18);
+        ETSIDI::setTextColor(1, 1, 1); // Blanco
+        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -3, -4);
+        break;
         break;
 
     case MENU:
@@ -18,12 +29,11 @@ void Coordinador::dibuja() {
         break;
 
     case JUEGO:
-        mundo.dibuja(); // El mundo se dibuja con normalidad
+        mundo.dibuja(estado); // El mundo se dibuja con normalidad
         break;
 
     case PAUSA:
-        mundo.dibuja(); // Dibujamos el mundo de fondo
-
+        mundo.dibuja(estado); // Dibujamos el mundo de fondo
         //Dibujamos un recuadro que se dibuja por encima oscuro 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

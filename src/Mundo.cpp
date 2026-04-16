@@ -3,69 +3,71 @@
 #include <math.h>
 #include "Vector2D.h"
 #include <iostream>
-#include "Coordinador.h"
 
-//Instancia global del mundo para que las funciones de glut puedan acceder a él
 
-//Mundo mundo;
-Coordinador coordinador; //cambiamos el que manda 
 
-//Funciones de glut
-
-void glueDibuja() { coordinador.dibuja(); }
-
-//Función de temporizador para actualizar el mundo cada 50ms
-void glueTimer(int v) {
-	//Calcula el nuevo valor de la luz y el ángulo para el parpadeo
-    coordinador.mueve();
-	//Solicita que se vuelva a dibujar la pantalla con el nuevo estado
-    glutPostRedisplay();
-	//Vuelve a llamar a esta función después de 50ms para seguir actualizando
-    glutTimerFunc(50, glueTimer, 0); // Cada 50ms
-}
-
-//añadimos esta funcion glue para que funcionen las teclas
-void glueTeclado(unsigned char key, int x, int y) {
-    coordinador.tecla(key);
-}
-
-//Funciones de la clase Mundo
-
-void Mundo::inicializa() {
-	//Inicializamos el valor de la luz y el ángulo para el parpadeo
-    valorLuz = 0.5f;
-    angulo = 0.0f;
-
-    //Reseteamos maquina de estados al empezar la partida cada vez
-    faseActual = TURNO_LUZ;
+Mundo::Mundo() {
+    // Valores por defecto
     seleccionada = nullptr;
+}
 
+Mundo::~Mundo() {
+    // Limpiamos los vectores para no dejar fugas de memoria
+    for (auto p : piezasLuz) delete p;
+    for (auto p : piezasOscuridad) delete p;
+}
+
+void Mundo::inicializa(int estado) {
+
+    // 1. LIMPIEZA   
+    for (auto p : piezasLuz) delete p;
+    for (auto p : piezasOscuridad) delete p;
     piezasLuz.clear();
     piezasOscuridad.clear();
+    tablero.vaciar(); // Asume que tienes un método para poner todas las casillas a nullptr
 
-    // --- BANDO DE LA LUZ ---
-    piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
-    piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
-	piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
-    piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
-    piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
-    
+    valorLuz = 0.5f;
+    angulo = 0.0f;
+    seleccionada = nullptr;
 
-    // --- BANDO DE LA OSCURIDAD ---
- 
-    piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
-	piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
-    piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
-    piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
-    piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
+    switch (estado) {
+    case 0: // INICIO: No creamos nada, el tablero se queda vacío y limpio
+        break;
+    case 2: // MENU: 
+        // ...
+        break;
+        //Inicializamos el valor de la luz y el ángulo para el parpadeo
+        valorLuz = 0.5f;
+        angulo = 0.0f;
+    case 3:
+        //Reseteamos maquina de estados al empezar la partida cada vez
+        faseActual = TURNO_LUZ;
+        seleccionada = nullptr;
 
-     // guardamos la pos de la pieza
-    for (auto p : piezasLuz) {
-        tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
-    }
+        // --- BANDO DE LA LUZ ---
+        piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
+        piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
+        piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
+        piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
 
-    for (auto p : piezasOscuridad) {
-        tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
+
+        // --- BANDO DE LA OSCURIDAD ---
+
+        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
+        piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
+        piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
+        piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
+
+        // guardamos la pos de la pieza
+        for (auto p : piezasLuz) {
+            tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
+        }
+
+        for (auto p : piezasOscuridad) {
+            tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
+        }
     }
 
 }
@@ -107,56 +109,83 @@ void Mundo::mueve() {
    
 }
 
-void Mundo::dibuja() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // --- RESETEO PROFUNDO DE OPENGL ---
+void Mundo::dibuja(int estado) {
+    
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-6, 6, -6, 6);
+    glOrtho(-10, 10, -10, 10, -1, 1); // Versión más robusta de Ortho
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glColor3f(1.0f, 1.0f, 1.0f);
 
-    // 1. Tablero de fondo
+   switch (estado) {
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        // Probamos con un rango más amplio (de -5 a 15) para asegurar que vemos el tablero
+        gluOrtho2D(-5.0, 15.0, -5.0, 15.0);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+      
+
+    case 0: // ESTADO INICIO (Coordinador::INICIO)
+        // Aquí dibujamos algo artístico para la portada
+        glDisable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f); // Fuerza color blanco
+        tablero.dibuja(1.0f);
+
+        // Si tienes una imagen de portada:
+        // ETSIDI::drawSprite("imagenes/portada.png", -5, -5, 10, 10);
+        break;
+
+    case 1: // ESTADO MENU
+        // Dibujamos el tablero normal pero quizás sin el ratón rojo
+        tablero.dibuja(0.5f);
+        break;
+
+    case 2: // ESTADO JUEGO (El que ya tenías hecho)
+        tablero.dibuja(valorLuz);
+
+        // Dibujamos las piezas
+        glEnable(GL_TEXTURE_2D);
+        for (auto p : piezasLuz) if (p->estaViva()) p->dibuja();
+        for (auto p : piezasOscuridad) if (p->estaViva()) p->dibuja();
+        glDisable(GL_TEXTURE_2D);
+
+        raton.dibuja(); // Aquí sí queremos ver el ratón
+        break;
+
+    case 3: // ESTADO PAUSA
+        tablero.dibuja(0.3f); // Tablero sombreado
+
+        if (seleccionada != nullptr) {
+            // Podemos añadir un método a Raton para cambiar color o hacerlo aquí
+            glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
+        }
+        else {
+            glColor3f(1.0f, 0.0f, 0.0f); // Rojo (Normal)
+        }
+        raton.dibuja();
+
+        // 3. Piezas
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+        for (auto p : piezasLuz) p->dibuja();
+        for (auto p : piezasOscuridad) p->dibuja();
+        break;
+    }glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     
-    tablero.dibuja(valorLuz);
 
-    // 2. Ratón con cambio de color
-    // Si hay algo seleccionado, pintamos el recuadro de AMARILLO, si no, de ROJO
-    if (seleccionada != nullptr) {
-        // Podemos añadir un método a Raton para cambiar color o hacerlo aquí
-        glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
-    }
-    else {
-        glColor3f(1.0f, 0.0f, 0.0f); // Rojo (Normal)
-    }
-    raton.dibuja();
-
-    // 3. Piezas
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glColor3ub(255, 255, 255);
-
-    for (auto p : piezasLuz) {
-        if (p->estaViva()) p->dibuja();
-    }
-
-    for (auto p : piezasOscuridad) {
-        if (p->estaViva()) p->dibuja();
-    }
-
-
-    glDisable(GL_TEXTURE_2D);
-    glutSwapBuffers();
+    glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
@@ -238,36 +267,4 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
     glutPostRedisplay();
 }
 
-void glueRaton(int button, int state, int x, int y) {
-    coordinador.gestionaRaton(button, state, x, y);
-    
-}
 
-void mousePasivo(int x, int y) {
-    coordinador.gestionaRatonPasivo(x, y);
-}
-
-
-//Aunque es el coordinador el que organiza todo el main permanece en mundo. Ahora el main llama a coordinador
-
-int main(int argc, char* argv[]) {
-	//Inicializamos GLUT y creamos la ventana
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Archon - ETSIDI");
-    
-
-	//Registramos las funciones de dibujo y temporizador
-    glutDisplayFunc(glueDibuja);
-    glutMouseFunc(glueRaton);
-    glutPassiveMotionFunc(mousePasivo);
-    glutTimerFunc(50, glueTimer, 0);
-    glutKeyboardFunc(glueTeclado);
- 
-    //observamos que hemos quitado el mundo.inicializa() porqu ahora se inicializa en coordinador con su constructor 
-
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glutMainLoop();
-    return 0;
-}

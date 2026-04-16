@@ -15,6 +15,15 @@ Tablero::Tablero() {
     }
 }
 
+void Tablero::vaciar() {
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            // Ponemos a null la casilla para que no apunte a piezas viejas
+            casillas[i][j] = nullptr;
+            // Si tu matriz es de punteros directos: casillas[i][j] = nullptr;
+        }
+    }
+}
 // con esto evitamos salirnos fuera del tablero
 bool Tablero::posicionValida(int i, int j) {
     if (i >= 0 && i < 9 && j >= 0 && j < 9) {
