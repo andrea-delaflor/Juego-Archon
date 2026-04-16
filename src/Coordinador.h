@@ -11,10 +11,11 @@ private:
     Mundo mundo;
 
 public:
-    Coordinador() { estado = INICIO; } // Empezamos en la pantalla de inicio
+    Coordinador();
 
     void tecla(unsigned char key);
     void dibuja();
     void mueve();
     void gestionaRaton(int boton, int estadoR, int x, int y);
+    void gestionaRatonPasivo(int x, int y);
 };

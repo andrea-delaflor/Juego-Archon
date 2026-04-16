@@ -17,6 +17,17 @@
 
 class Mundo {
 public:
+    //creamos los estados del juego:
+
+    enum FaseJuego {
+        TURNO_LUZ,
+        TURNO_OSCURIDAD,
+        ANIMANDO_MOVIMIENTO,
+        FIN_PARTIDA
+    };
+
+    FaseJuego faseActual = TURNO_LUZ;
+
 
     void inicializa();
     void mueve();
