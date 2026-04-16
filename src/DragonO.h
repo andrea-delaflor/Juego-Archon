@@ -11,7 +11,7 @@ private:
 
 public:
     DragonO(Vector2D posInicial) :
-        Pieza("Dragon", Bando::OSCURIDAD,
+        Pieza("Mecanica", Bando::OSCURIDAD,
             150,    // vida
             4.0f,   // velocidad
             30,     // poder de ataque

@@ -11,7 +11,7 @@ private:
 
 public:
     DjiniL(Vector2D posInicial) :
-        Pieza("Djinni", Bando::LUZ,
+        Pieza("CREA", Bando::LUZ,
             100,    // vida
             5.0f,   // velocidad
             20,     // poder de ataque

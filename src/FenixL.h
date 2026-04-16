@@ -11,7 +11,7 @@ private:
 
 public:
     FenixL(Vector2D pos) :
-        Pieza("Fenix Luz", Bando::LUZ,
+        Pieza("Zinico", Bando::LUZ,
             60,     // vida 
             2.5f,   // velocidad
             40,     // poder de ataque (mucha magia)
