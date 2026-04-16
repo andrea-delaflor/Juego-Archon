@@ -11,7 +11,7 @@ private:
 
 public:
     BasiliscoO(Vector2D pos) :
-        Pieza("Basilisco", Bando::OSCURIDAD,
+        Pieza("Matematicas", Bando::OSCURIDAD,
             90,          // Vida
             1.2f,        // Velocidad combate
             35,          // Poder de ataque

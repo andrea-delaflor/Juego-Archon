@@ -13,7 +13,7 @@ private:
 public:
 
     GolemL(Vector2D pos) :
-        Pieza("Golem Luz", Bando::LUZ,
+        Pieza("MotoStudent", Bando::LUZ,
             100,    // esta es la vida
             1.5f,   // esta es la vel
             30,     // la fuerza de golpeo
