@@ -1,23 +1,25 @@
 #include "Coordinador.h"
 
 //constructor--->recordamos que hemos quitado el inicializa del mundo aqui es donde lo vamos a poner
-Coordinador::Coordinador(): fondo("imagenes/fondoinicio.png", 0, 0, 20, 20) {
+Coordinador::Coordinador(): 
+    fondo("imagenes/fondoinicio.png", 0, 0, 20, 20) 
+    
+{
    
     estado = INICIO;//ponemos este como primer estado 
     mundo.inicializa(estado);
 }
 
 //MAQUINA DE ESTADOS: el coordinador se encarga de gestionar qué se muestra en cada momento
-void Coordinador::dibuja() {
-
-   
+void Coordinador::dibuja() 
+{  
     switch (estado) {
     case INICIO:
 
         // 1. Cámara (para que todo esté en su sitio)
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluOrtho2D(-10, 10, -10, 10);
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -57,10 +59,21 @@ void Coordinador::dibuja() {
         break;
 
     case MENU:
-		//resescribir fondo para el menu
-        fondo = ETSIDI::Sprite("imagenes/fondo_menu.png", 0, 0, 20, 20);
-        //aqui vamos a dibujar las opciones del menu (jugar, instrucciones, etc..)
+	
+        // 1. Cámara (igual que en inicio)
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10, 10, -10, 10);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // 2. Dibujar fondo de MENU
+        glEnable(GL_TEXTURE_2D);
+        fondo.draw(); // 
+        glDisable(GL_TEXTURE_2D);
+
         break;
+      
 
     case JUEGO:
         mundo.dibuja(estado); // El mundo se dibuja con normalidad
@@ -99,6 +112,7 @@ void Coordinador::tecla(unsigned char key) {
     case INICIO:
         if (key == 13) { // 13 es la tecla Enter
             estado = MENU;
+            fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
         }
         break;
 
@@ -106,10 +120,12 @@ void Coordinador::tecla(unsigned char key) {
         if (key == '1') {
             // hay que configurar el mundo para un jugador + IA
             estado = JUEGO;
+            mundo.inicializa(estado);
         }
         else if (key == '2') {
             // configurar mundo para 2 jugadores
             estado = JUEGO;
+            mundo.inicializa(estado);
         }
         break;
 

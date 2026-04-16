@@ -22,7 +22,7 @@ public:
             posInicial)
     {
         // Ruta de imagen original del Djinn
-        sprite = new ETSIDI::Sprite("imagenes/alumnos/crea2.png", 0, 0, 0.8f, 0.8f);
+        sprite = new ETSIDI::Sprite("imagenes/alumnos/djinisinfondo.png", 0, 0, 0.8f, 0.8f);
     }
 
     virtual ~DjiniL() {

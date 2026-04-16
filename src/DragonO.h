@@ -22,7 +22,7 @@ public:
             posInicial)
     {
         // Ruta de imagen original del dragón
-        sprite = new ETSIDI::Sprite("imagenes/profes/mecanica.png", 0, 0, 0.8f, 0.8f);
+        sprite = new ETSIDI::Sprite("imagenes/profes/dragonsinfondo.png", 0, 0, 0.8f, 0.8f);
     }
 
     virtual ~DragonO() {

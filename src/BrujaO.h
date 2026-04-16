@@ -22,7 +22,7 @@ public:
             pos)
     {
         // CARGAMOS EL SPRITE 
-        sprite = new ETSIDI::Sprite("imagenes/profes/direccion.png", 0, 0, 0.9f, 0.9f);
+        sprite = new ETSIDI::Sprite("imagenes/profes/brujasinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
     // El destructor para que no haya fugas de memoria
