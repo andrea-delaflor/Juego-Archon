@@ -1,7 +1,8 @@
 #include "Coordinador.h"
 
 //constructor--->recordamos que hemos quitado el inicializa del mundo aqui es donde lo vamos a poner
-Coordinador::Coordinador() {
+Coordinador::Coordinador(): fondo("imagenes/fondoinicio.png", 0, 0, 20, 20) {
+   
     estado = INICIO;//ponemos este como primer estado 
     mundo.inicializa(estado);
 }
@@ -12,23 +13,52 @@ void Coordinador::dibuja() {
    
     switch (estado) {
     case INICIO:
-        mundo.dibuja(estado);
-               
-        // Capa de texto
-        ETSIDI::setTextColor(1, 1, 0); // Amarillo
-        ETSIDI::setFont("fuentes/games.ttf", 40); // Ajusta la ruta y tamaño
-        ETSIDI::printxy("ARCHON:", -3, 7); 
-      //  ETSIDI::setTextColor(1, 1, 0); // Amarillo
-        ETSIDI::setFont("fuentes/games.ttf", 19); // Ajusta la ruta y tamaño
-        ETSIDI::printxy("Alumnos VS Profesores", -4.5, 6);
-        
 
-        ETSIDI::setFont("fuentes/bitwise.ttf", 19);
-        ETSIDI::setTextColor(1, 1, 1); // Blanco
-        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -5, -7);
+        // 1. Cámara (para que todo esté en su sitio)
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10, 10, -10, 10);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // 2. Fondo
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f); 
+        fondo.draw();
+        glDisable(GL_TEXTURE_2D);
+
+		// 3. Título y texto 
+        glDisable(GL_LIGHTING);     // 1. Apagamos luces (para que no den sombra a las letras)
+        glDisable(GL_DEPTH_TEST);   // 2. Quitamos profundidad (para que nada las tape)
+        glDisable(GL_TEXTURE_2D);
+        
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Título ARCHON
+        ETSIDI::setTextColor(1.0, 0.9, 0.7); // Amarillo puro
+        ETSIDI::setFont("fuentes/games.ttf", 50); // Un poco más grande
+        ETSIDI::printxy("ARCHON:", -3, 2); // Lo subimos un poco más para que no roce el tablero
+
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Subtítulo
+        ETSIDI::setFont("fuentes/games.ttf", 20);
+        ETSIDI::printxy("Alumnos VS Profesores", -4.5, 0);
+
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        // Instrucción de abajo
+        ETSIDI::setTextColor(1, 1, 1); // Blanco puro
+        ETSIDI::setFont("fuentes/bitwise.ttf", 22);
+        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR", -6, -4);
+
+        glEnable(GL_DEPTH_TEST); // Lo reactivamos para el resto del juego
         break;
 
     case MENU:
+		//resescribir fondo para el menu
+        fondo = ETSIDI::Sprite("imagenes/fondo_menu.png", 0, 0, 20, 20);
         //aqui vamos a dibujar las opciones del menu (jugar, instrucciones, etc..)
         break;
 

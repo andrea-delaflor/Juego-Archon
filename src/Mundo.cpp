@@ -140,13 +140,9 @@ void Mundo::dibuja(int estado) {
 
 
     case 0: // ESTADO INICIO (Coordinador::INICIO)
-        // Aquí dibujamos algo artístico para la portada
         
-        glColor3f(1.0f, 1.0f, 1.0f); // Fuerza color blanco
-        tablero.dibuja(0.4f);
-
-        // Si tienes una imagen de portada:
-        // ETSIDI::drawSprite("imagenes/portada.png", -5, -5, 10, 10);
+		//no dibujamos tablero ni piezas, solo el fondo y el texto del menú, que se dibujan en Coordinador.cpp
+        
         break;
 
     case 1: // ESTADO MENU
