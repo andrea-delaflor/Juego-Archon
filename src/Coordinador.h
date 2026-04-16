@@ -10,6 +10,7 @@ private:
     Estado estado;
     Mundo mundo;
     ETSIDI::Sprite fondo;
+    
 public:
     Coordinador();
 

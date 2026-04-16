@@ -33,13 +33,14 @@ void Mundo::inicializa(int estado) {
     switch (estado) {
     case 0: // INICIO: No creamos nada, el tablero se queda vacío y limpio
         break;
-    case 2: // MENU: 
+    case 1: // MENU: 
         // ...
         break;
         //Inicializamos el valor de la luz y el ángulo para el parpadeo
         valorLuz = 0.5f;
         angulo = 0.0f;
-    case 3:
+    case 2: //JUEGO
+        
         //Reseteamos maquina de estados al empezar la partida cada vez
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
@@ -68,6 +69,7 @@ void Mundo::inicializa(int estado) {
         for (auto p : piezasOscuridad) {
             tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
         }
+        break;
     }
 
 }
@@ -85,6 +87,18 @@ void Mundo::mueve() {
         //Se cumple si tenemos una pieza seleccionada y ha terminado de moverse por el tablero
         if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
 
+            // --- NUEVO: RESET DE FLAG DE COMBATE ---
+            // Una vez que la pieza llega, el mensaje de combate debe desaparecer
+            if (hayCombate) {
+                std::cout << "LOG: Combate finalizado visualmente." << std::endl;
+                hayCombate = false;
+                // Si quieres que el defensor muera al terminar la animación:
+                // if (defensor != nullptr) defensor->setMuerto(true); 
+                atacante = nullptr;
+                defensor = nullptr;
+            }
+            // ---------------------------------------
+           
             //cambiamos de truno! le toca al otro jugador
             if (seleccionada->obtenerBando() == Bando::LUZ) {
                 faseActual = TURNO_OSCURIDAD;
@@ -116,7 +130,9 @@ void Mundo::dibuja(int estado) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-10, 10, -10, 10, -1, 1); // Versión más robusta de Ortho
+    // Usamos un rango amplio para no perder el tablero (de -6 a 6)
+    gluOrtho2D(-6.0, 6.0, -6.0, 6.0);
+    
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -126,8 +142,7 @@ void Mundo::dibuja(int estado) {
        // 1. CONFIGURACIÓN DE CÁMARA (FUERA DEL SWITCH)
        glMatrixMode(GL_PROJECTION);
        glLoadIdentity();
-       // Usamos un rango amplio para no perder el tablero (de -10 a 10)
-       gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+
 
        glMatrixMode(GL_MODELVIEW);
        glLoadIdentity();
@@ -168,6 +183,59 @@ void Mundo::dibuja(int estado) {
         glColor3ub(255, 255, 255);
         for (auto p : piezasLuz) p->dibuja();
         for (auto p : piezasOscuridad) p->dibuja();
+
+        // --- CUADRO DE TEXTO DE COMBATE ---
+        if (hayCombate && atacante != nullptr && defensor != nullptr) {
+            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // 1. POSICIÓN DE LA CAJA (Debajo del tablero)
+            // Usamos Y entre -4.5 y -5.8 para que no pise las casillas (que llegan hasta -4.0)
+            float cajaYMax = -4.5f;
+            float cajaYMin = -5.8f;
+            float cajaXMax = 5.8f;
+
+            // Fondo oscuro elegante
+            glColor4f(0.0f, 0.0f, 0.0f, 0.9f);
+            glBegin(GL_QUADS);
+            glVertex2f(-cajaXMax, cajaYMax);
+            glVertex2f(cajaXMax, cajaYMax);
+            glVertex2f(cajaXMax, cajaYMin);
+            glVertex2f(-cajaXMax, cajaYMin);
+            glEnd();
+
+            // Borde blanco
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(-cajaXMax, cajaYMax);
+            glVertex2f(cajaXMax, cajaYMax);
+            glVertex2f(cajaXMax, cajaYMin);
+            glVertex2f(-cajaXMax, cajaYMin);
+            glEnd();
+
+            // 2. TEXTO CENTRADO
+            std::string mensaje = "COMBATE: " + atacante->obtenerNombre() + " VS " + defensor->obtenerNombre();
+
+            // Cálculo para centrar el texto:
+            // Cada carácter de HELVETICA_18 mide aprox 0.15 - 0.2 unidades en tu mundo.
+            // Restamos la mitad del ancho total del mensaje al centro (0.0).
+            float anchoEstimado = mensaje.length() * 0.18f;
+            float xPos = -(anchoEstimado / 2.0f);
+            float yPos = (cajaYMax + cajaYMin) / 2.0f - 0.1f; // Centro vertical de la caja
+
+            // Color Amarillo para el texto
+            glColor3f(1.0f, 1.0f, 0.0f);
+            glRasterPos2f(xPos, yPos);
+
+            for (char c : mensaje) {
+                glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+            }
+
+            glDisable(GL_BLEND);
+            glEnable(GL_TEXTURE_2D);
+            glColor3f(1.0f, 1.0f, 1.0f);
+        }
 
         break;
 
@@ -239,7 +307,21 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             }
 
             if (esDestinoValido) {
-                // AActualizamos el tablero---->estamos tocando la parte logica del tablero
+                // --- NUEVO: DETECCIÓN DE COMBATE ---
+                Pieza* piezaDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
+
+                // Si hay una pieza en el destino y es del bando contrario
+                if (piezaDestino != nullptr && piezaDestino->obtenerBando() != seleccionada->obtenerBando()) {
+                    hayCombate = true;
+                    atacante = seleccionada;
+                    defensor = piezaDestino;
+                    std::cout << "¡COMBATE DETECTADO!: " << atacante->obtenerNombre() << " vs " << defensor->obtenerNombre() << std::endl;
+                }
+                else {
+                    hayCombate = false; // Aseguramos reset si mueve a casilla vacía
+                }
+                // ------------------------------------
+                // Actualizamos el tablero---->estamos tocando la parte logica del tablero
                 Vector2D posAntigua = seleccionada->obtenerPosicion();
                 tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
 

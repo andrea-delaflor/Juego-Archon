@@ -92,6 +92,8 @@ bool Tablero::esVariable(int i, int j) {
 
 
 void Tablero::dibuja(float luminosidad) {
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
 
