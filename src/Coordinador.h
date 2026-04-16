@@ -1,6 +1,7 @@
 #pragma once
 #include "mundo.h"
 #include "ETSIDI.h"
+#include "batalla.h"
 
 class Coordinador {
 public:
@@ -9,6 +10,7 @@ public:
 private:
     Estado estado;
     Mundo mundo;
+    Batalla batalla;
     ETSIDI::Sprite fondo;
     
 public:
