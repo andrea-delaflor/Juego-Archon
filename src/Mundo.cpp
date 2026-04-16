@@ -36,6 +36,10 @@ void Mundo::inicializa() {
     valorLuz = 0.5f;
     angulo = 0.0f;
 
+    //Reseteamos maquina de estados al empezar la partida cada vez
+    faseActual = TURNO_LUZ;
+    seleccionada = nullptr;
+
     piezasLuz.clear();
     piezasOscuridad.clear();
 
@@ -73,6 +77,33 @@ void Mundo::mueve() {
 	//Calculamos el nuevo valor de la luz usando una función seno para que oscile entre 0 y 1. Usamos forma cíclica para que el parpadeo sea suave y continuo
     valorLuz = (sin(angulo) + 1.0f) / 2.0f; // Oscilación entre 0 y 1
 
+    //Aqui vamos a controlar los turnos de cada bando y su animación en pantalla
+    switch (faseActual) {
+    case ANIMANDO_MOVIMIENTO:
+        //Se cumple si tenemos una pieza seleccionada y ha terminado de moverse por el tablero
+        if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
+
+            //cambiamos de truno! le toca al otro jugador
+            if (seleccionada->obtenerBando() == Bando::LUZ) {
+                faseActual = TURNO_OSCURIDAD;
+                std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
+            }
+            else {
+                faseActual = TURNO_LUZ;
+                std::cout << "--> TURNO DE LA LUZ" << std::endl;
+            }
+
+            //dejamos de seleccionar pieza para que se pueda seleccionar otra (soltamos la pieza para que pueda jugar el siguoente jugador)
+            seleccionada = nullptr;
+        }
+        break;
+
+    case TURNO_LUZ:
+    case TURNO_OSCURIDAD:
+    case FIN_PARTIDA:
+        
+        break;
+    }
    
 }
 
@@ -139,60 +170,68 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
     // Si el click es fuera del tablero, no hacemos nada
     if (c.x == -1) return;
 
-    // ESTADO A: No hay nada seleccionado (Primer Click)
-    if (seleccionada == nullptr) {
-        // En lugar de piezaLuz o piezaOscuridad, preguntamos al tablero quién está ahí
-        Pieza* piezaEnCasilla = tablero.obtenerOcupante((int)c.x, (int)c.y);
+    switch (faseActual) {
 
-        if (piezaEnCasilla != nullptr) {
-            seleccionada = piezaEnCasilla;
+    case TURNO_LUZ:
+    case TURNO_OSCURIDAD:
 
-            // --- INFO EN CONSOLA ---
-            std::vector<Vector2D> movimientos = seleccionada->obtenerMovimientosValidos(&tablero);
+        // ESTADO A: No hay nada seleccionado (Primer Click)
+        if (seleccionada == nullptr) {
+            Pieza* piezaEnCasilla = tablero.obtenerOcupante((int)c.x, (int)c.y);
 
-            std::cout << "\n===============================" << std::endl;
-            std::cout << "SELECCIONADO: " << seleccionada->obtenerNombre() << std::endl;
-            std::cout << "Bando: " << (seleccionada->obtenerBando() == Bando::LUZ ? "LUZ" : "OSCURIDAD") << std::endl;
-            std::cout << "Rango: " << seleccionada->obtenerRangoMovimiento() << std::endl;
-            std::cout << "Casillas validas: " << movimientos.size() << std::endl;
+            if (piezaEnCasilla != nullptr) {
+                // Esto garantiza que solo puedas seleccionar fichas de tu bando
+                if ((faseActual == TURNO_LUZ && piezaEnCasilla->obtenerBando() == Bando::LUZ) ||
+                    (faseActual == TURNO_OSCURIDAD && piezaEnCasilla->obtenerBando() == Bando::OSCURIDAD)) {
 
-            for (auto& pos : movimientos) {
-                std::cout << " -> Puede ir a: (" << (int)pos.x << ", " << (int)pos.y << ")" << std::endl;
-            }
-            std::cout << "===============================" << std::endl;
-        }
-    }
-    // ESTADO B: Ya hay una pieza seleccionada (Segundo Click: Intentar mover)
-    else {
-        std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
-
-        bool esDestinoValido = false;
-        for (auto& v : validos) {
-            if ((int)v.x == (int)c.x && (int)v.y == (int)c.y) {
-                esDestinoValido = true;
-                break;
+                    seleccionada = piezaEnCasilla;
+                    std::cout << "LOG: Seleccionada pieza de tu bando." << std::endl;
+                }
+                else {
+                    std::cout << "ERROR: ¡No es tu turno o no es tu ficha!" << std::endl;
+                }
             }
         }
-
-        if (esDestinoValido) {
-            // 1. IMPORTANTE: Quitar la pieza de la posición antigua en la matriz del tablero
-            Vector2D posAntigua = seleccionada->obtenerPosicion();
-            tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
-
-            // 2. Actualizar la posición de la pieza
-            seleccionada->establecerPosicion(c);
-
-            // 3. Colocar la pieza en la nueva posición del tablero
-            tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
-
-            std::cout << "LOG: Movimiento realizado con exito." << std::endl;
-        }
+        // ESTADO B: Ya hay una pieza seleccionada (Segundo Click: Intentar mover)
         else {
-            std::cout << "LOG: Movimiento no permitido." << std::endl;
-        }
+            std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
+            bool esDestinoValido = false;
 
-        // Liberamos la selección
-        seleccionada = nullptr;
+            for (auto& v : validos) {
+                if ((int)v.x == (int)c.x && (int)v.y == (int)c.y) {
+                    esDestinoValido = true;
+                    break;
+                }
+            }
+
+            if (esDestinoValido) {
+                // AActualizamos el tablero---->estamos tocando la parte logica del tablero
+                Vector2D posAntigua = seleccionada->obtenerPosicion();
+                tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
+
+                seleccionada->establecerPosicion(c); // Esto activa animando=true
+                tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
+
+                std::cout << "LOG: Movimiento valido. Empezando animacion..." << std::endl;
+
+                // ¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
+                faseActual = ANIMANDO_MOVIMIENTO;
+            }
+            else {
+                std::cout << "LOG: Movimiento no permitido. Deseleccionando." << std::endl;
+                seleccionada = nullptr; // dejamos de seleccionar pieza queda libre para que el otro jugador pueda seleccionar
+            }
+        }
+        break;
+
+    case ANIMANDO_MOVIMIENTO:
+        // Mientras la ficha en movimiento obviamos clicks
+        std::cout << "LOG: Espera a que termine la animacion..." << std::endl;
+        break;
+
+    case FIN_PARTIDA:
+        // Si el juego termina no hacemos nada 
+        break;
     }
 
     // Forzamos a redibujar
