@@ -30,7 +30,7 @@ void Mundo::inicializa(int estado) {
         break;
     case 1:
         break;
-    case 2: //JUEGO
+    case 2: // JUEGO
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
 
@@ -64,14 +64,10 @@ void Mundo::mueve() {
     case ANIMANDO_MOVIMIENTO:
         if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
 
-            // ¡ATENCIÓN A ESTE CAMBIO! 
-            // Si hay combate, NO hacemos nada. Dejamos el flag 'hayCombate' a true.
-            // Así el Coordinador::mueve() se dará cuenta de que hay pelea y cambiará de pantalla.
             if (hayCombate) {
-                // Se queda bloqueado aquí hasta que el Coordinador llame a finalizaCombate()
+                // El Coordinador detectará el combate
             }
             else {
-                // Si no había combate (movimiento a casilla vacía), cambiamos turno normalmente
                 if (seleccionada->obtenerBando() == Bando::LUZ) {
                     faseActual = TURNO_OSCURIDAD;
                     std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
@@ -149,12 +145,14 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
     switch (faseActual) {
     case TURNO_LUZ:
     case TURNO_OSCURIDAD:
+
         if (seleccionada == nullptr) {
             Pieza* piezaEnCasilla = tablero.obtenerOcupante((int)c.x, (int)c.y);
 
             if (piezaEnCasilla != nullptr) {
                 if ((faseActual == TURNO_LUZ && piezaEnCasilla->obtenerBando() == Bando::LUZ) ||
                     (faseActual == TURNO_OSCURIDAD && piezaEnCasilla->obtenerBando() == Bando::OSCURIDAD)) {
+
                     seleccionada = piezaEnCasilla;
                 }
             }
@@ -177,7 +175,6 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                     hayCombate = true;
                     atacante = seleccionada;
                     defensor = piezaDestino;
-                    std::cout << "¡COMBATE DETECTADO!" << std::endl;
                 }
                 else {
                     hayCombate = false;
@@ -198,31 +195,62 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
         break;
 
     case ANIMANDO_MOVIMIENTO:
-        break;
-
     case FIN_PARTIDA:
         break;
     }
-
     glutPostRedisplay();
 }
 
-// ¡NUEVA FUNCIÓN! Se llama desde el Coordinador cuando la pantalla de batalla termina
-void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor) {
+// ¡NUEVO! Función que arranca una pieza de cuajo del juego para que desaparezca
+void Mundo::eliminarPieza(Pieza* p) {
+    if (p == nullptr) return;
 
-    // Obtenemos la casilla en la que estaban luchando (El atacante ya se había movido ahí lógicamente antes de la pantalla)
+    // Buscamos si la pieza está en el bando de la luz y la borramos
+    for (auto it = piezasLuz.begin(); it != piezasLuz.end(); ++it) {
+        if (*it == p) {
+            piezasLuz.erase(it);
+            return;
+        }
+    }
+    // Buscamos si la pieza está en el bando de la oscuridad y la borramos
+    for (auto it = piezasOscuridad.begin(); it != piezasOscuridad.end(); ++it) {
+        if (*it == p) {
+            piezasOscuridad.erase(it);
+            return;
+        }
+    }
+}
+
+void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
+
+    // Guardamos la casilla y de qué bando era el atacante ANTES de borrar nada
     Vector2D casillaCombate = atacante->obtenerPosicion();
+    Bando turnoAtacante = atacante->obtenerBando();
 
-    // 1. Colocamos al ganador en esa casilla del tablero
-    tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, ganador);
-    ganador->establecerPosicion(casillaCombate);
+    // ¡NUEVO COMPORTAMIENTO SEGURO!
+    if (empate) {
+        // 1. Vaciamos la casilla del tablero (la dejamos vacía)
+        tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, nullptr);
 
-    // 2. Quitamos al perdedor moviéndolo fuera del tablero para que no se dibuje ni moleste
-    // Si tuvieras una función "morir()", la llamarías aquí.
-    perdedor->establecerPosicion(Vector2D(-10, -10));
+        // 2. Usamos nuestra nueva función para borrarlos de las listas visuales
+        eliminarPieza(atacante);
+        eliminarPieza(defensor);
 
-    // 3. Cambiamos de turno. Independientemente de quién gane, el turno pasa al contrario del atacante inicial.
-    if (atacante->obtenerBando() == Bando::LUZ) {
+        std::cout << "¡EMPATE! Ambos luchadores han sido eliminados del juego." << std::endl;
+    }
+    else {
+        // 1. Colocamos al ganador en el tablero
+        tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, ganador);
+        ganador->establecerPosicion(casillaCombate);
+
+        // 2. Eliminamos al perdedor de las listas visuales
+        eliminarPieza(perdedor);
+
+        std::cout << "Gana el combate: " << ganador->obtenerNombre() << std::endl;
+    }
+
+    // 3. Cambiamos de turno con seguridad
+    if (turnoAtacante == Bando::LUZ) {
         faseActual = TURNO_OSCURIDAD;
         std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
     }
@@ -231,7 +259,7 @@ void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor) {
         std::cout << "--> TURNO DE LA LUZ" << std::endl;
     }
 
-    // 4. Limpiamos variables de combate para volver a la normalidad
+    // 4. Bajamos los interruptores rojos del combate
     resetCombate();
     seleccionada = nullptr;
 }

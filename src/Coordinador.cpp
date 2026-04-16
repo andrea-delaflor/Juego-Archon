@@ -76,7 +76,7 @@ void Coordinador::dibuja()
         break;
 
     case BATALLA:
-        batalla.dibuja(); // Dibuja la nueva arena de batalla
+        batalla.dibuja();
         break;
 
     case VICTORIA_ALUMNOS:
@@ -118,7 +118,7 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case BATALLA:
-        batalla.tecla(key); // Envía los controles de teclado a la batalla
+        batalla.tecla(key);
         break;
     }
 }
@@ -147,19 +147,20 @@ void Coordinador::mueve() {
     case JUEGO:
         mundo.mueve();
 
-        // ¡NUEVO! Detectamos si hay un combate y la ficha que atacó ya ha terminado de moverse al sitio
         if (mundo.hayCombate && mundo.seleccionada != nullptr && !mundo.seleccionada->estaAnimando()) {
             estado = BATALLA;
-            batalla.inicializa(mundo.atacante, mundo.defensor); // Preparamos la arena
+            batalla.inicializa(mundo.atacante, mundo.defensor);
         }
         break;
 
     case BATALLA:
         batalla.mueve();
-        // Si alguien ganó en la batalla...
+
         if (batalla.combateTerminado()) {
-            estado = JUEGO; // Volvemos al juego principal
-            mundo.finalizaCombate(batalla.obtenerGanador(), batalla.obtenerPerdedor()); // El Mundo limpia a los muertos
+            estado = JUEGO;
+
+            // ¡AQUÍ ESTÁ EL ARREGLO! Ahora le pasamos 3 argumentos (ganador, perdedor, y si es empate)
+            mundo.finalizaCombate(batalla.obtenerGanador(), batalla.obtenerPerdedor(), batalla.esEmpate());
         }
         break;
     }

@@ -2,36 +2,41 @@
 #include "Pieza.h"
 #include "ETSIDI.h"
 #include "Vector2D.h"
+#include <vector>  // ¡NUEVO! Para poder hacer listas de elementos
+#include <string>  // ¡NUEVO! Para guardar los textos de las rutas de las imágenes
 
 class Batalla {
 public:
-    Batalla();// Constructor de la clase (se llama cuando se crea la Batalla)
+    Batalla();
 
-    void inicializa(Pieza* atacante, Pieza* defensor);// Función que prepara la arena ANTES de empezar a pelear
-    void dibuja();// Función que dibuja el fondo y los personajes en pantalla
-    void mueve();// Función para manejar el movimiento en tiempo real (disparos, caminar...)
-    void tecla(unsigned char key);// Función para leer las teclas que pulsamos en la pelea
-   
-    // Funciones "para avisar" al Coordinador sepa qué ha pasado en la pelea
+    void inicializa(Pieza* atacante, Pieza* defensor);
+    void dibuja();
+    void mueve();
+    void tecla(unsigned char key);
+
     bool combateTerminado() const { return terminado; }
     Pieza* obtenerGanador() const { return ganador; }
     Pieza* obtenerPerdedor() const { return perdedor; }
+    bool esEmpate() const { return empate; }
 
 private:
-    Pieza* l1; // Luchador 1 (Atacante)
-    Pieza* l2; // Luchador 2 (Defensor)
+    Pieza* l1;
+    Pieza* l2;
 
-    Vector2D pos1; // Posición temporal en la arena para L1
-    Vector2D pos2; // Posición temporal en la arena para L2
+    Vector2D pos1;
+    Vector2D pos2;
 
-    // Vidas de los luchadores (HP = Health Points)
     int hp1;
     int hp2;
 
-    // Variables para controlar el final
-    bool terminado; // Se pone a 'true' cuando alguien muere
-    Pieza* ganador; // Guardará quién ha ganado
-    Pieza* perdedor; // Guardará quién ha muerto
+    bool terminado;
+    bool empate;
+    Pieza* ganador;
+    Pieza* perdedor;
 
     ETSIDI::Sprite fondoArena;
+
+    // ¡NUEVAS VARIABLES PARA ALTERNAR ARENAS!
+    std::vector<std::string> rutasArenas; // Aquí guardaremos los nombres de los archivos de imagen
+    int indiceArenaActual;                // Nos dice en qué arena de la lista estamos peleando ahora
 };

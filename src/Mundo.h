@@ -35,11 +35,11 @@ public:
     void dibuja(int estado);
     void clickRaton(int button, int state, int x, int y);
 
-    // Función nueva para resolver la victoria de la batalla
-    void finalizaCombate(Pieza* ganador, Pieza* perdedor);
+    void finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate);
 
     Raton raton;
     Pieza* seleccionada = nullptr;
+
     bool hayCombate = false;
     Pieza* atacante = nullptr;
     Pieza* defensor = nullptr;
@@ -54,4 +54,7 @@ private:
 
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;
+
+    // ¡NUEVO! Función interna segura para borrar una pieza y que desaparezca gráficamente
+    void eliminarPieza(Pieza* p);
 };
