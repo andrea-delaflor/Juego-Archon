@@ -160,6 +160,15 @@ void Mundo::dibuja(int estado) {
         glDisable(GL_TEXTURE_2D);
 
         raton.dibuja(); // Aquí sí queremos ver el ratón
+
+        // 3. Piezas
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3ub(255, 255, 255);
+        for (auto p : piezasLuz) p->dibuja();
+        for (auto p : piezasOscuridad) p->dibuja();
+
         break;
 
     case 3: // ESTADO PAUSA
@@ -174,13 +183,7 @@ void Mundo::dibuja(int estado) {
         }
         raton.dibuja();
 
-        // 3. Piezas
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor3ub(255, 255, 255);
-        for (auto p : piezasLuz) p->dibuja();
-        for (auto p : piezasOscuridad) p->dibuja();
+        
         break;
     }
 
