@@ -29,6 +29,7 @@
     <ClCompile Include="..\src\FenixL.cpp" />
     <ClCompile Include="..\src\GolemL.cpp" />
     <ClCompile Include="..\src\MagoL.cpp" />
+    <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
     <ClCompile Include="..\src\Mundo.cpp" />
     <ClCompile Include="..\src\Pieza.cpp" />

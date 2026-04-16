@@ -11,6 +11,7 @@ public:
 
     // Dibuja el tablero pasando la luminosidad actual (0.0 a 1.0)
     void dibuja(float luminosidad);
+    void vaciar();
 
     // --- NUEVAS FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
     bool posicionValida(int i, int j);

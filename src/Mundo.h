@@ -28,10 +28,12 @@ public:
 
     FaseJuego faseActual = TURNO_LUZ;
 
+    Mundo();          // Constructor
+    ~Mundo();
 
-    void inicializa();
+    void inicializa(int estado);
     void mueve();
-    void dibuja();
+    void dibuja(int estado);
     void clickRaton(int button, int state, int x, int y);
     Raton raton;               // Objeto que calcula la casilla
     Pieza* seleccionada = nullptr; // Puntero a la pieza que queremos mover
