@@ -3,25 +3,31 @@
 #include <math.h>
 #include "Vector2D.h"
 #include <iostream>
+#include "Coordinador.h"
 
 //Instancia global del mundo para que las funciones de glut puedan acceder a él
 
-Mundo mundo;
+//Mundo mundo;
+Coordinador coordinador; //cambiamos el que manda 
 
 //Funciones de glut
 
-void glueDibuja() { mundo.dibuja(); }
+void glueDibuja() { coordinador.dibuja(); }
 
 //Función de temporizador para actualizar el mundo cada 50ms
 void glueTimer(int v) {
 	//Calcula el nuevo valor de la luz y el ángulo para el parpadeo
-    mundo.mueve();
+    coordinador.mueve();
 	//Solicita que se vuelva a dibujar la pantalla con el nuevo estado
     glutPostRedisplay();
 	//Vuelve a llamar a esta función después de 50ms para seguir actualizando
     glutTimerFunc(50, glueTimer, 0); // Cada 50ms
 }
 
+//añadimos esta funcion glue para que funcionen las teclas
+void glueTeclado(unsigned char key, int x, int y) {
+    coordinador.tecla(key);
+}
 
 //Funciones de la clase Mundo
 
@@ -191,19 +197,19 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
     // Forzamos a redibujar
     glutPostRedisplay();
-}void glueRaton(int button, int state, int x, int y) {
-    // Solo actuamos cuando se PULSA (state == 0) el botón IZQUIERDO (button == 0)
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        // 1. Decirle al objeto raton que calcule la casilla
-        // Pasamos 800, 800 que es el tamaño de tu ventana en el main
-        mundo.clickRaton(button, state, x, y);
-    }
+}
+
+void glueRaton(int button, int state, int x, int y) {
+    coordinador.gestionaRaton(button, state, x, y);
+    
 }
 
 void mousePasivo(int x, int y) {
-    mundo.raton.actualizaPosicion(x, y, 800, 800);
+    coordinador.gestionaRatonPasivo(x, y);
 }
 
+
+//Aunque es el coordinador el que organiza todo el main permanece en mundo. Ahora el main llama a coordinador
 
 int main(int argc, char* argv[]) {
 	//Inicializamos GLUT y creamos la ventana
@@ -218,11 +224,10 @@ int main(int argc, char* argv[]) {
     glutMouseFunc(glueRaton);
     glutPassiveMotionFunc(mousePasivo);
     glutTimerFunc(50, glueTimer, 0);
+    glutKeyboardFunc(glueTeclado);
  
-    
+    //observamos que hemos quitado el mundo.inicializa() porqu ahora se inicializa en coordinador con su constructor 
 
-	//Inicializamos el mundo y comenzamos el bucle principal de GLUT
-    mundo.inicializa();
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glutMainLoop();
     return 0;

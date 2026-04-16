@@ -17,4 +17,5 @@ public:
     void dibuja();
     void mueve();
     void gestionaRaton(int boton, int estadoR, int x, int y);
+    void gestionaRatonPasivo(int x, int y);
 };
