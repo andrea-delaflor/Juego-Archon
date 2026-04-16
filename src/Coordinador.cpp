@@ -62,8 +62,14 @@ void Coordinador::dibuja()
         break;
 
     case PAUSA:
-        mundo.dibuja(estado); //recordamos que esto sirve para dibujar el tablero debajo--->hay q ver si queremos esto en batalla tambien
-        
+        //esto lo vamos a poner para que cuando estemos en JUEGO ponga el fondo del tablero y en BATALLA el de la pelea
+        if (estadoAnterior == JUEGO) {
+            mundo.dibuja(estado);
+        }
+        else if (estadoAnterior == BATALLA) { //aqui tenemos que mirarlo porque no se ven los botones...
+            batalla.dibuja();
+        }
+
         //aqui lo que vamos a hacer es ajustar la camara porque sino se mueve lo que dibujemos cada vez q la ventana cambie de tamaño
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -149,6 +155,7 @@ void Coordinador::tecla(unsigned char key) {
 
     case JUEGO:
         if (key == 'p' || key == 'P') {
+            estadoAnterior = estado; //aqui estamos guardando que venimos de JUEGO
             estado = PAUSA;
         }
         break;
@@ -160,8 +167,13 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case BATALLA:
-        
-        batalla.tecla(key);
+        if (key == 'p' || key == 'P') {
+            estadoAnterior = estado; // Guardamos que venimos de la BATALLA
+            estado = PAUSA;
+        }
+        else {
+            batalla.tecla(key); // Si no es la P, pasamos las teclas a la pelea
+        }
         break;
     }
 }
@@ -187,7 +199,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
 
             //Con esta función comprobamos que el raton ha hecho click en las coordenadas donde se encuentra nuestro boton verde 
             if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
-                estado = JUEGO;
+                estado = estadoAnterior; //ahora vuelve al estado en el que estaba
             }
 
             //lo mismo de arriba pero comprobando si son las coordenadas del botn rojo

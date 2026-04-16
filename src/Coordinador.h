@@ -9,6 +9,7 @@ public:
 
 private:
     Estado estado;
+    Estado estadoAnterior; //necesitamos esto para despues de la pausa volver al estado en el que estabamos
     Mundo mundo;
     Batalla batalla;
     ETSIDI::Sprite fondo;
