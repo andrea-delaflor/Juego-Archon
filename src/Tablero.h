@@ -12,7 +12,13 @@ public:
     // Dibuja el tablero pasando la luminosidad actual (0.0 a 1.0)
     void dibuja(float luminosidad);
     void vaciar();
-
+    //Función para saber de qué color / tipo es una casilla específica
+        // Devuelve: 
+        //   0 si la casilla es Blanca (Arena de luz)
+        //   1 si la casilla es Negra (Arena de oscuridad)
+        //   2 si la casilla es un Punto de Poder (Arena especial)
+        // =====================================================================
+        int obtenerTipoArena(int i, int j, float luminosidad);
     // --- NUEVAS FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
     bool posicionValida(int i, int j);
     Pieza* obtenerOcupante(int i, int j);
