@@ -254,9 +254,13 @@ void Coordinador::mueve() {
 }
 
 void Coordinador::gestionaRatonPasivo(int x, int y) {
+
+    int ancho = glutGet(GLUT_WINDOW_WIDTH);
+    int alto = glutGet(GLUT_WINDOW_HEIGHT);
+
     switch (estado) {
     case JUEGO:
-        mundo.raton.actualizaPosicion(x, y, 800, 800);
+        mundo.raton.actualizaPosicion(x, y, ancho, alto);
         break;
     case PAUSA:
     {//como hemos creado variables en un switch hay que poner {}
