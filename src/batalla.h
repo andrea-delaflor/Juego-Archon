@@ -11,7 +11,7 @@ class Batalla {
 public:
     Batalla();
 
-    void inicializa(Pieza* atacante, Pieza* defensor);
+    void inicializa(Pieza* atacante, Pieza* defensor, int tipoArena);
     void dibuja();
     void mueve();
     void tecla(unsigned char key);
