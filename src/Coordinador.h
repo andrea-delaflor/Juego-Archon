@@ -13,6 +13,10 @@ private:
     Mundo mundo;
     Batalla batalla;
     ETSIDI::Sprite fondo;
+
+    //estos dos bool actuan como un sensor de detectar el raton
+    bool hoverReanudar = false;
+    bool hoverAbandonar = false;
     
 public:
     Coordinador();

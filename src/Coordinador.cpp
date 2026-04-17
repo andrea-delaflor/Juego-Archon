@@ -90,7 +90,12 @@ void Coordinador::dibuja()
         glDisable(GL_BLEND);
 
         // Dibujamos un rectangulo verde que actua como boton reanudar partida
-        glColor3f(0.1f, 0.6f, 0.2f);
+        if (hoverReanudar == true) {
+            glColor3f(0.2f, 0.9f, 0.3f);//Esto es lo nuevo de detectar si el raton esta por encima (verde mas chillon)
+        }
+        else {
+            glColor3f(0.1f, 0.6f, 0.2f);//Color normal si el raton no esta por encima
+        }
         glBegin(GL_QUADS);
         glVertex2f(-3.0f, 1.0f);
         glVertex2f(3.0f, 1.0f);
@@ -99,7 +104,12 @@ void Coordinador::dibuja()
         glEnd();
 
         //dibujamos un rectangulo rojo que actua como boton abandonar partida
-        glColor3f(0.8f, 0.2f, 0.2f);
+        if (hoverReanudar == true) {
+            glColor3f(1.0f, 0.3f, 0.3f);//Esto es lo nuevo de detectar si el raton esta por encima (rojo mas chillon)
+        }
+        else {
+            glColor3f(0.8f, 0.2f, 0.2f);//Color normal si el raton no esta por encima
+        }
         glBegin(GL_QUADS);
         glVertex2f(-3.0f, -3.0f);
         glVertex2f(3.0f, -3.0f);
@@ -193,9 +203,13 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
     case PAUSA:
         //porque queremos que el menu pausa se controle con el raton
         if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
-             //esto como siempre lo de traducir coordenadas a las de OpenGL
-            float mouseX = ((float)x / 800.0f) * 20.0f - 10.0f;
-            float mouseY = ((1.0f - (float)y / 800.0f)) * 20.0f - 10.0f;
+            //estaba dando errores lo del raton asi que:
+            int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
+            int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
+            
+            //esto como siempre lo de traducir coordenadas a las de OpenGL
+            float mouseX = ((float)x / (float)anchoVentana) * 20.0f - 10.0f;
+            float mouseY = ((1.0f - (float)y / (float)altoVentana)) * 20.0f - 10.0f;
 
             //Con esta función comprobamos que el raton ha hecho click en las coordenadas donde se encuentra nuestro boton verde 
             if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
@@ -245,6 +259,32 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
         mundo.raton.actualizaPosicion(x, y, 800, 800);
         break;
     case PAUSA:
+    {//como hemos creado variables en un switch hay que poner {}
+        //estaba dando errores lo del raton asi que:
+        int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
+        int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
+        //estos es lo de cambio de coordenadas
+        float mouseX = ((float)x / (float)anchoVentana) * 20.0f - 10.0f;
+        float mouseY = ((1.0f - (float)y / (float)altoVentana)) * 20.0f - 10.0f;
+        
+        
+        //comprobamos si toca boton verde
+        if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
+            hoverReanudar = true;
+        }
+        else {
+            hoverReanudar = false;
+        }
+
+        //comprobamos si toca boton rojo
+        if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= -3.0f && mouseY <= -1.0f) {
+            hoverAbandonar = true;
+        }
+        else {
+            hoverAbandonar = false;
+        }
+        break;
+    }
     case INICIO:
     case MENU:
     case BATALLA:
