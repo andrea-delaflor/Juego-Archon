@@ -19,7 +19,7 @@ public:
         //   2 si la casilla es un Punto de Poder (Arena especial)
         // =====================================================================
         int obtenerTipoArena(int i, int j, float luminosidad);
-    // --- NUEVAS FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
+    // --- FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
     bool posicionValida(int i, int j);
     Pieza* obtenerOcupante(int i, int j);
     void colocarPieza(int i, int j, Pieza* p); // Para poder meter las fichas
