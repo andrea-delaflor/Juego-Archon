@@ -24,6 +24,32 @@ void Tablero::vaciar() {
         }
     }
 }
+// Calcula de qué color es la casilla exactamente en este momento
+int Tablero::obtenerTipoArena(int i, int j, float luminosidad) {
+    // 1. Prioridad máxima: Si caemos en un punto de poder, es arena especial (Devuelve 2)
+    if (esPowerPoint(i, j)) return 2;
+
+    // 2. Si es una casilla de las que cambian de color (cruz central o diagonales)
+    if (esVariable(i, j)) {
+        // Miramos cómo de iluminado está el tablero
+        if (luminosidad >= 0.5f) return 0; // Si es más de la mitad, es de día -> Blanca (0)
+        else return 1;                     // Si es menos, es de noche -> Negra (1)
+    }
+
+    // 3. Si no es ni punto de poder ni variable, calculamos el patrón de damero normal
+    if (i < 4) { // Lado izquierdo del tablero (columnas 0 a 3)
+        if (i == 0 && j == 4) return 0; // Excepción: La casilla A4 es siempre Blanca forzada
+        if ((i + j) % 2 != 0) return 0; // Matemática del damero: si la suma es impar, es Blanca (0)
+        else return 1;                  // Si la suma es par, es Negra (1)
+    }
+    else if (i > 4) { // Lado derecho del tablero (columnas 5 a 8)
+        if (i == 8 && j == 4) return 1; // Excepción: La casilla I4 es siempre Negra forzada 
+        if ((i + j) % 2 == 0) return 0; // Matemática invertida: aquí las pares son Blancas (0)
+        else return 1;                  // Y las impares son Negras (1)
+    }
+
+    return 1; // Por seguridad, si algo falla devolvemos arena Negra
+}
 // con esto evitamos salirnos fuera del tablero
 bool Tablero::posicionValida(int i, int j) {
     if (i >= 0 && i < 9 && j >= 0 && j < 9) {
