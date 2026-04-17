@@ -137,7 +137,11 @@ void Mundo::dibuja(int estado) {
 void Mundo::clickRaton(int button, int state, int x, int y) {
     if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
 
-    raton.actualizaPosicion(x, y, 800, 800);
+    //Preguntamos tamaño real pnatalla
+    int ancho = glutGet(GLUT_WINDOW_WIDTH);
+    int alto = glutGet(GLUT_WINDOW_HEIGHT);
+
+    raton.actualizaPosicion(x, y, ancho, alto);
     Vector2D c = raton.casilla;
 
     if (c.x == -1) return;
