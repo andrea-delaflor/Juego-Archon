@@ -45,6 +45,8 @@ public:
     Pieza* defensor = nullptr;
     Pieza* posibleDefensor = nullptr;
 
+    //Aquí guardaremos el número(0, 1 o 2) que nos diga el tablero para pasárselo a la arena
+        int tipoArenaCombate = 0;
     void resetCombate() { hayCombate = false; atacante = defensor = nullptr; }
 
 private:
@@ -55,6 +57,6 @@ private:
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;
 
-    // ¡NUEVO! Función interna segura para borrar una pieza y que desaparezca gráficamente
+    // Función interna segura para borrar una pieza y que desaparezca gráficamente
     void eliminarPieza(Pieza* p);
 };
