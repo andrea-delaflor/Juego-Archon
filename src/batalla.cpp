@@ -25,7 +25,7 @@ Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
 }
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
-void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
+void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     l1 = atacante;
     l2 = defensor;
 
@@ -39,10 +39,11 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
 
+    indiceArenaActual = tipoArena;
     // ALTERNAR ARENAS
     // Sumamos 1 al índice. El símbolo % (módulo) hace que si llegamos al final de la lista,
     // vuelva automáticamente a 0 en lugar de dar error. ¡Así es un bucle infinito!
-    indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
+   // indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
 
     // Cambiamos el dibujo de fondoArena usando la ruta que toca de la lista
     fondoArena = ETSIDI::Sprite(rutasArenas[indiceArenaActual].c_str(), 0, 0, 20, 20);
