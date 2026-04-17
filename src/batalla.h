@@ -15,6 +15,7 @@ public:
     void dibuja();
     void mueve();
     void tecla(unsigned char key);
+    void teclaEspecial(int key);
 
     bool combateTerminado() const { return terminado; }
     Pieza* obtenerGanador() const { return ganador; }

@@ -295,3 +295,10 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
         break;
     }
 }
+
+void Coordinador::teclaEspecial(int key) {
+    // Las flechas solo hacen algo si estamos en la pantalla de batalla
+    if (estado == BATALLA) {
+        batalla.teclaEspecial(key);
+    }
+}

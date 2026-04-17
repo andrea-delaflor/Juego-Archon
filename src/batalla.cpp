@@ -74,6 +74,8 @@ void Batalla::dibuja() {
     if (l1 != nullptr) {
         glPushMatrix();
         glTranslatef(pos1.x - l1->obtenerPosicion().x, pos1.y - l1->obtenerPosicion().y, 0);
+        //hacemos la pieza un poco mas grande
+        glScalef(2.0f, 2.0f, 1.5f);
         l1->dibuja();
         glPopMatrix();
     }
@@ -81,18 +83,13 @@ void Batalla::dibuja() {
     if (l2 != nullptr) {
         glPushMatrix();
         glTranslatef(pos2.x - l2->obtenerPosicion().x, pos2.y - l2->obtenerPosicion().y, 0);
+        //hacemos la pieza un poco mas grande
+        glScalef(2.0f, 2.0f, 1.5f);
         l2->dibuja();
         glPopMatrix();
     }
 
-    // Textos informativos temporales
-    glDisable(GL_TEXTURE_2D);
-    ETSIDI::setTextColor(1, 0, 0);
-    ETSIDI::setFont("fuentes/bitwise.ttf", 16);
-    ETSIDI::printxy("ATACANTE: PULSA ESPACIO PARA GANAR", -9, 8);
-    ETSIDI::printxy("DEFENSOR: PULSA ENTER PARA GANAR", 1, 8);
-    ETSIDI::printxy("PULSA 'E' PARA EMPATE (MUEREN LOS DOS)", -5, 7);
-
+    
     for (auto p : proyectiles) {
         p->dibuja();
     }
@@ -136,38 +133,45 @@ void Batalla::mueve() {
 }
 
 
-// TECLA: Lee lo que pulsas
-/*void Batalla::tecla(unsigned char key) {
-    if (key == ' ') {
-        hp2 = 0;
-        ganador = l1;
-        perdedor = l2;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 13) {
-        hp1 = 0;
-        ganador = l2;
-        perdedor = l1;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 'e' || key == 'E') {
-        hp1 = 0;
-        hp2 = 0;
-        ganador = nullptr;
-        perdedor = nullptr;
-        empate = true;
-        terminado = true;
-    }
-}*/
+
 
 void Batalla::tecla(unsigned char key) {
-    if (key == ' ') generarDisparo(true);  // Espacio: Atacante dispara
-    if (key == 13)  generarDisparo(false); // Enter: Defensor dispara
+    float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
 
-    // boton de escape
-    if (key == 'e') { terminado = true; empate = true; }
+    // JUGADOR 2
+    if (key == 'w' || key == 'W') pos1.y += vel;
+    if (key == 's' || key == 'S') pos1.y -= vel;
+    if (key == 'a' || key == 'A') pos1.x -= vel;
+    if (key == 'd' || key == 'D') pos1.x += vel;
+
+    // Disparos y Controles
+    if (key == ' ') generarDisparo(true);  //pulsando espacio jugador 1 usa su poder
+    if (key == 13)  generarDisparo(false); //pulsando enter jugador 2 usa su poder
+    if (key == 'e' || key == 'E') { terminado = true; empate = true; }
+
+    // Límites de la pantalla 
+    if (pos1.x > 9.5f) pos1.x = 9.5f;
+    if (pos1.x < -9.5f) pos1.x = -9.5f;
+    if (pos1.y > 9.5f) pos1.y = 9.5f;
+    if (pos1.y < -9.5f) pos1.y = -9.5f;
+
+
+}
+
+void Batalla::teclaEspecial(int key) {
+    float vel = 0.5f;
+
+    // JUGADOR 1
+    if (key == GLUT_KEY_UP)    pos2.y += vel;
+    if (key == GLUT_KEY_DOWN)  pos2.y -= vel;
+    if (key == GLUT_KEY_LEFT)  pos2.x -= vel;
+    if (key == GLUT_KEY_RIGHT) pos2.x += vel;
+
+    // Límites de la pantalla 
+    if (pos2.x > 9.5f) pos2.x = 9.5f;
+    if (pos2.x < -9.5f) pos2.x = -9.5f;
+    if (pos2.y > 9.5f) pos2.y = 9.5f;
+    if (pos2.y < -9.5f) pos2.y = -9.5f;
 }
 
 void Batalla::generarDisparo(bool esJugador1) {

@@ -22,6 +22,7 @@ public:
     Coordinador();
 
     void tecla(unsigned char key);
+    void teclaEspecial(int key);
     void dibuja();
     void mueve();
     void gestionaRaton(int boton, int estadoR, int x, int y);
