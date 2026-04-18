@@ -4,7 +4,7 @@
 #include <iostream>
 
 // CONSTRUCTOR: Prepara las variables iniciales
-Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
+Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     terminado = false;
     empate = false;
     ganador = nullptr;
@@ -16,9 +16,10 @@ Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
 
     //  Rellenamos nuestra lista de arenas con imágenes de prueba
     // Tienen que estar en la carpeta bin/imagenes
-    rutasArenas.push_back("imagenes/fondoinicio.png");   // Arena 0
-    rutasArenas.push_back("imagenes/menuprincipal.png"); // Arena 1
-    rutasArenas.push_back("imagenes/menupausa.png");     // Arena 2
+    rutasArenas.push_back("imagenes/batallacancha.png");   // Índice 0: Casilla Blanca
+    rutasArenas.push_back("imagenes/batalladespacho.png"); // Índice 1: Casilla Negra
+    rutasArenas.push_back("imagenes/batallaaula.png");     // Índice 2: Casilla Variable
+    rutasArenas.push_back("imagenes/batallapoder.png");    // Índice 3: Punto de Poder
 
     // Empezamos apuntando a la última para que al sumarle 1 en el primer combate, empiece por la Arena 0.
     indiceArenaActual = -1;
