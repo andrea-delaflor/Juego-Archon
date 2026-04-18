@@ -25,6 +25,8 @@ public:
         sprite = new ETSIDI::Sprite("imagenes/profes/brujasinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
+    bool esLider() override { return true; }
+
     // El destructor para que no haya fugas de memoria
     virtual ~BrujaO() {
         delete sprite;

@@ -58,6 +58,10 @@
     <ClCompile Include="..\src\batalla.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Hechizo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ListadeHechizos.cpp">
     <ClCompile Include="..\src\Obstaculo.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -126,6 +130,10 @@
     <ClInclude Include="..\src\batalla.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Hechizo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ListadeHechizos.h">
     <ClInclude Include="..\src\Obstaculo.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>

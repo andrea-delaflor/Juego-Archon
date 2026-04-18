@@ -1,5 +1,6 @@
 #include "MagoL.h"
 
+
 void MagoL::dibuja() {
     if (sprite != nullptr) {
          float x_gl = (float)posicion.x - 4.0f;

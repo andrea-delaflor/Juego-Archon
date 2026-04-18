@@ -1,4 +1,5 @@
 #include "Coordinador.h"
+#include <iostream>
 
 Coordinador::Coordinador() :
     fondo("imagenes/fondoinicio.png", 0, 0, 20, 20)
@@ -164,11 +165,15 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case JUEGO:
+        mundo.teclahechizos(key);
+       
         if (key == 'p' || key == 'P') {
-            estadoAnterior = estado; //aqui estamos guardando que venimos de JUEGO
+            estadoAnterior = estado;
             estado = PAUSA;
         }
-        break;
+        
+        
+            break;
 
     case PAUSA:
         if (key == 'r' || key == 'R') {
@@ -187,6 +192,7 @@ void Coordinador::tecla(unsigned char key) {
         break;
     }
 }
+
 
 void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
     switch (estado) {
