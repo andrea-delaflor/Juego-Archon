@@ -6,7 +6,7 @@
 Coordinador coordinador;
 
 //Funciones de glut
-void glueDibuja() { 
+void glueDibuja() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // Un gris azulado
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -32,11 +32,6 @@ void glueTeclado(unsigned char key, int x, int y) {
     coordinador.tecla(key);
 }
 
-//creamos teclado especial para leer flechas del teclado
-void glueTecladoEspecial(int key, int x, int y) {
-    coordinador.teclaEspecial(key);
-}
-
 
 void glueRaton(int button, int state, int x, int y) {
     coordinador.gestionaRaton(button, state, x, y);
@@ -60,7 +55,6 @@ int main(int argc, char* argv[]) {
     glutPassiveMotionFunc(glueRatonPasivo);
     glutTimerFunc(50, glueTimer, 0);
     glutKeyboardFunc(glueTeclado);
-    glutSpecialFunc(glueTecladoEspecial);
 
     //observamos que hemos quitado el mundo.inicializa() porqu ahora se inicializa en coordinador con su constructor 
 

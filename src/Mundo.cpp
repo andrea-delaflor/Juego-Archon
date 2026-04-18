@@ -4,55 +4,41 @@
 #include "Vector2D.h"
 #include <iostream>
 
-
-
 Mundo::Mundo() {
-    // Valores por defecto
     seleccionada = nullptr;
 }
 
 Mundo::~Mundo() {
-    // Limpiamos los vectores para no dejar fugas de memoria
     for (auto p : piezasLuz) delete p;
     for (auto p : piezasOscuridad) delete p;
 }
 
 void Mundo::inicializa(int estado) {
-
-    // 1. LIMPIEZA   
     for (auto p : piezasLuz) delete p;
     for (auto p : piezasOscuridad) delete p;
     piezasLuz.clear();
     piezasOscuridad.clear();
-    tablero.vaciar(); // Asume que tienes un mï¿½todo para poner todas las casillas a nullptr
+    tablero.vaciar();
 
     valorLuz = 0.5f;
     angulo = 0.0f;
     seleccionada = nullptr;
+    resetCombate();
 
     switch (estado) {
-    case 0: // INICIO: No creamos nada, el tablero se queda vacï¿½o y limpio
+    case 0:
         break;
-    case 2: // MENU: 
-        // ...
+    case 1:
         break;
-        //Inicializamos el valor de la luz y el ï¿½ngulo para el parpadeo
-        valorLuz = 0.5f;
-        angulo = 0.0f;
-    case 3:
-        //Reseteamos maquina de estados al empezar la partida cada vez
+    case 2: // JUEGO
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
 
-        // --- BANDO DE LA LUZ ---
         piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
         piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
         piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
         piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
         piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
-
-
-        // --- BANDO DE LA OSCURIDAD ---
 
         piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
         piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
@@ -60,125 +46,70 @@ void Mundo::inicializa(int estado) {
         piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
         piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
 
-        // guardamos la pos de la pieza
         for (auto p : piezasLuz) {
             tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
         }
-
         for (auto p : piezasOscuridad) {
             tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
         }
+        break;
     }
-
 }
 
-//Movemos el estado del mundo para crear el efecto de parpadeo suave en las casillas variables. 
 void Mundo::mueve() {
-	//Incrementamos el Ã¡ngulo para crear una oscilaciÃ³n suave
     angulo += 0.05f;
-	//Calculamos el nuevo valor de la luz usando una funciÃ³n seno para que oscile entre 0 y 1. Usamos forma cÃ­clica para que el parpadeo sea suave y continuo
-    valorLuz = (sin(angulo) + 1.0f) / 2.0f; // OscilaciÃ³n entre 0 y 1
+    valorLuz = (sin(angulo) + 1.0f) / 2.0f;
 
-    //Aqui vamos a controlar los turnos de cada bando y su animaciÃ³n en pantalla
     switch (faseActual) {
     case ANIMANDO_MOVIMIENTO:
-        //Se cumple si tenemos una pieza seleccionada y ha terminado de moverse por el tablero
         if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
 
-            //cambiamos de truno! le toca al otro jugador
-            if (seleccionada->obtenerBando() == Bando::LUZ) {
-                faseActual = TURNO_OSCURIDAD;
-                std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
+            if (hayCombate) {
+                // El Coordinador detectará el combate
             }
             else {
-                faseActual = TURNO_LUZ;
-                std::cout << "--> TURNO DE LA LUZ" << std::endl;
+                if (seleccionada->obtenerBando() == Bando::LUZ) {
+                    faseActual = TURNO_OSCURIDAD;
+                    std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
+                }
+                else {
+                    faseActual = TURNO_LUZ;
+                    std::cout << "--> TURNO DE LA LUZ" << std::endl;
+                }
+                seleccionada = nullptr;
             }
-
-            //dejamos de seleccionar pieza para que se pueda seleccionar otra (soltamos la pieza para que pueda jugar el siguoente jugador)
-            seleccionada = nullptr;
         }
         break;
 
     case TURNO_LUZ:
     case TURNO_OSCURIDAD:
     case FIN_PARTIDA:
-        
         break;
     }
-   
 }
 
 void Mundo::dibuja(int estado) {
-    
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-10, 10, -10, 10, -1, 1); // Versiï¿½n mï¿½s robusta de Ortho
-
+    gluOrtho2D(-6.0, 6.0, -6.0, 6.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-
-   switch (estado) {
-       // 1. CONFIGURACIï¿½N DE Cï¿½MARA (FUERA DEL SWITCH)
-       glMatrixMode(GL_PROJECTION);
-       glLoadIdentity();
-       // Usamos un rango amplio para no perder el tablero (de -10 a 10)
-       gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
-
-       glMatrixMode(GL_MODELVIEW);
-       glLoadIdentity();
-
-       // 2. DESACTIVAR TODO LO QUE PUEDA ESTORBAR
-       glDisable(GL_LIGHTING);   // Sin luces por ahora
-       glDisable(GL_DEPTH_TEST); // Que nada se tape por estar "detrï¿½s"
-       glDisable(GL_TEXTURE_2D); // El tablero base no necesita texturas de OpenGL
-      
-
-
-    case 0: // ESTADO INICIO (Coordinador::INICIO)
-        // Aquï¿½ dibujamos algo artï¿½stico para la portada
-        
-        glColor3f(1.0f, 1.0f, 1.0f); // Fuerza color blanco
-        tablero.dibuja(0.4f);
-
-        // Si tienes una imagen de portada:
-        // ETSIDI::drawSprite("imagenes/portada.png", -5, -5, 10, 10);
+    switch (estado) {
+    case 0:
         break;
 
-    case 1: // ESTADO MENU
-        // Dibujamos el tablero normal pero quizï¿½s sin el ratï¿½n rojo
+    case 1:
         tablero.dibuja(1.0f);
         break;
 
-    case 2: // ESTADO JUEGO (El que ya tenï¿½as hecho)
+    case 2:
         tablero.dibuja(valorLuz);
-
-        // Dibujamos las piezas
-        glEnable(GL_TEXTURE_2D);
-        for (auto p : piezasLuz) if (p->estaViva()) p->dibuja();
-        for (auto p : piezasOscuridad) if (p->estaViva()) p->dibuja();
-        glDisable(GL_TEXTURE_2D);
-
-        raton.dibuja(); // Aquï¿½ sï¿½ queremos ver el ratï¿½n
-        break;
-
-    case 3: // ESTADO PAUSA
-        tablero.dibuja(0.3f); // Tablero sombreado
-
-        if (seleccionada != nullptr) {
-            // Podemos aï¿½adir un mï¿½todo a Raton para cambiar color o hacerlo aquï¿½
-            glColor3f(1.0f, 1.0f, 0.0f); // Amarillo (Seleccionado)
-        }
-        else {
-            glColor3f(1.0f, 0.0f, 0.0f); // Rojo (Normal)
-        }
         raton.dibuja();
 
-        // 3. Piezas
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -186,48 +117,50 @@ void Mundo::dibuja(int estado) {
         for (auto p : piezasLuz) p->dibuja();
         for (auto p : piezasOscuridad) p->dibuja();
         break;
-    }
 
-    
+    case 3:
+        tablero.dibuja(0.3f);
+        if (seleccionada != nullptr) {
+            glColor3f(1.0f, 1.0f, 0.0f);
+        }
+        else {
+            glColor3f(1.0f, 0.0f, 0.0f);
+        }
+        raton.dibuja();
+        break;
+    }
 
     glEnable(GL_TEXTURE_2D);
     glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
-    // Solo actuamos si se presiona el botÃ³n izquierdo
     if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
 
-    // 1. Actualizamos la casilla donde se ha hecho click
-    raton.actualizaPosicion(x, y, 800, 800);
+    //Preguntamos tamaño real pnatalla
+    int ancho = glutGet(GLUT_WINDOW_WIDTH);
+    int alto = glutGet(GLUT_WINDOW_HEIGHT);
+
+    raton.actualizaPosicion(x, y, ancho, alto);
     Vector2D c = raton.casilla;
 
-    // Si el click es fuera del tablero, no hacemos nada
     if (c.x == -1) return;
 
     switch (faseActual) {
-
     case TURNO_LUZ:
     case TURNO_OSCURIDAD:
 
-        // ESTADO A: No hay nada seleccionado (Primer Click)
         if (seleccionada == nullptr) {
             Pieza* piezaEnCasilla = tablero.obtenerOcupante((int)c.x, (int)c.y);
 
             if (piezaEnCasilla != nullptr) {
-                // Esto garantiza que solo puedas seleccionar fichas de tu bando
                 if ((faseActual == TURNO_LUZ && piezaEnCasilla->obtenerBando() == Bando::LUZ) ||
                     (faseActual == TURNO_OSCURIDAD && piezaEnCasilla->obtenerBando() == Bando::OSCURIDAD)) {
 
                     seleccionada = piezaEnCasilla;
-                    std::cout << "LOG: Seleccionada pieza de tu bando." << std::endl;
-                }
-                else {
-                    std::cout << "ERROR: Â¡No es tu turno o no es tu ficha!" << std::endl;
                 }
             }
         }
-        // ESTADO B: Ya hay una pieza seleccionada (Segundo Click: Intentar mover)
         else {
             std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
             bool esDestinoValido = false;
@@ -239,64 +172,98 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                 }
             }
 
-        if (esDestinoValido) {
-            // --- LÃ“GICA DE INTERACCIÃ“N, CHOQUE ---
-            Pieza* ocupanteDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
-
-            // 1. Quitamos la pieza de su posiciÃ³n actual en el tablero
-            Vector2D posAntigua = seleccionada->obtenerPosicion();
-            tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
-
-            // 2. Si hay un enemigo (CHOQUE), lo guardamos como defensor antes de "pisarlo"
-            if (ocupanteDestino != nullptr && ocupanteDestino->obtenerBando() != seleccionada->obtenerBando()) {
-                this->hayCombate = true;
-                this->atacante = seleccionada;
-                this->defensor = ocupanteDestino;
-                std::cout << "Iniciando combate..." << std::endl;
-            }
-            else {
-                std::cout << "Movimiento libre realizado." << std::endl;
-            }
-
-            // 3. Movemos la pieza a la nueva casilla (lÃ³gica y visualmente)
-            seleccionada->establecerPosicion(c);
-            tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
-        }
-        else {
-            std::cout << "Movimiento no permitido." << std::endl;
             if (esDestinoValido) {
-                // AActualizamos el tablero---->estamos tocando la parte logica del tablero
+                Pieza* piezaDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
+
+                if (piezaDestino != nullptr && piezaDestino->obtenerBando() != seleccionada->obtenerBando()) {
+                    hayCombate = true;
+                    atacante = seleccionada;
+                    defensor = piezaDestino;
+                }
+                else {
+                    hayCombate = false;
+                }
+
                 Vector2D posAntigua = seleccionada->obtenerPosicion();
                 tablero.colocarPieza((int)posAntigua.x, (int)posAntigua.y, nullptr);
 
-                seleccionada->establecerPosicion(c); // Esto activa animando=true
+                seleccionada->establecerPosicion(c);
                 tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
 
-                std::cout << "LOG: Movimiento valido. Empezando animacion..." << std::endl;
-
-                // Â¡CAMBIO DE ESTADO! Bloqueamos el juego mientras se mueve
                 faseActual = ANIMANDO_MOVIMIENTO;
             }
             else {
-                std::cout << "LOG: Movimiento no permitido. Deseleccionando." << std::endl;
-                seleccionada = nullptr; // dejamos de seleccionar pieza queda libre para que el otro jugador pueda seleccionar
+                seleccionada = nullptr;
             }
         }
         break;
 
     case ANIMANDO_MOVIMIENTO:
-        // Mientras la ficha en movimiento obviamos clicks
-        std::cout << "LOG: Espera a que termine la animacion..." << std::endl;
-        break;
-
-        seleccionada = nullptr;
     case FIN_PARTIDA:
-        // Si el juego termina no hacemos nada 
         break;
     }
-
-    // Forzamos a redibujar
     glutPostRedisplay();
 }
 
+// ¡NUEVO! Función que arranca una pieza de cuajo del juego para que desaparezca
+void Mundo::eliminarPieza(Pieza* p) {
+    if (p == nullptr) return;
 
+    // Buscamos si la pieza está en el bando de la luz y la borramos
+    for (auto it = piezasLuz.begin(); it != piezasLuz.end(); ++it) {
+        if (*it == p) {
+            piezasLuz.erase(it);
+            return;
+        }
+    }
+    // Buscamos si la pieza está en el bando de la oscuridad y la borramos
+    for (auto it = piezasOscuridad.begin(); it != piezasOscuridad.end(); ++it) {
+        if (*it == p) {
+            piezasOscuridad.erase(it);
+            return;
+        }
+    }
+}
+
+void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
+
+    // Guardamos la casilla y de qué bando era el atacante ANTES de borrar nada
+    Vector2D casillaCombate = atacante->obtenerPosicion();
+    Bando turnoAtacante = atacante->obtenerBando();
+
+    // ¡NUEVO COMPORTAMIENTO SEGURO!
+    if (empate) {
+        // 1. Vaciamos la casilla del tablero (la dejamos vacía)
+        tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, nullptr);
+
+        // 2. Usamos nuestra nueva función para borrarlos de las listas visuales
+        eliminarPieza(atacante);
+        eliminarPieza(defensor);
+
+        std::cout << "¡EMPATE! Ambos luchadores han sido eliminados del juego." << std::endl;
+    }
+    else {
+        // 1. Colocamos al ganador en el tablero
+        tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, ganador);
+        ganador->establecerPosicion(casillaCombate);
+
+        // 2. Eliminamos al perdedor de las listas visuales
+        eliminarPieza(perdedor);
+
+        std::cout << "Gana el combate: " << ganador->obtenerNombre() << std::endl;
+    }
+
+    // 3. Cambiamos de turno con seguridad
+    if (turnoAtacante == Bando::LUZ) {
+        faseActual = TURNO_OSCURIDAD;
+        std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
+    }
+    else {
+        faseActual = TURNO_LUZ;
+        std::cout << "--> TURNO DE LA LUZ" << std::endl;
+    }
+
+    // 4. Bajamos los interruptores rojos del combate
+    resetCombate();
+    seleccionada = nullptr;
+}

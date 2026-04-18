@@ -1,6 +1,7 @@
 #pragma once
 #include "mundo.h"
 #include "ETSIDI.h"
+#include "batalla.h"
 
 class Coordinador {
 public:
@@ -8,12 +9,20 @@ public:
 
 private:
     Estado estado;
+    Estado estadoAnterior; //necesitamos esto para despues de la pausa volver al estado en el que estabamos
     Mundo mundo;
+    Batalla batalla;
+    ETSIDI::Sprite fondo;
 
+    //estos dos bool actuan como un sensor de detectar el raton
+    bool hoverReanudar = false;
+    bool hoverAbandonar = false;
+    
 public:
     Coordinador();
 
     void tecla(unsigned char key);
+    void teclaEspecial(int key);
     void dibuja();
     void mueve();
     void gestionaRaton(int boton, int estadoR, int x, int y);

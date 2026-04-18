@@ -23,7 +23,7 @@ public:
 
     {
         // PARA PONER LA IMAGEN
-        sprite = new ETSIDI::Sprite("imagenes/alumnos/zinico2.png", 0, 0, 0.9f, 0.9f);
+        sprite = new ETSIDI::Sprite("imagenes/alumnos/teatrosinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
     // El destructor para que no haya fugas de memoria
