@@ -106,6 +106,11 @@ void Batalla::dibuja() {
     for (auto p : proyectiles) {
         p->dibuja();
     }
+
+    //  Dibujar los obstáculos cayendo
+    for (auto o : obstaculos) {
+        o->dibuja();
+    }
 }
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
@@ -137,6 +142,61 @@ void Batalla::mueve() {
         }
         else {
             ++it;
+        }
+    }
+    // LÓGICA DE LOS OBSTÁCULOS
+    // 1. Si la arena es de las "peligrosas", generamos nuevos objetos cada cierto tiempo
+    if (arenaConObstaculos) {
+        temporizadorObstaculos += dt;
+
+        // Cada 2 segundos (aprox) cae un nuevo objeto
+        if (temporizadorObstaculos > 2.0f) {
+            temporizadorObstaculos = 0.0f;
+
+            // Posición aleatoria arriba de la pantalla (x entre -8 y 8, y = 10)
+            float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
+            Vector2D posObj(xAleatorio, 10.0f);
+
+            // Caen hacia abajo a velocidad 3
+            Vector2D velObj(0.0f, -3.0f);
+
+            // Elegimos un tipo al azar (0, 1 o 2)
+            TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
+
+            obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+        }
+    }
+
+    // 2. Mover obstáculos y comprobar colisiones
+    for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
+        (*it)->mueve(dt);
+
+        bool borrar = false;
+
+        // Comprobar colisión con el atacante (L1)
+        if ((*it)->colisionaCon(l1)) {
+            std::cout << "¡El Jugador L1 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
+            // Aquí en el futuro le sumaremos/restaremos vida
+            borrar = true;
+        }
+        // Comprobar colisión con el defensor (L2)
+        else if ((*it)->colisionaCon(l2)) {
+            std::cout << "¡El Jugador L2 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
+            // Aquí en el futuro le sumaremos/restaremos vida
+            borrar = true;
+        }
+        // Comprobar si la bola se ha caído fuera de la pantalla por abajo
+        else if ((*it)->getPos().y < -12.0f) {
+            borrar = true;
+        }
+
+        // Si ha chocado o se ha salido, lo borramos de la memoria
+        if (borrar) {
+            delete* it;
+            it = obstaculos.erase(it);
+        }
+        else {
+            ++it; // Si no, pasamos a comprobar la siguiente bola
         }
     }
 
