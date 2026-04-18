@@ -236,7 +236,7 @@ void Coordinador::mueve() {
 
         if (mundo.hayCombate && mundo.seleccionada != nullptr && !mundo.seleccionada->estaAnimando()) {
             estado = BATALLA;
-            batalla.inicializa(mundo.atacante, mundo.defensor);
+            batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate);
         }
         break;
 

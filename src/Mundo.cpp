@@ -179,6 +179,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                     hayCombate = true;
                     atacante = seleccionada;
                     defensor = piezaDestino;
+                    tipoArenaCombate = tablero.obtenerTipoArena((int)c.x, (int)c.y, valorLuz);
                 }
                 else {
                     hayCombate = false;
@@ -205,7 +206,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
     glutPostRedisplay();
 }
 
-// ¡NUEVO! Función que arranca una pieza de cuajo del juego para que desaparezca
+//  Función que arranca una pieza de cuajo del juego para que desaparezca
 void Mundo::eliminarPieza(Pieza* p) {
     if (p == nullptr) return;
 
@@ -231,7 +232,7 @@ void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
     Vector2D casillaCombate = atacante->obtenerPosicion();
     Bando turnoAtacante = atacante->obtenerBando();
 
-    // ¡NUEVO COMPORTAMIENTO SEGURO!
+    // COMPORTAMIENTO SEGURO!
     if (empate) {
         // 1. Vaciamos la casilla del tablero (la dejamos vacía)
         tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, nullptr);
