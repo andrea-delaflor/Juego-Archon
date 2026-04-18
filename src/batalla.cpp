@@ -4,7 +4,7 @@
 #include <iostream>
 
 // CONSTRUCTOR: Prepara las variables iniciales
-Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
+Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     terminado = false;
     empate = false;
     ganador = nullptr;
@@ -16,16 +16,17 @@ Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
 
     //  Rellenamos nuestra lista de arenas con imágenes de prueba
     // Tienen que estar en la carpeta bin/imagenes
-    rutasArenas.push_back("imagenes/fondoinicio.png");   // Arena 0
-    rutasArenas.push_back("imagenes/menuprincipal.png"); // Arena 1
-    rutasArenas.push_back("imagenes/menupausa.png");     // Arena 2
+    rutasArenas.push_back("imagenes/batallacancha.png");   // Índice 0: Casilla Blanca
+    rutasArenas.push_back("imagenes/batalladespacho.png"); // Índice 1: Casilla Negra
+    rutasArenas.push_back("imagenes/batallaaula.png");     // Índice 2: Casilla Variable
+    rutasArenas.push_back("imagenes/batallacafeteria.png");    // Índice 3: Punto de Poder
 
     // Empezamos apuntando a la última para que al sumarle 1 en el primer combate, empiece por la Arena 0.
     indiceArenaActual = -1;
 }
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
-void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
+void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     l1 = atacante;
     l2 = defensor;
 
@@ -39,10 +40,11 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
 
+    indiceArenaActual = tipoArena;
     // ALTERNAR ARENAS
     // Sumamos 1 al índice. El símbolo % (módulo) hace que si llegamos al final de la lista,
     // vuelva automáticamente a 0 en lugar de dar error. ¡Así es un bucle infinito!
-    indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
+   // indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
 
     // Cambiamos el dibujo de fondoArena usando la ruta que toca de la lista
     fondoArena = ETSIDI::Sprite(rutasArenas[indiceArenaActual].c_str(), 0, 0, 20, 20);
