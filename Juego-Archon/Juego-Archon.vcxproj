@@ -54,6 +54,7 @@
     <ClInclude Include="..\src\MagoL.h" />
     <ClInclude Include="..\src\Movimiento.h" />
     <ClInclude Include="..\src\Mundo.h" />
+    <ClInclude Include="..\src\Obstaculo.h" />
     <ClInclude Include="..\src\Pieza.h" />
     <ClInclude Include="..\src\PiezaTest.h" />
     <ClInclude Include="..\src\Proyectil.h" />
@@ -62,7 +63,6 @@
     <ClInclude Include="..\src\Tablero.h" />
     <ClInclude Include="..\src\TrollO.h" />
     <ClInclude Include="..\src\Vector2D.h" />
-    <ClInclude Include="Obstaculo.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

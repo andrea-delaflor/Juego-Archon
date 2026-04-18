@@ -126,7 +126,7 @@
     <ClInclude Include="..\src\batalla.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Obstaculo.h">
+    <ClInclude Include="..\src\Obstaculo.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
