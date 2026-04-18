@@ -58,12 +58,19 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     // Limpiamos la lista de obstáculos de combates anteriores
     for (auto o : obstaculos) delete o;
     obstaculos.clear();
-    // Lanzamos un "dado". 50% de probabilidad de que la arena tenga trampas.
-    arenaConObstaculos = (rand() % 2 == 0);
+    // Lanzamos un "dado" PROBABILIDAD DEL 80%
+    // rand() % 100 genera un número del 0 al 99. 
+    // Si es menor que 80, hay obstáculos (80% de las veces).
+    int tiradaDado = rand() % 100;
+    arenaConObstaculos = (tiradaDado < 80);
+
     temporizadorObstaculos = 0.0f;
 
     if (arenaConObstaculos) {
         std::cout << "¡CUIDADO! Esta arena tiene obstaculos cayendo del cielo." << std::endl;
+    }
+    else {
+        std::cout << "Arena normal, sin obstaculos." << std::endl;
     }
 }
 
@@ -86,7 +93,11 @@ void Batalla::dibuja() {
 
     if (l1 != nullptr) {
         glPushMatrix();
-        glTranslatef(pos1.x - l1->obtenerPosicion().x, pos1.y - l1->obtenerPosicion().y, 0);
+        //Calculamos el offset exacto que hace la pieza al dibujarse
+        float offsetX_l1 = l1->obtenerPosicion().x - 4.0f;
+        float offsetY_l1 = 4.0f - l1->obtenerPosicion().y;
+        // Le restamos ese offset a nuestra posición de batalla para que cuadre perfecto
+        glTranslatef(pos1.x - offsetX_l1, pos1.y - offsetY_l1, 0);
         //hacemos la pieza un poco mas grande
         glScalef(2.0f, 2.0f, 1.5f);
         l1->dibuja();
@@ -95,7 +106,10 @@ void Batalla::dibuja() {
 
     if (l2 != nullptr) {
         glPushMatrix();
-        glTranslatef(pos2.x - l2->obtenerPosicion().x, pos2.y - l2->obtenerPosicion().y, 0);
+        // Hacemos exactamente lo mismo para el defensor
+        float offsetX_l2 = l2->obtenerPosicion().x - 4.0f;
+        float offsetY_l2 = 4.0f - l2->obtenerPosicion().y;
+        glTranslatef(pos2.x - offsetX_l2, pos2.y - offsetY_l2, 0);
         //hacemos la pieza un poco mas grande
         glScalef(2.0f, 2.0f, 1.5f);
         l2->dibuja();
@@ -155,10 +169,10 @@ void Batalla::mueve() {
 
             // Posición aleatoria arriba de la pantalla (x entre -8 y 8, y = 10)
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
-            Vector2D posObj(xAleatorio, 10.0f);
+            Vector2D posObj(xAleatorio, 10.0f); 
 
             // Caen hacia abajo a velocidad 3
-            Vector2D velObj(0.0f, -3.0f);
+            Vector2D velObj(0.0f, -3.0f);// velocidad de caida 
 
             // Elegimos un tipo al azar (0, 1 o 2)
             TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
@@ -174,13 +188,13 @@ void Batalla::mueve() {
         bool borrar = false;
 
         // Comprobar colisión con el atacante (L1)
-        if ((*it)->colisionaCon(l1)) {
+        if ((*it)->colisionaCon(pos1)) {
             std::cout << "¡El Jugador L1 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
             // Aquí en el futuro le sumaremos/restaremos vida
             borrar = true;
         }
         // Comprobar colisión con el defensor (L2)
-        else if ((*it)->colisionaCon(l2)) {
+        else if ((*it)->colisionaCon(pos2)) {
             std::cout << "¡El Jugador L2 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
             // Aquí en el futuro le sumaremos/restaremos vida
             borrar = true;

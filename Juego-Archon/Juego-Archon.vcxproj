@@ -33,12 +33,12 @@
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
     <ClCompile Include="..\src\Mundo.cpp" />
+    <ClCompile Include="..\src\Obstaculo.cpp" />
     <ClCompile Include="..\src\Pieza.cpp" />
     <ClCompile Include="..\src\Raton.cpp" />
     <ClCompile Include="..\src\Tablero.cpp" />
     <ClCompile Include="..\src\TrollO.cpp" />
     <ClCompile Include="..\src\Vector2D.cpp" />
-    <ClCompile Include="Obstaculo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ArqueraL.h" />
