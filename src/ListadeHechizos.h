@@ -33,11 +33,18 @@ public:
 };
 
 // 4. EXCHANGE: Intercambia las posiciones de dos piezas
+
+class Pieza; // Avisamos al compilador de que la clase Pieza existe para poder usar punteros a ella
 class HechizoExchange : public Hechizo {
+private:
+	Pieza* primeraPieza = nullptr; // Guardamos la primera pieza seleccionada para el intercambio
 public:
-    HechizoExchange() : Hechizo("Exchange") {}
+    HechizoExchange() : Hechizo("Exchange") {
+        primeraPieza = nullptr; // Aseguramos que empiece vacía
+    }
     void aplicar(Mundo* mundo, Vector2D destino) override;
 };
+
 
 // 5. IMPRISON: Inmoviliza una pieza enemiga
 class HechizoImprison : public Hechizo {

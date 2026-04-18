@@ -68,13 +68,21 @@ void Mundo::inicializa(int estado) {
         // Luz
         libroLuz.push_back(new HechizoTeleport());
         libroLuz.push_back(new HechizoHeal());
-        libroLuz.push_back(new HechizoRevive());
         libroLuz.push_back(new HechizoShiftTime());
+		libroLuz.push_back(new HechizoExchange());
+        libroLuz.push_back(new HechizoImprison());
+        libroLuz.push_back(new HechizoRevive());
+		libroLuz.push_back(new HechizoSummon());
+        
         // Oscuridad
         libroOscuridad.push_back(new HechizoTeleport());
         libroOscuridad.push_back(new HechizoHeal());
-        libroOscuridad.push_back(new HechizoRevive());
         libroOscuridad.push_back(new HechizoShiftTime());
+		libroOscuridad.push_back(new HechizoExchange());
+        libroOscuridad.push_back(new HechizoImprison());
+        libroOscuridad.push_back(new HechizoRevive());
+		libroOscuridad.push_back(new HechizoSummon());
+       
 
         for (auto p : piezasLuz) {
             tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
@@ -87,8 +95,31 @@ void Mundo::inicializa(int estado) {
 }
 
 void Mundo::mueve() {
-    angulo += 0.05f;
+    // 1. ACTUALIZAR EL RELOJ DEL MUNDO
+    angulo += 0.01f;
     valorLuz = (sin(angulo) + 1.0f) / 2.0f;
+
+    // 2. LÓGICA DE LIBERACIÓN (IMPRISON)
+    // Recorremos el tablero buscando piezas encarceladas
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            Pieza* p = tablero.obtenerOcupante(i, j);
+            if (p && p->estaEncarcelada()) {
+                // Comparamos la luz actual con la luz que había cuando fue encerrada
+                // Usamos fabsf (valor absoluto) para ver cuánto ha cambiado el tablero
+                float diferencia = fabsf(valorLuz - p->getLuzDeCaptura());
+
+                // Si la diferencia es grande (ej: de 0.1 a 0.9), significa que el ciclo
+                // ha pasado de oscuro a claro (o viceversa) y el hechizo se rompe.
+                if (diferencia > 0.8f) {
+                    p->establecerEncarcelada(false,0.0f);
+                    std::cout << "EL SELLO SE ROMPE: " << p->obtenerNombre() << " es libre." << std::endl;
+                }
+            }
+        }
+    }
+
+    // 3. GESTIÓN DE TURNOS Y ANIMACIONES
 
     switch (faseActual) {
     case ANIMANDO_MOVIMIENTO:
@@ -128,6 +159,7 @@ void Mundo::dibuja(int estado) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+ 
     switch (estado) {
     case 0:
         break;
@@ -146,6 +178,7 @@ void Mundo::dibuja(int estado) {
         glColor3ub(255, 255, 255);
         for (auto p : piezasLuz) p->dibuja();
         for (auto p : piezasOscuridad) p->dibuja();
+
         break;
 
     case 3:
@@ -167,67 +200,30 @@ void Mundo::dibuja(int estado) {
 
 void Mundo::teclahechizos(unsigned char key) {
 
-
+    // Si no hemos hecho click en el Mago, las teclas no hacen nada
+    if (!modoMagiaActivo || hechizoSeleccionado != nullptr) return;
     std::cout << "Tecla pulsada: " << key << " | Modo Magia: " << modoMagiaActivo << std::endl;
 
 
-    // 1. Elegimos el cementerio según el turno
-    std::vector<Pieza*>& cementerio = (faseActual == TURNO_LUZ) ? cementerioLuz : cementerioOscuridad;
+    // Rango de teclas de hechizos
+    if (key >= '1' && key <= '7') {
+          int idx = key - '1';
+          std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
 
-    // 2. Si ya elegimos el hechizo "Revive" y estamos esperando la pieza muerta
-    if (esperandoEleccionRevive) {
-        if (key >= '1' && key <= '9') {
-            int num = key - '1';
-            if (num < (int)cementerio.size()) {
-                indiceSeleccionado = num;
-                esperandoEleccionRevive = false;
-                // Pieza suele usar obtenerNombre()
-                std::cout << "Has elegido resucitar a: " << cementerio[num]->obtenerNombre() << std::endl;
-                std::cout << "Ahora haz click en una casilla vacia del tablero." << std::endl;
-            }
-        }
-        return;
+          // Validamos que el índice exista en nuestro libro
+          if (idx < (int)libro.size()) {
+              if (libro[idx]->estaUsado()) {
+                  std::cout << "Hechizo ya agotado." << std::endl;
+                  return;
+              }
+              
+              // Simplemente lo marcamos como el hechizo que el ratón va a usar
+              hechizoSeleccionado = libro[idx];
+              std::cout << "Seleccionado: " << hechizoSeleccionado->getNombre() << std::endl;
+              std::cout << "Haz click en el tablero para actuar." << std::endl;
+          }
     }
-
-    // 3. Si NO hemos elegido hechizo todavía, los números eligen el hechizo del libro
-    if (modoMagiaActivo && hechizoSeleccionado == nullptr) {
-        if (key >= '1' && key <= '7') {
-            int idx = key - '1';
-
-            // CORRECCIÓN: Usamos los nombres de los vectores de Mundo.h
-            std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
-
-            if (idx < (int)libro.size()) {
-                // Comprobamos si ya está usado antes de seleccionarlo
-                if (libro[idx]->estaUsado()) {
-                    std::cout << "Este hechizo ya ha sido agotado." << std::endl;
-                    return;
-                }
-
-                hechizoSeleccionado = libro[idx];
-                // Hechizo usa getNombre() según tu Hechizo.h
-                std::cout << "Seleccionado: " << hechizoSeleccionado->getNombre() << std::endl;
-
-                // Caso especial: Hechizo Revive
-                if (hechizoSeleccionado->getNombre() == "Revive") {
-                    if (cementerio.empty()) {
-                        std::cout << "No hay nadie para resucitar. Elige otro hechizo." << std::endl;
-                        hechizoSeleccionado = nullptr;
-                    }
-                    else {
-                        esperandoEleccionRevive = true;
-                        std::cout << "--- CEMENTERIO ---" << std::endl;
-                        for (int i = 0; i < (int)cementerio.size(); i++) {
-                            std::cout << i + 1 << ": " << cementerio[i]->obtenerNombre() << std::endl;
-                        }
-                    }
-                }
-                else {
-                    std::cout << "Haz click en el tablero para aplicar el hechizo." << std::endl;
-                }
-            }
-        }
-    }
+    
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
@@ -258,12 +254,8 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             std::cout << (faseActual == TURNO_LUZ ? "--> TURNO LUZ" : "--> TURNO OSCURIDAD") << std::endl;
         }
 
-        
-
         glutPostRedisplay();
-        return;
-    
-        
+        return;       
     }
 
     switch (faseActual) {
@@ -276,6 +268,11 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             if (piezaEnCasilla != nullptr) {
                 if ((faseActual == TURNO_LUZ && piezaEnCasilla->obtenerBando() == Bando::LUZ) ||
                     (faseActual == TURNO_OSCURIDAD && piezaEnCasilla->obtenerBando() == Bando::OSCURIDAD)) {
+
+                    if (piezaEnCasilla->estaEncarcelada()) {
+                        std::cout << "¡ESTA PIEZA ESTA ENCARCELADA! No puede moverse hasta que cambie el ciclo." << std::endl;
+                        return; // Importante: salimos para que 'seleccionada' siga siendo nullptr
+                    }
 
                     seleccionada = piezaEnCasilla;
 

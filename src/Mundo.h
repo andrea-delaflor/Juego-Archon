@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Tablero.h"
 #include "Vector2D.h"
 #include "ETSIDI.h"
@@ -31,6 +32,8 @@ public:
 
     FaseJuego faseActual = TURNO_LUZ;
 
+    
+   
     Mundo();
     ~Mundo();
 
@@ -72,6 +75,8 @@ public:
     void setIndiceSeleccionado(int i) { indiceSeleccionado = i; }
     int getIndiceSeleccionado() { return indiceSeleccionado; }
 
+  
+
     // Getters de Tablero y Valor de Luz
     Tablero& getTablero() { return tablero; }
     float getValorLuz() { return valorLuz; }
@@ -85,12 +90,22 @@ public:
     // Función auxiliar para el bando actual
     Bando bandoActual() { return (faseActual == TURNO_LUZ) ? Bando::LUZ : Bando::OSCURIDAD; }
 
+    void invertirCicloTiempo() {
+        // Para invertir el flujo en una onda senoidal, sumamos PI (180 grados)
+        // Esto hace que si la luz estaba subiendo, ahora esté exactamente en el punto opuesto bajando.
+            angulo += 3.14159f;
+
+        // Actualizamos el valor inmediatamente para que se vea el salto
+        valorLuz = (sin(angulo) + 1.0f) / 2.0f;
+
+        std::cout << "Shift Time: Angulo desplazado. Nueva luz: " << valorLuz << std::endl;
+    }
 	    
 private:
     Tablero tablero;
     float valorLuz = 0.5f;
     float angulo = 0.0f;
-
+	
     // Listas de piezas vivas
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;

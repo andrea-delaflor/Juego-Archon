@@ -38,6 +38,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     }
 }
 
+//este hechizo no se puede hacer hasta que este la clase vida, pero lo dejo aquí para que se vea la estructura de los hechizos
 // 2. HEAL
 void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
@@ -49,33 +50,70 @@ void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
 
 // 3. SHIFT TIME
 void HechizoShiftTime::aplicar(Mundo* mundo, Vector2D destino) {
-    mundo->setValorLuz(1.0f - mundo->getValorLuz());
+    // Usamos el método público para que Mundo gestione sus variables privadas
+    mundo->invertirCicloTiempo();
+
+    std::cout << "Hechizo Shift Time aplicado correctamente." << std::endl;
+
     usado = true;
 }
 
 // 4. EXCHANGE
 void HechizoExchange::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
-    Pieza* p1 = mundo->seleccionada;
-    Pieza* p2 = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
+    Pieza* piezaActual = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
 
-    if (p1 && p2 && p1 != p2) {
-        Vector2D pos1 = p1->obtenerPosicion();
-        Vector2D pos2 = p2->obtenerPosicion();
-        p1->establecerPosicion(pos2);
-        p2->establecerPosicion(pos1);
-        tablero.colocarPieza((int)pos1.x, (int)pos1.y, p2);
-        tablero.colocarPieza((int)pos2.x, (int)pos2.y, p1);
+    // PASO 1: Elegir la primera pieza
+    if (primeraPieza == nullptr) {
+        if (piezaActual != nullptr) {
+            primeraPieza = piezaActual;
+            std::cout << "Primera pieza seleccionada: " << primeraPieza->obtenerNombre() << std::endl;
+            std::cout << "Ahora haz click en la segunda pieza para intercambiarlas." << std::endl;
+        }
+        else {
+            std::cout << "Haz click sobre una pieza real." << std::endl;
+        }
+        return; // Salimos sin marcar 'usado = true' porque falta el segundo click
+    }
+
+    // PASO 2: Elegir la segunda pieza y ejecutar
+    if (piezaActual != nullptr && piezaActual != primeraPieza) {
+        Vector2D pos1 = primeraPieza->obtenerPosicion();
+        Vector2D pos2 = piezaActual->obtenerPosicion();
+
+        // Intercambio en el tablero
+        tablero.colocarPieza((int)pos2.x, (int)pos2.y, primeraPieza);
+        tablero.colocarPieza((int)pos1.x, (int)pos1.y, piezaActual);
+
+        std::cout << "¡INTERCAMBIO COMPLETADO!" << std::endl;
+
+        // Limpiamos para el próximo uso y finalizamos
+        primeraPieza = nullptr;
         usado = true;
+    }
+    else {
+        std::cout << "Selecciona una pieza diferente a la primera." << std::endl;
     }
 }
 
 // 5. IMPRISON
 void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
-    if (p) {
-        p->establecerEncarcelada(true);
+
+    // 1. Comprobamos que haya una pieza
+    // 2. Comprobamos que el bando de esa pieza sea distinto al bandoActual del mundo
+    if (p != nullptr && p->obtenerBando() != mundo->bandoActual()) {
+
+        p->establecerEncarcelada(true, mundo->getValorLuz());
+
+        std::cout << "IMPRISON: " << p->obtenerNombre() << " ha sido neutralizada." << std::endl;
         usado = true;
+    }
+    else if (p != nullptr) {
+        std::cout << "No puedes encarcelar a tus propios aliados." << std::endl;
+    }
+    else {
+        std::cout << "No hay ningun objetivo en esa casilla." << std::endl;
     }
 }
 
