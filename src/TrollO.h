@@ -3,8 +3,6 @@
 #include "glut.h"
 #include "ETSIDI.h"
 
-//probando rama
-
 //Troll ----->Bando oscuridad
 namespace ETSIDI { class Sprite; }
 
