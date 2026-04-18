@@ -6,8 +6,12 @@
 enum class Bando { LUZ, OSCURIDAD };
 enum class TipoMovimiento { TERRESTRE, VOLADOR, TELETRANSPORTE };
 enum class TipoArma {
-    CUERPO_A_CUERPO, PROYECTIL, BOLA_DE_FUEGO,
-    RAYO, FLECHA, VENENO, MAGIA
+    CUERPO_A_CUERPO, // Para Golem, Troll, etc.
+    PELOTAFUTBOL,     // Arquera 
+    BOLA_DE_FUEGO,   // Dragón
+    RAYO_LASER,       // Djinni (Láser)
+    RAYO_NUMERICO,   // Basilisco (Cálculo)
+    ACTAS           // Mago y Bruja 
 };
 
 class Tablero;
