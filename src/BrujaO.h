@@ -18,7 +18,7 @@ public:
             1.3f,    // Velocidad de ataque
             110.0f,  // Alcance
             9,       // Rango de movimiento (3 casillas)
-            TipoArma::VENENO,
+            TipoArma::ACTAS,
             pos)
     {
         // CARGAMOS EL SPRITE 

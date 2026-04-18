@@ -18,7 +18,7 @@ public:
             1.0f,   // velocidad de ataque
             3.0f,   // alcance
             4,      // rango de movimiento
-            TipoArma::MAGIA,
+            TipoArma::RAYO_LASER,
             posInicial)
     {
         // Ruta de imagen original del Djinn

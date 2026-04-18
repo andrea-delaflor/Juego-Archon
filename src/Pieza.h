@@ -66,6 +66,9 @@ public:
         luzDeCaptura = luz;
     }
 
+    //para las armas correctas
+    TipoArma obtenerArma() const { return arma; }
+
     Vector2D    obtenerPosicionVisual() const { return posicionVisual; } // Posición suave
     bool        estaAnimando() const { return animando; }
 
