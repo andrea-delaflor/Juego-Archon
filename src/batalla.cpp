@@ -19,7 +19,7 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     rutasArenas.push_back("imagenes/batallacancha.png");   // Índice 0: Casilla Blanca
     rutasArenas.push_back("imagenes/batalladespacho.png"); // Índice 1: Casilla Negra
     rutasArenas.push_back("imagenes/batallaaula.png");     // Índice 2: Casilla Variable
-    rutasArenas.push_back("imagenes/batallapoder.png");    // Índice 3: Punto de Poder
+    rutasArenas.push_back("imagenes/batallacafeteria.png");    // Índice 3: Punto de Poder
 
     // Empezamos apuntando a la última para que al sumarle 1 en el primer combate, empiece por la Arena 0.
     indiceArenaActual = -1;
