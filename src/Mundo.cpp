@@ -244,34 +244,25 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
     // --- LÓGICA DE APLICAR HECHIZO ---
     if (modoMagiaActivo && hechizoSeleccionado != nullptr) {
-        std::cout << "Aplicando magia..." << std::endl;
-        hechizoSeleccionado->aplicar(this, c);
+        // 1. Llamamos a la lógica interna del hechizo
+        hechizoSeleccionado->aplicar(this, raton.casilla);
 
-        // 2. RESETEO OBLIGATORIO DE ESTADOS
-         modoMagiaActivo = false;
-        hechizoSeleccionado = nullptr;
-        seleccionada = nullptr; // Deseleccionamos al Mago tras la magia
-        
-        /*
-        // Si el hechizo se marcó como usado, pasamos turno
+        // 2. ¿El hechizo considera que ya ha terminado su trabajo?
         if (hechizoSeleccionado->estaUsado()) {
+            modoMagiaActivo = false;
+            hechizoSeleccionado = nullptr;
+            seleccionada = nullptr;
+
+            // Cambio de turno
             faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
-            std::cout << "Hechizo lanzado con exito. Cambio de turno." << std::endl;
-        }
-        */
-        // 3. CAMBIO DE TURNO FORZADO
-        if (faseActual == TURNO_LUZ) {
-            faseActual = TURNO_OSCURIDAD;
-            std::cout << "--> TURNO DE LA OSCURIDAD" << std::endl;
-        }
-        else {
-            faseActual = TURNO_LUZ;
-            std::cout << "--> TURNO DE LA LUZ" << std::endl;
+            std::cout << (faseActual == TURNO_LUZ ? "--> TURNO LUZ" : "--> TURNO OSCURIDAD") << std::endl;
         }
 
-        // 4. ACTUALIZAMOS PANTALLA Y SALIMOS DE LA FUNCIÓN
+        
+
         glutPostRedisplay();
-        return; //
+        return;
+    
         
     }
 
@@ -290,6 +281,13 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
                     if (seleccionada->esLider()) {
                         std::cout << "Lider seleccionado. Pulsa 1-7 para magia o mueve." << std::endl;
+                        std::cout << "1.Teleport: mueve una pieza aliada a otra casilla válida." << std::endl;
+                        std::cout << "2.Heal: cura completamente a una pieza aliada." << std::endl;
+                        std::cout << "3.Shift Time: cambia el valor de luz del mundo." << std::endl;
+                        std::cout << "4.Exchange: intercambia la posición de dos piezas." << std::endl;
+                        std::cout << "5.Imprison: encarcela a una pieza enemiga." << std::endl;
+                        std::cout << "6.Revive: revive a una pieza del cementerio." << std::endl;
+                        std::cout << "7.Summon: invoca una nueva pieza temporalmente en el tablero." << std::endl;
                         modoMagiaActivo = true;
                     }
                 }

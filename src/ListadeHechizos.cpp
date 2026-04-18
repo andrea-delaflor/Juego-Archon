@@ -7,12 +7,34 @@
 // 1. TELEPORT
 void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
-    if (mundo->seleccionada && tablero.obtenerOcupante((int)destino.x, (int)destino.y) == nullptr) {
+    Pieza* piezaEnClick = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
+
+    // PASO 1: Si la pieza seleccionada es el Mago, el jugador está eligiendo a quién teletransportar
+    // (O si no hay nada seleccionado aún)
+    if (mundo->seleccionada == nullptr || mundo->seleccionada->esLider()) {
+        if (piezaEnClick != nullptr && piezaEnClick->obtenerBando() == mundo->bandoActual()) {
+            mundo->seleccionada = piezaEnClick;
+            std::cout << "Pieza elegida para Teleport: " << piezaEnClick->obtenerNombre() << std::endl;
+            std::cout << "Ahora selecciona el destino vacio." << std::endl;
+            // IMPORTANTE: No ponemos 'usado = true' porque solo hemos seleccionado
+            return;
+        }
+    }
+
+    // PASO 2: Si ya tenemos una pieza seleccionada (que no es el líder o ya es el objetivo)
+    // y el destino está vacío, ejecutamos el salto.
+    if (mundo->seleccionada != nullptr && piezaEnClick == nullptr) {
         Vector2D antigua = mundo->seleccionada->obtenerPosicion();
         tablero.colocarPieza((int)antigua.x, (int)antigua.y, nullptr);
+
         mundo->seleccionada->establecerPosicion(destino);
         tablero.colocarPieza((int)destino.x, (int)destino.y, mundo->seleccionada);
-        usado = true;
+
+        usado = true; // AQUÍ es donde se gasta el hechizo
+        std::cout << "Teletransporte completado." << std::endl;
+    }
+    else {
+        std::cout << "Seleccion de destino invalida para Teleport." << std::endl;
     }
 }
 
