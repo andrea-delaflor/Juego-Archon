@@ -58,6 +58,16 @@
     <ClCompile Include="..\src\batalla.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="..\src\Hechizo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ListadeHechizos.cpp">
+    <ClCompile Include="..\src\Obstaculo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+>>>>>>> 498a6f845757cd87c42cdb0a793008643fc53bf0
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Mundo.h">
@@ -123,6 +133,16 @@
     <ClInclude Include="..\src\batalla.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="..\src\Hechizo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ListadeHechizos.h">
+    <ClInclude Include="..\src\Obstaculo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+>>>>>>> 498a6f845757cd87c42cdb0a793008643fc53bf0
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Archivos de origen">
