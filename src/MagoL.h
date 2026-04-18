@@ -23,7 +23,7 @@ public:
             1.2f,   // velocidad de ataque
             100.0f, // alcance (ataque a distancia)
             9,      // rango de movimiento 
-            TipoArma::MAGIA,
+            TipoArma::ACTAS,
             pos)
     
         {

@@ -267,10 +267,28 @@ void Batalla::generarDisparo(bool esJugador1) {
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
     Vector2D vel = esJugador1 ? Vector2D(8, 0) : Vector2D(-8, 0);
 
-    if (p->obtenerArma() == TipoArma::FLECHA) {
+    switch (p->obtenerArma()) {
+    case TipoArma::PELOTAFUTBOL: // Arquera
         proyectiles.push_back(new PelotaFutbol(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
-    }
-    else if (p->obtenerArma() == TipoArma::BOLA_DE_FUEGO) {
+        break;
+
+    case TipoArma::BOLA_DE_FUEGO: // Dragón
         proyectiles.push_back(new BolaFuego(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_LASER: // Djinni (Láser)
+        proyectiles.push_back(new RayoLaser(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_NUMERICO: // Basilisco (Cálculo)
+        proyectiles.push_back(new RayoNumerico(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::ACTAS: // Mago y Bruja (Actas)
+        proyectiles.push_back(new Acta(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    default:
+        break;
     }
 }
