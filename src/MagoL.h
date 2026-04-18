@@ -2,11 +2,16 @@
 #include "Pieza.h"
 #include "glut.h"
 #include "ETSIDI.h"
+#include "Hechizo.h"
+#include "ListadeHechizos.h"
+#include <vector>
+
 
 namespace ETSIDI { class Sprite; }
 
 class MagoL : public Pieza {
 private:
+    std::vector<Hechizo*> libroHechizos;
     ETSIDI::Sprite* sprite;
 
 public:
@@ -22,14 +27,20 @@ public:
             pos)
     
         {
-            // CARGAMOS EL SPRITE 
+            // CARGAR EL SPRITE 
             sprite = new ETSIDI::Sprite("imagenes/alumnos/magosinfondo1.png", 0, 0, 0.9f, 0.9f);
         }
 
-        // El destructor para que no haya fugas de memoria
-        virtual ~MagoL() {
-            delete sprite;
+    bool esLider() override { return true; }
+
+    //El destructor    
+    virtual ~MagoL() {
+        if (sprite) delete sprite;
+        for (auto h : libroHechizos) {
+            delete h;
         }
+        libroHechizos.clear();
+    }
 
     
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TELETRANSPORTE; }
@@ -37,4 +48,20 @@ public:
     std::string obtenerNombreSprite() override { return "luz_mago"; }
 
     void dibuja() override;
+
+    void inicializarHechizos() {
+        // Evitar duplicados si se llama dos veces
+        if (!libroHechizos.empty()) return;
+
+        libroHechizos.push_back(new HechizoTeleport());
+        libroHechizos.push_back(new HechizoHeal());
+        libroHechizos.push_back(new HechizoShiftTime());
+        libroHechizos.push_back(new HechizoExchange());
+        libroHechizos.push_back(new HechizoImprison());
+        // HECHIZOS PENDIENTES: Añadir aquí el de Summon y Revive 
+    }
+    
+    std::vector<Hechizo*>& getHechizos() { return libroHechizos; }
+
+    
 };
