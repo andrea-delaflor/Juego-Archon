@@ -29,6 +29,8 @@
     <ClCompile Include="..\src\DragonO.cpp" />
     <ClCompile Include="..\src\FenixL.cpp" />
     <ClCompile Include="..\src\GolemL.cpp" />
+    <ClCompile Include="..\src\Hechizo.cpp" />
+    <ClCompile Include="..\src\ListadeHechizos.cpp" />
     <ClCompile Include="..\src\MagoL.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
@@ -50,6 +52,8 @@
     <ClInclude Include="..\src\DragonO.h" />
     <ClInclude Include="..\src\FenixL.h" />
     <ClInclude Include="..\src\GolemL.h" />
+    <ClInclude Include="..\src\Hechizo.h" />
+    <ClInclude Include="..\src\ListadeHechizos.h" />
     <ClInclude Include="..\src\MagoL.h" />
     <ClInclude Include="..\src\Movimiento.h" />
     <ClInclude Include="..\src\Mundo.h" />

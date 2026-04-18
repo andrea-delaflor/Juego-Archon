@@ -14,6 +14,9 @@ class Tablero;
 
 class Pieza {
 public:
+
+    virtual bool esLider() { return false; }
+
     // Constructor LIMPIO (sin Movimiento* al final)
     Pieza(const std::string& _nombre,
         Bando _bando,
