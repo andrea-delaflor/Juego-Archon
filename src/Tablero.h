@@ -16,7 +16,8 @@ public:
         // Devuelve: 
         //   0 si la casilla es Blanca (Arena de luz)
         //   1 si la casilla es Negra (Arena de oscuridad)
-        //   2 si la casilla es un Punto de Poder (Arena especial)
+        //   2 si la casilla es Variable (las que cambian de color)
+        //   3 si la casilla es un Punto de Poder
         // =====================================================================
         int obtenerTipoArena(int i, int j, float luminosidad);
     // --- FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
