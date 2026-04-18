@@ -27,25 +27,23 @@ void Tablero::vaciar() {
 // Calcula de qué color es la casilla exactamente en este momento
 int Tablero::obtenerTipoArena(int i, int j, float luminosidad) {
     // 1. Prioridad máxima: Si caemos en un punto de poder, es arena especial (Devuelve 2)
-    if (esPowerPoint(i, j)) return 2;
+    if (esPowerPoint(i, j)) return 3;
 
     // 2. Si es una casilla de las que cambian de color (cruz central o diagonales)
-    if (esVariable(i, j)) {
+    if (esVariable(i, j)) return 2;  // 2 = Arena Variable (Aula)
         // Miramos cómo de iluminado está el tablero
-        if (luminosidad >= 0.5f) return 0; // Si es más de la mitad, es de día -> Blanca (0)
-        else return 1;                     // Si es menos, es de noche -> Negra (1)
-    }
+        
 
-    // 3. Si no es ni punto de poder ni variable, calculamos el patrón de damero normal
+    // 3. Si no es ni punto de poder ni variable, calculamos el patrón de tablero 
     if (i < 4) { // Lado izquierdo del tablero (columnas 0 a 3)
-        if (i == 0 && j == 4) return 0; // Excepción: La casilla A4 es siempre Blanca forzada
-        if ((i + j) % 2 != 0) return 0; // Matemática del damero: si la suma es impar, es Blanca (0)
-        else return 1;                  // Si la suma es par, es Negra (1)
+        if (i == 0 && j == 4) return 0; // Blanca forzada
+        if ((i + j) % 2 != 0) return 0; // 0 = Arena Blanca Fija (Cancha)
+        else return 1;                  // 1 = Arena Negra Fija (Despacho)
     }
     else if (i > 4) { // Lado derecho del tablero (columnas 5 a 8)
-        if (i == 8 && j == 4) return 1; // Excepción: La casilla I4 es siempre Negra forzada 
-        if ((i + j) % 2 == 0) return 0; // Matemática invertida: aquí las pares son Blancas (0)
-        else return 1;                  // Y las impares son Negras (1)
+        if (i == 8 && j == 4) return 1; // Negra forzada
+        if ((i + j) % 2 == 0) return 0; // 0 = Arena Blanca Fija (Cancha)
+        else return 1;                  // 1 = Arena Negra Fija (Despacho)
     }
 
     return 1; // Por seguridad, si algo falla devolvemos arena Negra
