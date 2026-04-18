@@ -2,8 +2,9 @@
 #include "glut.h" 
 #include "ProyectilHijos.h"
 #include <iostream>
+#include <cstdlib> // Necesario para rand()
 
-// CONSTRUCTOR: Prepara las variables iniciales
+
 Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     terminado = false;
     empate = false;
@@ -54,6 +55,16 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     //para no acumular disparos anteiores
     for (auto p : proyectiles) delete p;
     proyectiles.clear();
+    // Limpiamos la lista de obstáculos de combates anteriores
+    for (auto o : obstaculos) delete o;
+    obstaculos.clear();
+    // Lanzamos un "dado". 50% de probabilidad de que la arena tenga trampas.
+    arenaConObstaculos = (rand() % 2 == 0);
+    temporizadorObstaculos = 0.0f;
+
+    if (arenaConObstaculos) {
+        std::cout << "¡CUIDADO! Esta arena tiene obstaculos cayendo del cielo." << std::endl;
+    }
 }
 
 // DIBUJA: Pinta todo en la pantalla
