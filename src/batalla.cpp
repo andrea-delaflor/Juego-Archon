@@ -109,7 +109,7 @@ void Batalla::dibuja() {
         l1->dibujaEnBatalla();
         glPopMatrix();
         // Dibujamos corazones vida
-        l1->dibujaCorazones(pos1.x, pos1.y, 1.5f);
+        l1->dibujaCorazones(-9.0f, 8.5f, 1.5f);
     }
 
     //JUGADOR 2
@@ -121,7 +121,7 @@ void Batalla::dibuja() {
         l2->dibujaEnBatalla();
         glPopMatrix();
 
-        l2->dibujaCorazones(pos2.x, pos2.y, 1.5f);
+        l2->dibujaCorazones(8.0f, 8.5f, 1.5f);
     }
     
     for (auto p : proyectiles) {
