@@ -199,7 +199,7 @@ void Batalla::mueve() {
         // Comprobar colisión con el atacante (L1)
         if (Interaccion::colision(**it, pos1)) {
             if ((*it)->getTipo() == TipoObstaculo::DANO) {
-                l1->recibirDanio(10); // Quita medio corazón (si valen 20)
+                l1->recibirDanio(10); 
                 hp1 = l1->obtenerVida();
             }
             borrar = true;
@@ -287,6 +287,7 @@ void Batalla::teclaEspecial(int key) {
 void Batalla::generarDisparo(bool esJugador1) {
     Pieza* p = esJugador1 ? l1 : l2;
     Vector2D posDisparo = esJugador1 ? pos1 : pos2;
+    
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
     Vector2D vel = esJugador1 ? Vector2D(8, 0) : Vector2D(-8, 0);
 
