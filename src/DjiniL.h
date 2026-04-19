@@ -21,6 +21,7 @@ public:
             TipoArma::RAYO_LASER,
             posInicial)
     {
+        salud = new Vida(100, 20.0f);
         // Ruta de imagen original del Djinn
         sprite = new ETSIDI::Sprite("imagenes/alumnos/djinisinfondo.png", 0, 0, 0.8f, 0.8f);
     }

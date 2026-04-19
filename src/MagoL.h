@@ -27,6 +27,7 @@ public:
             pos)
     
         {
+        salud = new Vida(60, 20.0f);
             // CARGAR EL SPRITE 
             sprite = new ETSIDI::Sprite("imagenes/alumnos/magosinfondo1.png", 0, 0, 0.9f, 0.9f);
         }
