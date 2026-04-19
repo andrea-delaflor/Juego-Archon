@@ -138,6 +138,7 @@ void Mundo::mueve() {
                     std::cout << "--> TURNO DE LA LUZ" << std::endl;
                 }
                 seleccionada = nullptr;
+                comprobarVictoria(); //para saber ganador
             }
         }
         break;
@@ -414,4 +415,65 @@ void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
     // 4. Bajamos los interruptores rojos del combate
     resetCombate();
     seleccionada = nullptr;
+    comprobarVictoria();
+}
+
+void Mundo::comprobarVictoria() {
+    bool pierdeLuz = false;
+    bool pierdeOscuridad = false;
+
+    //Forma de ganar --> eliminar todas las piezas o dejar solo una encarcelada
+    if (piezasLuz.empty() || (piezasLuz.size() == 1 && piezasLuz[0]->estaEncarcelada())) { 
+        pierdeLuz = true;
+    }
+
+    if (piezasOscuridad.empty() || (piezasOscuridad.size() == 1 && piezasOscuridad[0]->estaEncarcelada())) {
+        pierdeOscuridad = true;
+    }
+
+    // Comprobamos si alguien ha perdido por estas reglas
+    if (pierdeLuz && pierdeOscuridad) { //El empate es muy raro pero puede ocurrir (batalla final tablero contrarreloj)
+        ganadorPartida = 3;
+        faseActual = FIN_PARTIDA;
+        return;
+    }
+    else if (pierdeLuz) {
+        ganadorPartida = 2; // Gana Oscuridad
+        faseActual = FIN_PARTIDA;
+        return;
+    }
+    else if (pierdeOscuridad) {
+        ganadorPartida = 1; // Gana Luz
+        faseActual = FIN_PARTIDA;
+        return;
+    }
+
+    //Forma de ganar consigiendo estar en los puento de poder ----> hay q comprobar las coordenadas
+    Vector2D puntosPoder[5] = {
+        Vector2D(4, 4), // Centro exacto
+        Vector2D(4, 0), // Abajo
+        Vector2D(4, 8), // Arriba
+        Vector2D(0, 4), // Izquierda
+        Vector2D(8, 4)  // Derecha
+    };
+
+    int contadorLuz = 0;
+    int contadorOscuridad = 0;
+
+    for (int i = 0; i < 5; i++) {
+        Pieza* ocupante = tablero.obtenerOcupante((int)puntosPoder[i].x, (int)puntosPoder[i].y);
+        if (ocupante != nullptr) {
+            if (ocupante->obtenerBando() == Bando::LUZ) contadorLuz++;
+            else contadorOscuridad++;
+        }
+    }
+
+    if (contadorLuz == 5) {
+        ganadorPartida = 1; // Gana Luz
+        faseActual = FIN_PARTIDA;
+    }
+    else if (contadorOscuridad == 5) {
+        ganadorPartida = 2; // Gana Oscuridad
+        faseActual = FIN_PARTIDA;
+    }
 }

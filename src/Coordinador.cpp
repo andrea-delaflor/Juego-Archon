@@ -244,6 +244,22 @@ void Coordinador::mueve() {
             estado = BATALLA;
             batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate);
         }
+
+        // Comprobamos si hay ganador y quien 
+        if (mundo.faseActual == Mundo::FIN_PARTIDA) {
+            if (mundo.obtenerGanador() == 1) {
+                estado = VICTORIA_ALUMNOS;
+            }
+            else if (mundo.obtenerGanador() == 2) {
+                estado = VICTORIA_PROFESORES;
+            }
+            else {
+                //esto seria para lo del empate.....
+                estado = MENU;
+            }
+        }
+
+
         break;
 
     case BATALLA:
