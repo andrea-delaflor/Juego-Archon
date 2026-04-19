@@ -18,7 +18,7 @@ public:
             1.5f,        // Velocidad de ataque
             80.0f,       // Alcance
             3,           // Rango de movimiento tablero
-            TipoArma::FLECHA,
+            TipoArma::PELOTAFUTBOL,
             pos)
     {
         sprite = new ETSIDI::Sprite("imagenes/alumnos/cestidi2.png", 0, 0, 0.9f, 0.9f);

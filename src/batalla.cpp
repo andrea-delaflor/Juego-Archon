@@ -2,9 +2,10 @@
 #include "glut.h" 
 #include "ProyectilHijos.h"
 #include <iostream>
+#include <cstdlib> // Necesario para rand()
 
-// CONSTRUCTOR: Prepara las variables iniciales
-Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
+
+Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     terminado = false;
     empate = false;
     ganador = nullptr;
@@ -16,16 +17,17 @@ Batalla::Batalla() : fondoArena("imagenes/fondoinicio.png", 0, 0, 20, 20) {
 
     //  Rellenamos nuestra lista de arenas con imágenes de prueba
     // Tienen que estar en la carpeta bin/imagenes
-    rutasArenas.push_back("imagenes/fondoinicio.png");   // Arena 0
-    rutasArenas.push_back("imagenes/menuprincipal.png"); // Arena 1
-    rutasArenas.push_back("imagenes/menupausa.png");     // Arena 2
+    rutasArenas.push_back("imagenes/batallacancha.png");   // Índice 0: Casilla Blanca
+    rutasArenas.push_back("imagenes/batalladespacho.png"); // Índice 1: Casilla Negra
+    rutasArenas.push_back("imagenes/batallaaula.png");     // Índice 2: Casilla Variable
+    rutasArenas.push_back("imagenes/batallacafeteria.png");    // Índice 3: Punto de Poder
 
     // Empezamos apuntando a la última para que al sumarle 1 en el primer combate, empiece por la Arena 0.
     indiceArenaActual = -1;
 }
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
-void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
+void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     l1 = atacante;
     l2 = defensor;
 
@@ -39,10 +41,11 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
 
+    indiceArenaActual = tipoArena;
     // ALTERNAR ARENAS
     // Sumamos 1 al índice. El símbolo % (módulo) hace que si llegamos al final de la lista,
     // vuelva automáticamente a 0 en lugar de dar error. ¡Así es un bucle infinito!
-    indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
+   // indiceArenaActual = (indiceArenaActual + 1) % rutasArenas.size();
 
     // Cambiamos el dibujo de fondoArena usando la ruta que toca de la lista
     fondoArena = ETSIDI::Sprite(rutasArenas[indiceArenaActual].c_str(), 0, 0, 20, 20);
@@ -52,6 +55,23 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor) {
     //para no acumular disparos anteiores
     for (auto p : proyectiles) delete p;
     proyectiles.clear();
+    // Limpiamos la lista de obstáculos de combates anteriores
+    for (auto o : obstaculos) delete o;
+    obstaculos.clear();
+    // Lanzamos un "dado" PROBABILIDAD DEL 80%
+    // rand() % 100 genera un número del 0 al 99. 
+    // Si es menor que 80, hay obstáculos (80% de las veces).
+    int tiradaDado = rand() % 100;
+    arenaConObstaculos = (tiradaDado < 80);
+
+    temporizadorObstaculos = 0.0f;
+
+    if (arenaConObstaculos) {
+        std::cout << "¡CUIDADO! Esta arena tiene obstaculos cayendo del cielo." << std::endl;
+    }
+    else {
+        std::cout << "Arena normal, sin obstaculos." << std::endl;
+    }
 }
 
 // DIBUJA: Pinta todo en la pantalla
@@ -71,30 +91,41 @@ void Batalla::dibuja() {
     fondoArena.draw();
     glDisable(GL_TEXTURE_2D);
 
+  
+    //  JUGADOR 1 
     if (l1 != nullptr) {
         glPushMatrix();
-        glTranslatef(pos1.x - l1->obtenerPosicion().x, pos1.y - l1->obtenerPosicion().y, 0);
-        l1->dibuja();
+         
+        
+        glTranslatef(pos1.x, pos1.y, 0);
+
+        glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
+
+        // dibuja la pieza + el arma
+        l1->dibujaEnBatalla();
         glPopMatrix();
     }
 
+    //jugador 2
     if (l2 != nullptr) {
         glPushMatrix();
-        glTranslatef(pos2.x - l2->obtenerPosicion().x, pos2.y - l2->obtenerPosicion().y, 0);
-        l2->dibuja();
+        
+        glTranslatef(pos2.x, pos2.y, 0);
+
+        glScalef(2.0f, 2.0f, 1.0f);
+
+        
+        l2->dibujaEnBatalla();
         glPopMatrix();
     }
-
-    // Textos informativos temporales
-    glDisable(GL_TEXTURE_2D);
-    ETSIDI::setTextColor(1, 0, 0);
-    ETSIDI::setFont("fuentes/bitwise.ttf", 16);
-    ETSIDI::printxy("ATACANTE: PULSA ESPACIO PARA GANAR", -9, 8);
-    ETSIDI::printxy("DEFENSOR: PULSA ENTER PARA GANAR", 1, 8);
-    ETSIDI::printxy("PULSA 'E' PARA EMPATE (MUEREN LOS DOS)", -5, 7);
-
+    
     for (auto p : proyectiles) {
         p->dibuja();
+    }
+
+    //  Dibujar los obstáculos cayendo
+    for (auto o : obstaculos) {
+        o->dibuja();
     }
 }
 
@@ -129,6 +160,61 @@ void Batalla::mueve() {
             ++it;
         }
     }
+    // LÓGICA DE LOS OBSTÁCULOS
+    // 1. Si la arena es de las "peligrosas", generamos nuevos objetos cada cierto tiempo
+    if (arenaConObstaculos) {
+        temporizadorObstaculos += dt;
+
+        // Cada 2 segundos (aprox) cae un nuevo objeto
+        if (temporizadorObstaculos > 2.0f) {
+            temporizadorObstaculos = 0.0f;
+
+            // Posición aleatoria arriba de la pantalla (x entre -8 y 8, y = 10)
+            float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
+            Vector2D posObj(xAleatorio, 10.0f); 
+
+            // Caen hacia abajo a velocidad 3
+            Vector2D velObj(0.0f, -3.0f);// velocidad de caida 
+
+            // Elegimos un tipo al azar (0, 1 o 2)
+            TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
+
+            obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+        }
+    }
+
+    // 2. Mover obstáculos y comprobar colisiones
+    for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
+        (*it)->mueve(dt);
+
+        bool borrar = false;
+
+        // Comprobar colisión con el atacante (L1)
+        if ((*it)->colisionaCon(pos1)) {
+            std::cout << "¡El Jugador L1 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
+            // Aquí en el futuro le sumaremos/restaremos vida
+            borrar = true;
+        }
+        // Comprobar colisión con el defensor (L2)
+        else if ((*it)->colisionaCon(pos2)) {
+            std::cout << "¡El Jugador L2 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
+            // Aquí en el futuro le sumaremos/restaremos vida
+            borrar = true;
+        }
+        // Comprobar si la bola se ha caído fuera de la pantalla por abajo
+        else if ((*it)->getPos().y < -12.0f) {
+            borrar = true;
+        }
+
+        // Si ha chocado o se ha salido, lo borramos de la memoria
+        if (borrar) {
+            delete* it;
+            it = obstaculos.erase(it);
+        }
+        else {
+            ++it; // Si no, pasamos a comprobar la siguiente bola
+        }
+    }
 
     // Comprobar fin de batalla
     if (hp1 <= 0) { terminado = true; ganador = l2; perdedor = l1; }
@@ -136,38 +222,55 @@ void Batalla::mueve() {
 }
 
 
-// TECLA: Lee lo que pulsas
-/*void Batalla::tecla(unsigned char key) {
-    if (key == ' ') {
-        hp2 = 0;
-        ganador = l1;
-        perdedor = l2;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 13) {
-        hp1 = 0;
-        ganador = l2;
-        perdedor = l1;
-        empate = false;
-        terminado = true;
-    }
-    else if (key == 'e' || key == 'E') {
-        hp1 = 0;
-        hp2 = 0;
-        ganador = nullptr;
-        perdedor = nullptr;
-        empate = true;
-        terminado = true;
-    }
-}*/
+
 
 void Batalla::tecla(unsigned char key) {
-    if (key == ' ') generarDisparo(true);  // Espacio: Atacante dispara
-    if (key == 13)  generarDisparo(false); // Enter: Defensor dispara
+    float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
 
-    // boton de escape
-    if (key == 'e') { terminado = true; empate = true; }
+    // JUGADOR 2
+    if (key == 'w' || key == 'W') pos1.y += vel;
+    if (key == 's' || key == 'S') pos1.y -= vel;
+    if (key == 'a' || key == 'A') pos1.x -= vel;
+    if (key == 'd' || key == 'D') pos1.x += vel;
+
+    // Disparos y Controles
+    if (key == ' ') generarDisparo(true);  //pulsando espacio jugador 1 usa su poder
+    if (key == 13)  generarDisparo(false); //pulsando enter jugador 2 usa su poder
+    if (key == 'e' || key == 'E') { terminado = true; empate = true; }
+
+    // Límites de la pantalla 
+    if (pos1.x > 9.5f) pos1.x = 9.5f;
+    if (pos1.x < -9.5f) pos1.x = -9.5f;
+    if (pos1.y > 9.5f) pos1.y = 9.5f;
+    if (pos1.y < -9.5f) pos1.y = -9.5f;
+
+    // Activar animación Golem (el arma rota al puslar la tecla)
+    if ((key == 't' || key == 'T') && l1) {
+        l1->iniciarAnimacion();
+    }
+
+    // Activar animación Troll (el arma rota al pulsar la tecla)
+    if ((key == 'y' || key == 'Y') && l2) {
+        l2->iniciarAnimacion();
+    }
+
+
+}
+
+void Batalla::teclaEspecial(int key) {
+    float vel = 0.5f;
+
+    // JUGADOR 1
+    if (key == GLUT_KEY_UP)    pos2.y += vel;
+    if (key == GLUT_KEY_DOWN)  pos2.y -= vel;
+    if (key == GLUT_KEY_LEFT)  pos2.x -= vel;
+    if (key == GLUT_KEY_RIGHT) pos2.x += vel;
+
+    // Límites de la pantalla 
+    if (pos2.x > 9.5f) pos2.x = 9.5f;
+    if (pos2.x < -9.5f) pos2.x = -9.5f;
+    if (pos2.y > 9.5f) pos2.y = 9.5f;
+    if (pos2.y < -9.5f) pos2.y = -9.5f;
 }
 
 void Batalla::generarDisparo(bool esJugador1) {
@@ -176,10 +279,28 @@ void Batalla::generarDisparo(bool esJugador1) {
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
     Vector2D vel = esJugador1 ? Vector2D(8, 0) : Vector2D(-8, 0);
 
-    if (p->obtenerArma() == TipoArma::FLECHA) {
+    switch (p->obtenerArma()) {
+    case TipoArma::PELOTAFUTBOL: // Arquera
         proyectiles.push_back(new PelotaFutbol(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
-    }
-    else if (p->obtenerArma() == TipoArma::BOLA_DE_FUEGO) {
+        break;
+
+    case TipoArma::BOLA_DE_FUEGO: // Dragón
         proyectiles.push_back(new BolaFuego(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_LASER: // Djinni (Láser)
+        proyectiles.push_back(new RayoLaser(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_NUMERICO: // Basilisco (Cálculo)
+        proyectiles.push_back(new RayoNumerico(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::ACTAS: // Mago y Bruja (Actas)
+        proyectiles.push_back(new Acta(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    default:
+        break;
     }
 }

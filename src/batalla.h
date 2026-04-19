@@ -6,15 +6,17 @@
 #include <vector>  // Para poder hacer listas de elementos
 #include <string>  //Para guardar los textos de las rutas de las imágenes
 #include <list>
+#include "Obstaculo.h"
 
 class Batalla {
 public:
     Batalla();
 
-    void inicializa(Pieza* atacante, Pieza* defensor);
+    void inicializa(Pieza* atacante, Pieza* defensor, int tipoArena);
     void dibuja();
     void mueve();
     void tecla(unsigned char key);
+    void teclaEspecial(int key);
 
     bool combateTerminado() const { return terminado; }
     Pieza* obtenerGanador() const { return ganador; }
@@ -44,4 +46,7 @@ private:
 
     std::list<Proyectil*> proyectiles;
     void generarDisparo(bool esJugador1);
+    std::list<Obstaculo*> obstaculos; // Lista donde guardaremos los que van cayendo
+    bool arenaConObstaculos;          // ¿Tiene o no tiene trampas esta arena?
+    float temporizadorObstaculos;     // Reloj para saber cuándo tirar el siguiente objeto
 };

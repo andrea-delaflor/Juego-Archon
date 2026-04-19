@@ -18,7 +18,7 @@ public:
             0.8f,        // Velocidad de ataque
             40.0f,       // Alcance
             3,           // Rango de movimiento tablero
-            TipoArma::VENENO,
+            TipoArma::RAYO_NUMERICO,
             pos)
     {
         sprite = new ETSIDI::Sprite("imagenes/profes/mate.png", 0, 0, 0.9f, 0.9f);

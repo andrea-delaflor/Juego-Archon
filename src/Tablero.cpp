@@ -24,6 +24,30 @@ void Tablero::vaciar() {
         }
     }
 }
+// Calcula de qué color es la casilla exactamente en este momento
+int Tablero::obtenerTipoArena(int i, int j, float luminosidad) {
+    // 1. Prioridad máxima: Si caemos en un punto de poder, es arena especial (Devuelve 2)
+    if (esPowerPoint(i, j)) return 3;
+
+    // 2. Si es una casilla de las que cambian de color (cruz central o diagonales)
+    if (esVariable(i, j)) return 2;  // 2 = Arena Variable (Aula)
+        // Miramos cómo de iluminado está el tablero
+        
+
+    // 3. Si no es ni punto de poder ni variable, calculamos el patrón de tablero 
+    if (i < 4) { // Lado izquierdo del tablero (columnas 0 a 3)
+        if (i == 0 && j == 4) return 0; // Blanca forzada
+        if ((i + j) % 2 != 0) return 0; // 0 = Arena Blanca Fija (Cancha)
+        else return 1;                  // 1 = Arena Negra Fija (Despacho)
+    }
+    else if (i > 4) { // Lado derecho del tablero (columnas 5 a 8)
+        if (i == 8 && j == 4) return 1; // Negra forzada
+        if ((i + j) % 2 == 0) return 0; // 0 = Arena Blanca Fija (Cancha)
+        else return 1;                  // 1 = Arena Negra Fija (Despacho)
+    }
+
+    return 1; // Por seguridad, si algo falla devolvemos arena Negra
+}
 // con esto evitamos salirnos fuera del tablero
 bool Tablero::posicionValida(int i, int j) {
     if (i >= 0 && i < 9 && j >= 0 && j < 9) {
