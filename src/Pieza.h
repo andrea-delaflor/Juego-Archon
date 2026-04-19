@@ -81,6 +81,24 @@ public:
     void  restaurarVidaCompleta();
     float obtenerBonusCombate(Bando bandoCasilla);
 
+
+    virtual void dibujaEnBatalla() { dibuja(); }
+
+    void iniciarAnimacion() { atacando = true; }
+
+    void actualizaAnimacionAtaque(float dt) {
+        if (atacando) {
+            anguloAtaque += 500.0f * dt; // Sube rápido
+            if (anguloAtaque > 60.0f) {
+                atacando = false;
+            }
+        }
+        else if (anguloAtaque > 0.0f) {
+            anguloAtaque -= 150.0f * dt; // Baja más lento
+            if (anguloAtaque < 0.0f) anguloAtaque = 0.0f;
+        }
+    }
+
     virtual void imprimir();
 
 protected:
@@ -100,6 +118,9 @@ protected:
 
     Vector2D    posicionVisual; // Coordenadas para el dibujo 
     bool        animando;       // Indica si la pieza se está desplazando
+
+    float anguloAtaque = 0.0f; // Para la rotación de la llave/código
+    bool atacando = false;     // Control de estado
 
   
     float luzDeCaptura = 0.0f;
