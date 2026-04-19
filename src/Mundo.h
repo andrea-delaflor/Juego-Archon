@@ -50,6 +50,10 @@ public:
 
     void finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate);
 
+    //Comprobar victoria
+    void comprobarVictoria();
+    int obtenerGanador() const { return ganadorPartida; }
+
     // Variables de estado de selección
     Raton raton;
     Pieza* seleccionada = nullptr;
@@ -120,6 +124,8 @@ private:
     bool esperandoEleccionRevive = false;
     int indiceSeleccionado = -1;
 
+    //Ganra juego ---> 1=luz, 2=oscuridad, 0= empate
+    int ganadorPartida = 0;
     // Función interna segura para borrar una pieza y que desaparezca gráficamente
     void eliminarPieza(Pieza* p);
 };
