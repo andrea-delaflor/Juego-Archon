@@ -5,7 +5,10 @@ class PelotaFutbol : public Proyectil {
     ETSIDI::Sprite sprite;
 public:
     PelotaFutbol(Vector2D pos, Vector2D vel, int d, bool j1)
-        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/pelotafutbol.png", 0, 0, 1, 1) {
+        : Proyectil(pos, vel, d, j1), 
+        sprite("imagenes/armas/pelotafutbol.png", 0, 0, 1.0f, 1.0f) {
+        sprite.setCenter(0.5f, 0.5f);
+        sprite.setSize(1.8f, 1.8f);
     } 
 
     void dibuja() override {
@@ -18,7 +21,10 @@ class BolaFuego : public Proyectil {
     ETSIDI::Sprite sprite;
 public:
     BolaFuego(Vector2D pos, Vector2D vel, int d, bool j1)
-        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/fuego.png", 0, 0, 1.5, 1.5) {
+        : Proyectil(pos, vel, d, j1), 
+        sprite("imagenes/armas/fuego.png", 0, 0, 1.5f, 1.5f) {
+        sprite.setCenter(0.75f, 0.75f);
+        sprite.setSize(1.8f, 1.8f);
     } 
 
     void dibuja() override {
@@ -32,8 +38,10 @@ class RayoLaser : public Proyectil {
     Vector2D origen;  //para el punto de disparo, como hicimos en el pang
 public:
     RayoLaser(Vector2D pos, Vector2D vel, int d, bool j1)
-        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/rayolaser.png", 0, 0, 1.5, 1.5) {
+        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/rayolaser.png", 0, 0, 1.5f, 1.5f) {
         origen = pos; // guardamos el sitio desde donde se disparó
+        sprite.setCenter(0.75f, 0.75f);
+        sprite.setSize(1.8f, 1.8f);
     }
 
     void dibuja() override {
@@ -58,7 +66,10 @@ class RayoNumerico : public Proyectil {
     Vector2D origen;
 public:
     RayoNumerico(Vector2D pos, Vector2D vel, int d, bool j1)
-        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/rayonumerico.png", 0, 0, 1.5, 1.5) {
+        : Proyectil(pos, vel, d, j1), 
+        sprite("imagenes/armas/rayonumerico.png", 0, 0, 1.5f, 1.5f) {
+        sprite.setCenter(0.75f, 0.75f);
+        sprite.setSize(1.8f, 1.8f);
         origen = pos;
     }
 
@@ -83,7 +94,10 @@ class Acta : public Proyectil {
     ETSIDI::Sprite sprite;
 public:
     Acta(Vector2D pos, Vector2D vel, int d, bool j1)
-        : Proyectil(pos, vel, d, j1), sprite("imagenes/armas/guiasaprendizaje.png", 0, 0, 1.5, 1.5) {
+        : Proyectil(pos, vel, d, j1), 
+        sprite("imagenes/armas/guiasaprendizaje.png", 0, 0, 1.5f, 1.5f) {
+        sprite.setCenter(0.75f, 0.75f);
+        sprite.setSize(1.8f, 1.8f);
     }
 
     void dibuja() override {

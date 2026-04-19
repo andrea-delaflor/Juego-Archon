@@ -17,6 +17,7 @@ void ArqueraL::dibuja() {
         glColor3ub(255, 255, 255);
 
         sprite->setPos(x_gl, y_gl);
+        
         sprite->draw();
 
         glPopAttrib();
