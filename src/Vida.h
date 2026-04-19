@@ -30,18 +30,15 @@ public:
 
         // Calculamos cuántos corazones mostrar
         int numCorazones = (int)std::ceil(actual / puntosPorCorazon);
-        spriteCorazon.setSize(0.4f * escala, 0.4f * escala);
+        spriteCorazon.setSize(0.6f * escala, 0.6f * escala);
 
         for (int i = 0; i < numCorazones; i++) {
             // Centramos la fila de corazones sobre la pieza
             float separacion = 0.5f * escala;
             float xPos = x + (i - (numCorazones - 1) / 2.0f) * separacion;
 
-            spriteCorazon.setPos(xPos, y + (0.8f * escala));
+            spriteCorazon.setPos(xPos, y + (0.4f * escala));
             spriteCorazon.draw();
         }
     }
-
-
-
 };

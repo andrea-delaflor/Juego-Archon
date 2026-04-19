@@ -6,9 +6,9 @@
 class Interaccion {
 public:
     // Verifica si un proyectil toca a una pieza en batalla
-    static bool colision(Proyectil& p, Pieza& pieza) {
-        Vector2D dist = p.getPos() - pieza.obtenerPosicionVisual();
-        return dist.modulo() < 1.2f; // Radio de colisión estándar
+    static bool colision(Proyectil& p, Vector2D posPiezaEnBatalla) {
+        Vector2D dist = p.getPos() - posPiezaEnBatalla;
+        return dist.modulo() < 1.5f; // Radio de colisión estándar
     }
 
     // Verifica si un obstáculo (bola que cae) toca a una pieza

@@ -138,20 +138,21 @@ void Batalla::dibuja() {
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+    //LÓGICA DE PROYECTILES
     for (auto it = proyectiles.begin(); it != proyectiles.end(); ) {
         (*it)->mueve(dt);
 
         bool impactado = false;
         // Colisión simple por distancia
         if ((*it)->esDeJugador1()) {
-            if (Interaccion::colision(**it, *l2)) { // Usamos la clase Interaccion
+            if (Interaccion::colision(**it, pos2)) { // Usamos la clase Interaccion
                 l2->recibirDanio((*it)->getDanio());
                 hp2 = l2->obtenerVida(); // Actualizamos HP local para el chequeo de fin
                 impactado = true;
             }
         }
         else {
-            if (Interaccion::colision(**it, *l1)) {
+            if (Interaccion::colision(**it, pos1)) {
                 l1->recibirDanio((*it)->getDanio());
                 hp1 = l1->obtenerVida();
                 impactado = true;

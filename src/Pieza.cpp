@@ -100,16 +100,6 @@ void Pieza::actualizaAnimacionAtaque(float dt) {
 }
 
 // vida y el daño
-/*void Pieza::recibirDanio(int cantidad) {
-    if (!viva) return;
-    if (cantidad < 0) cantidad = 0;
-
-    vida -= cantidad;
-    if (vida <= 0) {
-        vida = 0;
-        viva = false;
-    }
-}*/
 
 /*void Pieza::curar(int cantidad) {
     if (!viva || cantidad <= 0) return;
@@ -120,10 +110,6 @@ void Pieza::actualizaAnimacionAtaque(float dt) {
     }
 }*/
 
-/*void Pieza::restaurarVidaCompleta() {
-    vida = vidaMaxima;
-    viva = true;
-}*/
 
 void Pieza::establecerViva(bool _viva) {
     viva = _viva;

@@ -31,7 +31,6 @@ public:
         TipoArma _arma, 
         Vector2D _posInicial);
 
-    // DESTRUCTOR ÚNICO (Soluciona error C2535 en línea 106)
     virtual ~Pieza() {
         if (salud) delete salud;
     }
@@ -77,7 +76,7 @@ public:
         luzDeCaptura = luz;
     }
 
-    // GESTIÓN DE VIDA ÚNICA (Soluciona error C2535 en línea 96)
+    // GESTIÓN DE VIDA ÚNICA
     void recibirDanio(int cantidad) {
         if (salud != nullptr) {
             salud->damage(cantidad);
