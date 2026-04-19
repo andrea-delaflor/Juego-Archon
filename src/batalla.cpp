@@ -91,31 +91,33 @@ void Batalla::dibuja() {
     fondoArena.draw();
     glDisable(GL_TEXTURE_2D);
 
+  
+    //  JUGADOR 1 
     if (l1 != nullptr) {
         glPushMatrix();
-        //Calculamos el offset exacto que hace la pieza al dibujarse
-        float offsetX_l1 = l1->obtenerPosicion().x - 4.0f;
-        float offsetY_l1 = 4.0f - l1->obtenerPosicion().y;
-        // Le restamos ese offset a nuestra posición de batalla para que cuadre perfecto
-        glTranslatef(pos1.x - offsetX_l1, pos1.y - offsetY_l1, 0);
-        //hacemos la pieza un poco mas grande
-        glScalef(2.0f, 2.0f, 1.5f);
-        l1->dibuja();
+         
+        
+        glTranslatef(pos1.x, pos1.y, 0);
+
+        glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
+
+        // dibuja la pieza + el arma
+        l1->dibujaEnBatalla();
         glPopMatrix();
     }
 
+    //jugador 2
     if (l2 != nullptr) {
         glPushMatrix();
-        // Hacemos exactamente lo mismo para el defensor
-        float offsetX_l2 = l2->obtenerPosicion().x - 4.0f;
-        float offsetY_l2 = 4.0f - l2->obtenerPosicion().y;
-        glTranslatef(pos2.x - offsetX_l2, pos2.y - offsetY_l2, 0);
-        //hacemos la pieza un poco mas grande
-        glScalef(2.0f, 2.0f, 1.5f);
-        l2->dibuja();
+        
+        glTranslatef(pos2.x, pos2.y, 0);
+
+        glScalef(2.0f, 2.0f, 1.0f);
+
+        
+        l2->dibujaEnBatalla();
         glPopMatrix();
     }
-
     
     for (auto p : proyectiles) {
         p->dibuja();
@@ -241,6 +243,16 @@ void Batalla::tecla(unsigned char key) {
     if (pos1.x < -9.5f) pos1.x = -9.5f;
     if (pos1.y > 9.5f) pos1.y = 9.5f;
     if (pos1.y < -9.5f) pos1.y = -9.5f;
+
+    // Activar animación Golem (el arma rota al puslar la tecla)
+    if ((key == 't' || key == 'T') && l1) {
+        l1->iniciarAnimacion();
+    }
+
+    // Activar animación Troll (el arma rota al pulsar la tecla)
+    if ((key == 'y' || key == 'Y') && l2) {
+        l2->iniciarAnimacion();
+    }
 
 
 }

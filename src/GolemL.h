@@ -27,7 +27,7 @@ public:
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/alumnos/motostudent2.png", 0, 0, 0.9f, 0.9f);
         //el sprite del arma
-        spriteLlave = new ETSIDI::Sprite("imagenes/armas/llaveinglesa.png", 0, 0, 0.7f, 0.7f);
+        spriteLlave = new ETSIDI::Sprite("imagenes/armas/llaveinglesa.png", 0, 0, 0.8f, 0.8f);
     }
 
     // El destructor para que no haya fugas de memoria

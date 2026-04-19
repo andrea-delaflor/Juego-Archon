@@ -26,7 +26,7 @@ public:
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/profes/orgaestadistica.png", 0, 0, 0.9f, 0.9f);
         // CARGAMOS EL SPRITE DEL ARMA   
-        spriteCodigo = new ETSIDI::Sprite("imagenes/armas/codigotecnico.png", 0, 0, 0.6f, 0.6f);
+        spriteCodigo = new ETSIDI::Sprite("imagenes/armas/codigotecnico.png", 0, 0, 0.8f, 0.8f);
 
     }
 
