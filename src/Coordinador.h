@@ -17,6 +17,7 @@ private:
     //estos dos bool actuan como un sensor de detectar el raton
     bool hoverReanudar = false;
     bool hoverAbandonar = false;
+    bool modoUnJugador = false; //esto lo vamos a utilizar para saber si estamos en modo 1 o 2 jugadores
     
 public:
     Coordinador();

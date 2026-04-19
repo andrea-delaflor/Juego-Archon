@@ -140,6 +140,22 @@ void Coordinador::dibuja()
 
     case VICTORIA_ALUMNOS:
     case VICTORIA_PROFESORES:
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // 1. Dibujamos la imagen gigante
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        fondo.draw();
+        glDisable(GL_TEXTURE_2D);
+
+        // 2. Un texto parpadeante o normal para volver al menú
+        ETSIDI::setTextColor(1, 1, 1);
+        ETSIDI::setFont("fuentes/bitwise.ttf", 20);
+        ETSIDI::printxy("PULSA ENTER PARA VOLVER AL MENU", -6.0f, -8.0f);
         break;
     }
 }
@@ -155,10 +171,12 @@ void Coordinador::tecla(unsigned char key) {
 
     case MENU:
         if (key == '1') {
+            modoUnJugador = true; //se ha activado modo con IA
             estado = JUEGO;
             mundo.inicializa(estado);
         }
         else if (key == '2') {
+            modoUnJugador = true;
             estado = JUEGO;
             mundo.inicializa(estado);
         }
@@ -188,6 +206,14 @@ void Coordinador::tecla(unsigned char key) {
         }
         else {
             batalla.tecla(key); // Si no es la P, pasamos las teclas a la pelea
+        }
+        break;
+    case VICTORIA_ALUMNOS:
+    case VICTORIA_PROFESORES:
+        if (key == 13) { // Tecla ENTER
+            estado = MENU;
+            fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
+            mundo.inicializa(0); // Reseteamos el mundo
         }
         break;
     }
@@ -249,9 +275,20 @@ void Coordinador::mueve() {
         if (mundo.faseActual == Mundo::FIN_PARTIDA) {
             if (mundo.obtenerGanador() == 1) {
                 estado = VICTORIA_ALUMNOS;
+                if (modoUnJugador) {
+                    fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
+                }
+                else {
+                    fondo = ETSIDI::Sprite("imagenes/victoriaalumnos.png", 0, 0, 20, 20);
+                }
             }
             else if (mundo.obtenerGanador() == 2) {
                 estado = VICTORIA_PROFESORES;
+                if (modoUnJugador) {
+                    fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
+                } else {
+                    fondo = ETSIDI::Sprite("imagenes/victoriaprofes.png", 0, 0, 20, 20);
+                }
             }
             else {
                 //esto seria para lo del empate.....
