@@ -21,6 +21,7 @@ public:
             TipoArma::PELOTAFUTBOL,
             pos)
     {
+        salud = new Vida(50, 20.0f);
         sprite = new ETSIDI::Sprite("imagenes/alumnos/cestidi2.png", 0, 0, 0.9f, 0.9f);
     }
 

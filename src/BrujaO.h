@@ -21,6 +21,7 @@ public:
             TipoArma::ACTAS,
             pos)
     {
+        salud = new Vida(55, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/profes/brujasinfondo.png", 0, 0, 0.9f, 0.9f);
     }

@@ -17,8 +17,6 @@ Pieza::Pieza(const std::string& _nombre,
 {
     nombre = _nombre;
     bando = _bando;
-    vidaMaxima = _vidaMaxima;
-    vida = _vidaMaxima;
     viva = true;
     velocidad = _velocidad;
     poderAtaque = _poderAtaque;
@@ -28,9 +26,10 @@ Pieza::Pieza(const std::string& _nombre,
     arma = _arma;
 
     posicion = _posInicial;
-    posicionVisual = _posInicial; // Al inicio están en el mismo sitio
-    animando = false;                       //animado nos sirve para en el metodo actualizar cuando dejar de calcular el movimiento
+    posicionVisual = _posInicial;
+    animando = false;
     encarcelada = false;
+    salud = nullptr; 
 }
 
 //Para ir actualizando la taryectoria
@@ -46,8 +45,8 @@ void Pieza::actualizar(float velocidadtrayectoria) {
         // cada vez que se dibuja. 
         //float velocidadAnimacion = 0.0005f;
         
-        posicionVisual.x += dir.x * velocidadtrayectoria;
-        posicionVisual.y += dir.y * velocidadtrayectoria;
+        posicionVisual.x += (float)(dir.x * velocidadtrayectoria);
+        posicionVisual.y += (float)(dir.y * velocidadtrayectoria);
     }
     else {
         posicionVisual = posicion;
@@ -87,8 +86,21 @@ std::vector<Vector2D> Pieza::obtenerMovimientosValidos(Tablero* tablero) {
     return std::vector<Vector2D>();
 }
 
+void Pieza::actualizaAnimacionAtaque(float dt) {
+    if (atacando) {
+        anguloAtaque += 500.0f * dt; // La velocidad a la que sube el arma
+        if (anguloAtaque > 60.0f) {
+            atacando = false;
+        }
+    }
+    else if (anguloAtaque > 0.0f) {
+        anguloAtaque -= 150.0f * dt; // La velocidad a la que baja
+        if (anguloAtaque < 0.0f) anguloAtaque = 0.0f;
+    }
+}
+
 // vida y el daño
-void Pieza::recibirDanio(int cantidad) {
+/*void Pieza::recibirDanio(int cantidad) {
     if (!viva) return;
     if (cantidad < 0) cantidad = 0;
 
@@ -97,37 +109,36 @@ void Pieza::recibirDanio(int cantidad) {
         vida = 0;
         viva = false;
     }
-}
+}*/
 
-void Pieza::curar(int cantidad) {
+/*void Pieza::curar(int cantidad) {
     if (!viva || cantidad <= 0) return;
 
     vida += cantidad;
     if (vida > vidaMaxima) {
         vida = vidaMaxima;
     }
-}
+}*/
 
-void Pieza::restaurarVidaCompleta() {
+/*void Pieza::restaurarVidaCompleta() {
     vida = vidaMaxima;
     viva = true;
-}
+}*/
 
 void Pieza::establecerViva(bool _viva) {
     viva = _viva;
-    if (viva && vida <= 0) vida = 1;
 }
 
-float Pieza::obtenerBonusCombate(Bando bandoCasilla) {
+/*float Pieza::obtenerBonusCombate(Bando bandoCasilla) {
     if (bandoCasilla == bando) return 1.25f;
     return 0.85f;
-}
+}*/
 
 // imprimir
 void Pieza::imprimir() {
     std::cout << "Pieza: " << nombre
         << " | Bando: " << (bando == Bando::LUZ ? "LUZ" : "OSCURIDAD")
-        << " | Vida: " << vida << "/" << vidaMaxima
+        << " | Vida: " << obtenerVida()
         << " | Pos: (" << posicion.x << "," << posicion.y << ")";
 
     if (!viva) std::cout << " [ELIMINADA]";

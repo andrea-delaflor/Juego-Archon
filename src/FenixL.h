@@ -22,6 +22,7 @@ public:
             pos)
 
     {
+        salud = new Vida(60, 20.0f);
         // PARA PONER LA IMAGEN
         sprite = new ETSIDI::Sprite("imagenes/alumnos/teatrosinfondo.png", 0, 0, 0.9f, 0.9f);
     }

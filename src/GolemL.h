@@ -24,6 +24,7 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        salud = new Vida(100, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/alumnos/motostudent2.png", 0, 0, 0.9f, 0.9f);
         //el sprite del arma

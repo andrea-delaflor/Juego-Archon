@@ -21,6 +21,7 @@ public:
             TipoArma::RAYO_NUMERICO,
             pos)
     {
+        salud = new Vida(90, 20.0f);
         sprite = new ETSIDI::Sprite("imagenes/profes/mate.png", 0, 0, 0.9f, 0.9f);
     }
 

@@ -23,6 +23,7 @@ public:
             pos)
 
     {
+        salud = new Vida(50, 20.0f);
         // PARA PONER LA IMAGEN
         sprite = new ETSIDI::Sprite("imagenes/profes/bansheesinfondo.png", 0, 0, 0.9f, 0.9f);
     }

@@ -1,6 +1,7 @@
 #include "batalla.h"
 #include "glut.h" 
 #include "ProyectilHijos.h"
+#include "Interaccion.h"
 #include <iostream>
 #include <cstdlib> // Necesario para rand()
 
@@ -12,8 +13,12 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     perdedor = nullptr;
     l1 = nullptr;
     l2 = nullptr;
-    hp1 = 100;
-    hp2 = 100;
+    hp1 = 0;
+    hp2 = 0;
+
+
+    temporizadorObstaculos = 0.0f;
+    arenaConObstaculos = false;
 
     //  Rellenamos nuestra lista de arenas con imágenes de prueba
     // Tienen que estar en la carpeta bin/imagenes
@@ -35,8 +40,10 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
     empate = false;
     ganador = nullptr;
     perdedor = nullptr;
-    hp1 = 100;
-    hp2 = 100;
+
+    // Sincronizamos los HP con la vida real de la pieza (clase Vida)
+    hp1 = l1->obtenerVida();
+    hp2 = l2->obtenerVida();
 
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
@@ -92,31 +99,29 @@ void Batalla::dibuja() {
     glDisable(GL_TEXTURE_2D);
 
   
-    //  JUGADOR 1 
+    //  JUGADOR 1
     if (l1 != nullptr) {
         glPushMatrix();
-         
-        
         glTranslatef(pos1.x, pos1.y, 0);
-
         glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
 
         // dibuja la pieza + el arma
         l1->dibujaEnBatalla();
         glPopMatrix();
+        // Dibujamos corazones vida
+        l1->dibujaCorazones(pos1.x, pos1.y, 1.5f);
     }
 
-    //jugador 2
+    //JUGADOR 2
     if (l2 != nullptr) {
         glPushMatrix();
-        
         glTranslatef(pos2.x, pos2.y, 0);
-
         glScalef(2.0f, 2.0f, 1.0f);
 
-        
         l2->dibujaEnBatalla();
         glPopMatrix();
+
+        l2->dibujaCorazones(pos2.x, pos2.y, 1.5f);
     }
     
     for (auto p : proyectiles) {
@@ -139,14 +144,16 @@ void Batalla::mueve() {
         bool impactado = false;
         // Colisión simple por distancia
         if ((*it)->esDeJugador1()) {
-            if (((*it)->getPos() - pos2).modulo() < 1.2f) { // Choca con rival
-                hp2 -= (*it)->getDanio();
+            if (Interaccion::colision(**it, *l2)) { // Usamos la clase Interaccion
+                l2->recibirDanio((*it)->getDanio());
+                hp2 = l2->obtenerVida(); // Actualizamos HP local para el chequeo de fin
                 impactado = true;
             }
         }
         else {
-            if (((*it)->getPos() - pos1).modulo() < 1.2f) { // Choca con rival
-                hp1 -= (*it)->getDanio();
+            if (Interaccion::colision(**it, *l1)) {
+                l1->recibirDanio((*it)->getDanio());
+                hp1 = l1->obtenerVida();
                 impactado = true;
             }
         }
@@ -186,19 +193,22 @@ void Batalla::mueve() {
     // 2. Mover obstáculos y comprobar colisiones
     for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
         (*it)->mueve(dt);
-
         bool borrar = false;
 
         // Comprobar colisión con el atacante (L1)
-        if ((*it)->colisionaCon(pos1)) {
-            std::cout << "¡El Jugador L1 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
-            // Aquí en el futuro le sumaremos/restaremos vida
+        if (Interaccion::colision(**it, pos1)) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO) {
+                l1->recibirDanio(10); // Quita medio corazón (si valen 20)
+                hp1 = l1->obtenerVida();
+            }
             borrar = true;
         }
         // Comprobar colisión con el defensor (L2)
-        else if ((*it)->colisionaCon(pos2)) {
-            std::cout << "¡El Jugador L2 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
-            // Aquí en el futuro le sumaremos/restaremos vida
+        else if (Interaccion::colision(**it, pos2)) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO) {
+                l2->recibirDanio(10);
+                hp2 = l2->obtenerVida();
+            }
             borrar = true;
         }
         // Comprobar si la bola se ha caído fuera de la pantalla por abajo

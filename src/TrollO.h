@@ -23,6 +23,7 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        salud = new Vida(100, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/profes/orgaestadistica.png", 0, 0, 0.9f, 0.9f);
         // CARGAMOS EL SPRITE DEL ARMA   

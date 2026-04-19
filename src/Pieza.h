@@ -1,127 +1,126 @@
 ﻿#pragma once
 #include "Vector2D.h"
+#include "Vida.h"
 #include <vector>
 #include <string>
 
 enum class Bando { LUZ, OSCURIDAD };
 enum class TipoMovimiento { TERRESTRE, VOLADOR, TELETRANSPORTE };
 enum class TipoArma {
-    CUERPO_A_CUERPO, // Para Golem, Troll, etc.
-    PELOTAFUTBOL,     // Arquera 
-    BOLA_DE_FUEGO,   // Dragón
-    RAYO_LASER,       // Djinni (Láser)
-    RAYO_NUMERICO,   // Basilisco (Cálculo)
-    ACTAS           // Mago y Bruja 
+    CUERPO_A_CUERPO,
+    PELOTAFUTBOL,
+    BOLA_DE_FUEGO,
+    RAYO_LASER,
+    RAYO_NUMERICO,
+    ACTAS
 };
 
 class Tablero;
 
 class Pieza {
 public:
-
-    virtual bool esLider() { return false; }
-
-    // Constructor LIMPIO (sin Movimiento* al final)
+    // Constructor
     Pieza(const std::string& _nombre,
-        Bando _bando,
+        Bando _bando, 
         int _vidaMaxima,
-        float _velocidad,
-        int _poderAtaque,
+        float _velocidad, 
+        int _poderAtaque, 
         float _velocidadAtaque,
         float _alcance,
-        int _rangoMovimiento,
-        TipoArma _arma,
+        int _rangoMovimiento, 
+        TipoArma _arma, 
         Vector2D _posInicial);
 
-    virtual ~Pieza() = default;
+    // DESTRUCTOR ÚNICO (Soluciona error C2535 en línea 106)
+    virtual ~Pieza() {
+        if (salud) delete salud;
+    }
 
+    // Deshabilitar copia
     Pieza(const Pieza&) = delete;
     Pieza& operator=(const Pieza&) = delete;
-    //actualiza la trayectoria
-    void actualizar(float dt);
 
-    // ── Métodos virtuales puros ─
+    // Métodos virtuales y lógicos
+    virtual bool esLider() { return false; }
+    void actualizar(float dt);
     virtual std::string obtenerNombreSprite() = 0;
     virtual void dibuja() = 0;
-    virtual TipoMovimiento obtenerTipoMovimiento() = 0; // Obliga a los hijos a decir qué son
+    virtual TipoMovimiento obtenerTipoMovimiento() = 0;
     virtual void usarHabilidadEspecial(Tablero* tablero) {}
-
-
+    virtual void imprimir();
     std::vector<Vector2D> obtenerMovimientosValidos(Tablero* tablero);
 
-    // ── Getters ─
-    std::string obtenerNombre() const  { return nombre; }
-    Bando       obtenerBando() const { return bando; }
-    Vector2D    obtenerPosicion() const { return posicion; }
-    int         obtenerVida() const { return vida; }
-    bool        estaViva() const { return viva; }
-    int         obtenerRangoMovimiento() const { return rangoMovimiento; }
-    TipoArma    obtenerArma() const { return arma; }
-    float       obtenerAlcance() const { return alcance; }
-    int         obtenerPoderAtaque() const { return poderAtaque; }
-	bool        estaEncarcelada() const { return encarcelada; } // Para el hechizo Imprison
-	float       getLuzDeCaptura() const { return luzDeCaptura; } // Para el hechizo Imprison, nos dice la luz del mundo cuando fue encarcelada, para saber cuándo liberarla
-	void establecerEncarcelada(bool estado, float luz = 0.0f) { // Para el hechizo Imprison, al establecer encarcelada a true, guardamos la luz actual del mundo para luego compararla y saber cuándo liberar a la pieza
+    // GETTERS
+    std::string obtenerNombre() const { return nombre; }
+    Bando obtenerBando() const { return bando; }
+    Vector2D obtenerPosicion() const { return posicion; }
+    bool estaViva() const { return viva; }
+    int obtenerRangoMovimiento() const { return rangoMovimiento; }
+    TipoArma obtenerArma() const { return arma; }
+    float obtenerAlcance() const { return alcance; }
+    int obtenerPoderAtaque() const { return poderAtaque; }
+    bool estaEncarcelada() const { return encarcelada; }
+    float getLuzDeCaptura() const { return luzDeCaptura; }
+    Vector2D obtenerPosicionVisual() const { return posicionVisual; }
+    bool estaAnimando() const { return animando; }
+
+    // OBTENER VIDA ÚNICO
+    int obtenerVida() const {
+        return (salud != nullptr) ? salud->getActual() : 0;
+    }
+
+    // SETTERS
+    void establecerPosicion(Vector2D pos);
+    void establecerViva(bool _viva);
+    void establecerEncarcelada(bool estado, float luz = 0.0f) {
         encarcelada = estado;
         luzDeCaptura = luz;
     }
 
-    
-
-    Vector2D    obtenerPosicionVisual() const { return posicionVisual; } // Posición suave
-    bool        estaAnimando() const { return animando; }
-
-    // ── Setters ──
-    void establecerPosicion(Vector2D pos);
-    void establecerViva(bool _viva);
-
-    // ── Gestión de vida ──
-    void  recibirDanio(int cantidad);
-    void  curar(int cantidad);
-    void  restaurarVidaCompleta();
-    float obtenerBonusCombate(Bando bandoCasilla);
-
-
-    virtual void dibujaEnBatalla() { dibuja(); }
-
-    void iniciarAnimacion() { atacando = true; }
-
-    void actualizaAnimacionAtaque(float dt) {
-        if (atacando) {
-            anguloAtaque += 500.0f * dt; // Sube rápido
-            if (anguloAtaque > 60.0f) {
-                atacando = false;
-            }
-        }
-        else if (anguloAtaque > 0.0f) {
-            anguloAtaque -= 150.0f * dt; // Baja más lento
-            if (anguloAtaque < 0.0f) anguloAtaque = 0.0f;
+    // GESTIÓN DE VIDA ÚNICA (Soluciona error C2535 en línea 96)
+    void recibirDanio(int cantidad) {
+        if (salud != nullptr) {
+            salud->damage(cantidad);
+            if (salud->muerto()) viva = false;
         }
     }
 
-    virtual void imprimir();
+    void restaurarVidaCompleta() {
+        if (salud != nullptr) {
+            salud->heal(1000); // Cura al máximo
+        }
+        viva = true;
+    }
+
+    void dibujaCorazones(float x, float y, float e) {
+        if (salud != nullptr) salud->dibuja(x, y, e);
+    }
+
+    // BATALLA Y ANIMACIÓN
+    virtual void dibujaEnBatalla() { dibuja(); }
+    void iniciarAnimacion() { atacando = true; }
+    void actualizaAnimacionAtaque(float dt);
 
 protected:
     std::string nombre;
-    Bando       bando;
-    Vector2D    posicion;
-    int         vida;
-    int         vidaMaxima;
-    bool        viva;
-    bool        encarcelada=false;
-    float       velocidad;
-    int         poderAtaque;
-    float       velocidadAtaque;
-    float       alcance;
-    int         rangoMovimiento;
-    TipoArma    arma;
+    Bando bando;
+    Vector2D posicion;
+    bool viva;
+    bool encarcelada = false;
+    float velocidad;
+    int poderAtaque;
+    float velocidadAtaque;
+    float alcance;
+    int rangoMovimiento;
+    TipoArma arma;
 
-    Vector2D    posicionVisual; // Coordenadas para el dibujo 
-    bool        animando;       // Indica si la pieza se está desplazando
+    Vector2D posicionVisual;
+    bool animando;
 
-    float anguloAtaque = 0.0f; // Para la rotación de la llave/código
-    bool atacando = false;     // Control de estado
-
-  
+    float anguloAtaque = 0.0f;
+    bool atacando = false;
     float luzDeCaptura = 0.0f;
+
+    // PUNTERO ÚNICO A SALUD
+    Vida* salud = nullptr;
 };
