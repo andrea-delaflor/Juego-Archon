@@ -289,10 +289,15 @@ void Batalla::teclaEspecial(int key) {
 
 void Batalla::generarDisparo(bool esJugador1) {
     Pieza* p = esJugador1 ? l1 : l2;
-    Vector2D posDisparo = esJugador1 ? pos1 : pos2;
-    
+    //Vector2D posDisparo = esJugador1 ? pos1 : pos2;
+
+    Vector2D posPieza = esJugador1 ? pos1 : pos2;
+    float offsetX = -2.0f;
+    float offsetY = 3.75f;
+    Vector2D posDisparo = posPieza + Vector2D(offsetX, offsetY);
+
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
-    Vector2D vel = esJugador1 ? Vector2D(8, 0) : Vector2D(-8, 0);
+    Vector2D vel = esJugador1 ? Vector2D(10, 0) : Vector2D(-10, 0);
 
     switch (p->obtenerArma()) {
     case TipoArma::PELOTAFUTBOL: // Arquera
