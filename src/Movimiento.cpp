@@ -73,6 +73,7 @@ std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero
         for (int dj = -rango; dj <= rango; dj++) {
 
             if (di == 0 && dj == 0) continue;  // Casilla propia
+            if (abs(di) + abs(dj) > rango) continue; // esro lo que hace es q se mueva en casillas reales ---> es decir le da igual la direccion se muve solo las casillas que se tiene que mover, esto lo hacemos porque sino en las diagonales se mueve mas de lo que deberia
 
             int ni = i + di;
             int nj = j + dj;
