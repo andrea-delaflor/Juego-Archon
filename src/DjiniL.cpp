@@ -1,7 +1,7 @@
-#include "DjiniL.h"
+﻿#include "DjiniL.h"
 
 void DjiniL::dibuja() {
-    // Sincronizaci�n de la animaci�n interna
+    // Sincronización de la animación interna
     actualizar(0.005f);
 
     if (sprite != nullptr) {
@@ -26,4 +26,15 @@ void DjiniL::dibuja() {
         glPopMatrix();
     }
     glutPostRedisplay();
+}
+
+void DjiniL::dibujaEnBatalla(){
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor3ub(255, 255, 255);
+
+    sprite->setPos(0.0f, 0.0f);  // ← siempre en el origen
+    sprite->setSize(0.9f, 0.9f);
+    sprite->draw();
 }

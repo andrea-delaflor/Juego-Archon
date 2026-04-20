@@ -129,6 +129,8 @@ public:
 
     bool tieneEscudoActivo() { return escudoActivado; }
 
+    void forzarPosicionVisual(Vector2D pos) { posicionVisual = pos; }
+
 protected:
     std::string nombre;
     Bando bando;

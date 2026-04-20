@@ -66,5 +66,6 @@ public:
     
     std::vector<Hechizo*>& getHechizos() { return libroHechizos; }
 
+    void dibujaEnBatalla() override;
     
 };

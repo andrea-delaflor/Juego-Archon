@@ -36,4 +36,5 @@ public:
     std::string obtenerNombreSprite() override { return "oscuridad_dragon"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

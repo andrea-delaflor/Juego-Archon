@@ -35,4 +35,5 @@ public:
     std::string obtenerNombreSprite() override { return "luz_arquera"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };
