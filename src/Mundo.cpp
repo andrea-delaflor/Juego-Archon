@@ -71,19 +71,41 @@ void Mundo::inicializa(int estado) {
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
 
-		// Inicializar piezas en el tablero
-        // Luz
-        piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
-        piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
-        piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
-        piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
-        piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
-		// Oscuridad
-        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
-        piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
-        piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
-        piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
-        piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
+		// PIEZAS DEL BANDO DE LA LUZ!!
+
+        // EMPEZAMOS CON LA FILA 0 (aqui iran el mago y las piezas no peon == golem)
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 0)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 1)));
+        piezasLuz.push_back(new DjiniL(Vector2D(0, 2)));
+        piezasLuz.push_back(new FenixL(Vector2D(0, 3)));
+        piezasLuz.push_back(new MagoL(Vector2D(0, 4))); // El es el principal lo ponemos en el medio en el punto de poder!!
+        piezasLuz.push_back(new FenixL(Vector2D(0, 5)));
+        piezasLuz.push_back(new DjiniL(Vector2D(0, 6)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 7)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 8)));
+
+        //FILA 1 ---> peones == golem
+        for (int i = 0; i < 9; i++) {
+            piezasLuz.push_back(new GolemL(Vector2D(1, i)));
+        }
+		
+        //PIEZAS DEL BANDO DE LA OSCURIDAD
+
+        // EMPEZAMOS CON LA FILA 8 (aqui iran el mago y las piezas no peon == troll)
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 0)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 1)));
+        piezasOscuridad.push_back(new BansheeO(Vector2D(8, 2)));
+        piezasOscuridad.push_back(new DragonO(Vector2D(8, 3)));
+        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4))); //  El es el principal lo ponemos en el medio en el punto de poder!!
+        piezasOscuridad.push_back(new DragonO(Vector2D(8, 5)));
+        piezasOscuridad.push_back(new BansheeO(Vector2D(8, 6)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 7)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 8)));
+
+        //FILA 9 ---> peones == trol
+        for (int i = 0; i < 9; i++) {
+            piezasOscuridad.push_back(new TrollO(Vector2D(7, i)));
+        }
 
 		// Inicializar libros de hechizos 
         // Luz
