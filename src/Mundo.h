@@ -87,6 +87,7 @@ public:
     Tablero& getTablero() { return tablero; }
     float getValorLuz() { return valorLuz; }
     void setValorLuz(float nuevoValor) { valorLuz = nuevoValor; }
+
     // Getters de Listas de Piezas y Cementerios
     std::vector<Pieza*>& getPiezasLuz() { return piezasLuz; }
     std::vector<Pieza*>& getPiezasOscuridad() { return piezasOscuridad; }

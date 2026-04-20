@@ -29,6 +29,8 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 6.0f; }
+
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TERRESTRE; }
     std::string obtenerNombreSprite() override { return "luz_arquera"; }
 

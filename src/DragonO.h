@@ -30,6 +30,8 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
+
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
     std::string obtenerNombreSprite() override { return "oscuridad_dragon"; }
 

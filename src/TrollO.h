@@ -37,6 +37,8 @@ public:
         delete spriteCodigo;
     }
 
+    float getRadio() override { return 2.5f; }
+
    // le indicamos a Pieza el Tipo de Movimiento que usa
     TipoMovimiento obtenerTipoMovimiento() override {
         return TipoMovimiento::TERRESTRE;

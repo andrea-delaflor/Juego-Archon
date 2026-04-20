@@ -29,6 +29,7 @@ public:
     virtual ~DjiniL() {
         delete sprite;
     }
+    float getRadio() override { return 6.0f; }
 
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
     std::string obtenerNombreSprite() override { return "luz_djinn"; }

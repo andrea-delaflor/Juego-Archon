@@ -34,6 +34,8 @@ public:
 
     bool esLider() override { return true; }
 
+    float getRadio() override { return 6.0f; }
+
     //El destructor    
     virtual ~MagoL() {
         if (sprite) delete sprite;

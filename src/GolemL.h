@@ -37,6 +37,8 @@ public:
         delete spriteLlave;
     }
 
+    float getRadio() override { return 6.0f; }
+
     // Le comunicamos a nuestra Pieza.cpp que se trata de una Pieza tipo TERRESTRE-----> clase Moviemiento
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TERRESTRE; }
 
