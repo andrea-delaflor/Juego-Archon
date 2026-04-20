@@ -101,6 +101,10 @@ void Batalla::dibuja() {
   
     //  JUGADOR 1
     if (l1 != nullptr) {
+        //vamos a forzar la posicionVisual para que coincida sprite con hitbox:
+        Vector2D backup1 = l1->obtenerPosicionVisual();
+        l1->forzarPosicionVisual(Vector2D(0, 0));
+
         glPushMatrix();
         glTranslatef(pos1.x, pos1.y, 0);
         glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
@@ -108,12 +112,18 @@ void Batalla::dibuja() {
         // dibuja la pieza + el arma
         l1->dibujaEnBatalla();
         glPopMatrix();
+
+        l1->forzarPosicionVisual(backup1);
+
         // Dibujamos corazones vida
         l1->dibujaCorazones(-9.0f, 8.5f, 1.5f);
     }
 
     //JUGADOR 2
     if (l2 != nullptr) {
+        Vector2D backup2 = l2->obtenerPosicionVisual();
+        l2->forzarPosicionVisual(Vector2D(0, 0));
+
         glPushMatrix();
         glTranslatef(pos2.x, pos2.y, 0);
         glScalef(2.0f, 2.0f, 1.0f);
@@ -121,9 +131,15 @@ void Batalla::dibuja() {
         l2->dibujaEnBatalla();
         glPopMatrix();
 
+        l2->forzarPosicionVisual(backup2);
+
         l2->dibujaCorazones(8.0f, 8.5f, 1.5f);
     }
     
+    for (auto p : proyectiles) p->dibuja();
+    for (auto o : obstaculos)  o->dibuja();
+
+    /*
     for (auto p : proyectiles) {
         p->dibuja();
     }
@@ -132,6 +148,7 @@ void Batalla::dibuja() {
     for (auto o : obstaculos) {
         o->dibuja();
     }
+    */
 }
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
@@ -148,23 +165,25 @@ void Batalla::mueve() {
         bool impactado = false;
 
         if ((*it)->esDeJugador1()) {
+            Vector2D dist = (*it)->getPos() - pos2;
             // [NUEVO] comprobar si hay escudo en J2
-            if (l2 && l2->tieneEscudoActivo() && Interaccion::colision(**it, pos2)) {
+            if (l2 && l2->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
             // si no hay escudo entra aqui
-            else if (Interaccion::colision(**it, pos2)) {
+            else if (dist.modulo() < 1.5f) {
                 l2->getVida().damage((*it)->getDanio());
                 hp2 = l2->getVida().getActual();
                 impactado = true;
             }
         }
         else {
+            Vector2D dist = (*it)->getPos() - pos1;
             // [NUEVO] comprobar si J1 tiene escudo
-            if (l1 && l1->tieneEscudoActivo() && Interaccion::colision(**it, pos1)) {
+            if (l1 && l1->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
-            else if (Interaccion::colision(**it, pos1)) {
+            else if (dist.modulo() < 1.5f) {
                 l1->getVida().damage((*it)->getDanio());
                 hp1 = l1->getVida().getActual();
                 impactado = true;
@@ -199,8 +218,11 @@ void Batalla::mueve() {
         (*it)->mueve(dt);
         bool borrar = false;
 
+        Vector2D distL1 = (*it)->getPos() - pos1;
+        Vector2D distL2 = (*it)->getPos() - pos2;
+
         // Comprobar Jugador 1
-        if (Interaccion::colision(**it, pos1, l1->getRadio())) {
+        if (distL1.modulo() < 1.5f) {
             // [NUEVO] Solo hace daño si NO tiene el escudo activo
             if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo()) {
                 l1->getVida().damage(10);
@@ -210,7 +232,7 @@ void Batalla::mueve() {
         }
 
         // Comprobar Jugador 2     
-        if (!borrar && Interaccion::colision(**it, pos2, l2->getRadio())) {
+        else if (distL2.modulo() < 1.5f) {
             // [NUEVO] Solo hace daño si NO tiene el escudo activo
             if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo()) {
                 l2->getVida().damage(10);
@@ -219,7 +241,7 @@ void Batalla::mueve() {
             borrar = true;
         }
 
-        if (!borrar && (*it)->getPos().y < -12.0f) {
+        else if ((*it)->getPos().y < -12.0f) {
             borrar = true;
         }
 
@@ -311,13 +333,13 @@ void Batalla::teclaEspecial(int key) {
 
 void Batalla::generarDisparo(bool esJugador1) {
     Pieza* p = esJugador1 ? l1 : l2;
-    //Vector2D posDisparo = esJugador1 ? pos1 : pos2;
-
+    Vector2D posDisparo = esJugador1 ? pos1 : pos2;
+    /*
     Vector2D posPieza = esJugador1 ? pos1 : pos2;
     float offsetX = -2.0f;
     float offsetY = 3.75f;
     Vector2D posDisparo = posPieza + Vector2D(offsetX, offsetY);
-
+    */
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
     Vector2D vel = esJugador1 ? Vector2D(10, 0) : Vector2D(-10, 0);
 
