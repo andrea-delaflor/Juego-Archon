@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Vector2D.h"
 #include <iostream>
+#include "Movimiento.h"
 
 Mundo::Mundo() {
     modoMagiaActivo = false;
@@ -214,6 +215,42 @@ void Mundo::dibuja(int estado) {
 
     case 2:
         tablero.dibuja(valorLuz);
+
+        // al seleccionar una pieza nos de opciones de sus movimientos posibles
+        if (seleccionada != nullptr && faseActual != ANIMANDO_MOVIMIENTO) {
+            //Aqui calculamos los posibles movimientos de la pieza seleccionada
+            std::vector<Vector2D> movimientosValidos = seleccionada->obtenerMovimientosValidos(&tablero);
+
+            //Configuramos OpenGL para debujar lineas
+            glDisable(GL_LIGHTING);
+            glDisable(GL_TEXTURE_2D);
+            glLineWidth(3.0f); // este es el grosor de la linea por si queremos mas o menos
+            glColor3f(0.2f, 1.0f, 0.2f); //este color es verde fosforito pero lo podemos cambiar
+
+            //Aqui es donde dibujamos el marco del movimiento posible
+            for (Vector2D mov : movimientosValidos) {
+                // Traducimos la coordenada de la matriz a las de OpenGL
+                float x_gl = (float)mov.x - 4.0f;
+                float y_gl = 4.0f - (float)mov.y;
+
+                glBegin(GL_LINE_LOOP);
+                //Usaos el mismo valor que habiamos usado en Tablero.cpp
+                glVertex2f(x_gl - 0.48f, y_gl - 0.48f);
+                glVertex2f(x_gl + 0.48f, y_gl - 0.48f);
+                glVertex2f(x_gl + 0.48f, y_gl + 0.48f);
+                glVertex2f(x_gl - 0.48f, y_gl + 0.48f);
+                glEnd();
+            }
+
+            // Restauramos las configuraciones para no estropear el resto del dibujo
+            glLineWidth(1.0f);
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_LIGHTING);
+            glColor3f(1.0f, 1.0f, 1.0f);
+        }
+
+
+
         raton.dibuja();
 
         glEnable(GL_TEXTURE_2D);
