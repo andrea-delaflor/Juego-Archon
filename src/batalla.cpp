@@ -258,16 +258,25 @@ void Batalla::tecla(unsigned char key) {
     if (pos1.y > 9.5f) pos1.y = 9.5f;
     if (pos1.y < -9.5f) pos1.y = -9.5f;
 
-    // Activar animación Golem (el arma rota al puslar la tecla)
-    if ((key == 't' || key == 'T') && l1) {
-        l1->iniciarAnimacion();
+    // Para el Jugador 1
+    if ((key == 't' || key == 'T') && l1) {                       //vamos a utilizar las mismas teclas para activar los poderes, asi es mas facil de jugar
+        if (l1->obtenerArma() == TipoArma::ESCUDO) {
+            l1->activarEscudo();
+        }
+        else {
+            l1->iniciarAnimacion(); // Esto es para el Golem y su llave
+        }
     }
 
-    // Activar animación Troll (el arma rota al pulsar la tecla)
+    // Para el Jugador 2
     if ((key == 'y' || key == 'Y') && l2) {
-        l2->iniciarAnimacion();
+        if (l2->obtenerArma() == TipoArma::ESCUDO) {
+            l2->activarEscudo();
+        }
+        else {
+            l2->iniciarAnimacion(); // Esto es para el Troll y su código
+        }
     }
-
 
 }
 
