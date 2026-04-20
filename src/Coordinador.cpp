@@ -353,6 +353,8 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
     case BATALLA:
         break;
     }
+    //Forzamos que la caja de texto siga al ratón
+    glutPostRedisplay();
 }
 
 void Coordinador::teclaEspecial(int key) {
