@@ -17,7 +17,7 @@ public:
     TipoObstaculo getTipo() const { return tipo; }
 
     // Función matemática para saber si choca con un jugador
-    bool colisionaCon(Vector2D posJugador) const;
+    bool colisionaCon(Vector2D posJugador, float radioJugador = 2.5f) const;
 
 private:
     Vector2D posicion;

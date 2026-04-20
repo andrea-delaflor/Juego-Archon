@@ -33,6 +33,8 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
+
     //le indicamos que tipo de moviemiento tiene la pieza
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
 

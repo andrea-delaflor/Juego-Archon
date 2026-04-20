@@ -33,6 +33,7 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
 
     // Al ser TELETRANSPORTE, usará la lógica de Movimiento.cpp automáticamente
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TELETRANSPORTE; }

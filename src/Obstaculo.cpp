@@ -39,11 +39,8 @@ void Obstaculo::mueve(float dt) {
 }
 
 
-bool Obstaculo::colisionaCon(Vector2D posJugador) const {
-    // Calculamos la distancia entre el obstáculo y las coordenadas que nos pasen
+bool Obstaculo::colisionaCon(Vector2D posJugador, float radioJugador) const {
     Vector2D dist = posicion - posJugador;
-
-    // ARREGLO: Subimos el rango a 2.5f para compensar el glScalef de los personajes.
-    // Si sigue costando cogerlas, puedes subir este número a 3.0f
-    return dist.modulo() < (radio + 2.5f);
+    // Ahora usamos el radio que le pasemos específicamente
+    return dist.modulo() < (radio + radioJugador);
 }

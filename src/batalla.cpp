@@ -139,22 +139,23 @@ void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
     //LÓGICA DE PROYECTILES
+    //GESTIÓN DE PROYECTILES
     for (auto it = proyectiles.begin(); it != proyectiles.end(); ) {
         (*it)->mueve(dt);
-
         bool impactado = false;
+
         // Colisión simple por distancia
         if ((*it)->esDeJugador1()) {
             if (Interaccion::colision(**it, pos2)) { // Usamos la clase Interaccion
-                l2->recibirDanio((*it)->getDanio());
-                hp2 = l2->obtenerVida(); // Actualizamos HP local para el chequeo de fin
+                l2->getVida().damage((*it)->getDanio());
+                hp2 = l2->getVida().getActual(); // Actualizamos HP local para el chequeo de fin
                 impactado = true;
             }
         }
         else {
             if (Interaccion::colision(**it, pos1)) {
-                l1->recibirDanio((*it)->getDanio());
-                hp1 = l1->obtenerVida();
+                l1->getVida().damage((*it)->getDanio());
+                hp1 = l1->getVida().getActual();
                 impactado = true;
             }
         }
@@ -169,6 +170,7 @@ void Batalla::mueve() {
         }
     }
     // LÓGICA DE LOS OBSTÁCULOS
+    // GENERACIÓN DE OBSTÁCULOS
     // 1. Si la arena es de las "peligrosas", generamos nuevos objetos cada cierto tiempo
     if (arenaConObstaculos) {
         temporizadorObstaculos += dt;
@@ -191,45 +193,46 @@ void Batalla::mueve() {
         }
     }
 
-    // 2. Mover obstáculos y comprobar colisiones
+    // 2. COLISIÓN DE OBSTÁCULOS
     for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
         (*it)->mueve(dt);
         bool borrar = false;
 
-        // Comprobar colisión con el atacante (L1)
-        if (Interaccion::colision(**it, pos1)) {
+        // Comprobar Jugador 1 (Oscuridad / Atacante)
+        if (Interaccion::colision(**it, pos1, l1->getRadio())) {
             if ((*it)->getTipo() == TipoObstaculo::DANO) {
-                l1->recibirDanio(10); 
-                hp1 = l1->obtenerVida();
+                l1->getVida().damage(10);
+                hp1 = l1->getVida().getActual();
             }
-            borrar = true;
-        }
-        // Comprobar colisión con el defensor (L2)
-        else if (Interaccion::colision(**it, pos2)) {
-            if ((*it)->getTipo() == TipoObstaculo::DANO) {
-                l2->recibirDanio(10);
-                hp2 = l2->obtenerVida();
-            }
-            borrar = true;
-        }
-        // Comprobar si la bola se ha caído fuera de la pantalla por abajo
-        else if ((*it)->getPos().y < -12.0f) {
             borrar = true;
         }
 
-        // Si ha chocado o se ha salido, lo borramos de la memoria
+        // Comprobar Jugador 2 (Luz / Defensor)     
+        if (!borrar && Interaccion::colision(**it, pos2, l2->getRadio())) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO) {
+                l2->getVida().damage(10);
+                hp2 = l2->getVida().getActual();
+            }
+            borrar = true;
+        }
+
+        // Si se sale por debajo de la pantalla
+        if (!borrar && (*it)->getPos().y < -12.0f) {
+            borrar = true;
+        }
+
         if (borrar) {
             delete* it;
             it = obstaculos.erase(it);
         }
         else {
-            ++it; // Si no, pasamos a comprobar la siguiente bola
+            ++it;
         }
     }
-
+    //CONDICIÓN DE VICTORIA
     // Comprobar fin de batalla
-    if (hp1 <= 0) { terminado = true; ganador = l2; perdedor = l1; }
-    else if (hp2 <= 0) { terminado = true; ganador = l1; perdedor = l2; }
+    if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; } 
+    else if (l2->getVida().muerto()) { terminado = true; ganador = l1; perdedor = l2; }
 }
 
 
@@ -238,7 +241,7 @@ void Batalla::mueve() {
 void Batalla::tecla(unsigned char key) {
     float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
 
-    // JUGADOR 2
+    // JUGADOR 1
     if (key == 'w' || key == 'W') pos1.y += vel;
     if (key == 's' || key == 'S') pos1.y -= vel;
     if (key == 'a' || key == 'A') pos1.x -= vel;
@@ -271,7 +274,7 @@ void Batalla::tecla(unsigned char key) {
 void Batalla::teclaEspecial(int key) {
     float vel = 0.5f;
 
-    // JUGADOR 1
+    // JUGADOR 2
     if (key == GLUT_KEY_UP)    pos2.y += vel;
     if (key == GLUT_KEY_DOWN)  pos2.y -= vel;
     if (key == GLUT_KEY_LEFT)  pos2.x -= vel;

@@ -63,10 +63,18 @@ public:
     Vector2D obtenerPosicionVisual() const { return posicionVisual; }
     bool estaAnimando() const { return animando; }
 
-    // OBTENER VIDA ÚNICO
-    int obtenerVida() const {
+    // OBTENER VIDA ÚNICO 
+	//SPARA IMPRIMIR VIDA EN LA PANTALLA, NO PARA GESTIONAR VIDA
+	int obtenerVida() const { // Devuelve la vida actual o 0 si no hay salud
         return (salud != nullptr) ? salud->getActual() : 0;
     }
+	//PARA GESTIONAR VIDA DESDE EL MUNDO, NO PARA IMPRIMIR
+	Vida& getVida() { // Devuelve una referencia a la vida para saber cuanta vida tiene la pieza
+        return *salud;
+    }
+
+	// OBTENER RADIO DE ATAQUE ÚNICO (para la lógica de batalla)
+    virtual float getRadio() { return 3.5f; } // Valor por defecto
 
     // SETTERS
     void establecerPosicion(Vector2D pos);
@@ -77,12 +85,14 @@ public:
     }
 
     // GESTIÓN DE VIDA ÚNICA
+    //funcion damage desde vida se repite
+    /*
     void recibirDanio(int cantidad) {
         if (salud != nullptr) {
             salud->damage(cantidad);
             if (salud->muerto()) viva = false;
         }
-    }
+    }*/
 
     void restaurarVidaCompleta() {
         if (salud != nullptr) {

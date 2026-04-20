@@ -31,6 +31,7 @@ public:
     virtual ~FenixL() {
         delete sprite;
     }
+    float getRadio() override { return 6.0f; }
 
     //le indicamos que tipo de moviemiento tiene la pieza
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }

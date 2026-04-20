@@ -12,9 +12,9 @@ public:
     }
 
     // Verifica si un obstáculo (bola que cae) toca a una pieza
-    static bool colision(Obstaculo& o, Vector2D posPiezaEnBatalla) {
+    static bool colision(Obstaculo& o, Vector2D posPiezaEnBatalla, float radioP) {
         Vector2D dist = o.getPos() - posPiezaEnBatalla;
         // Compensamos el glScalef(2,2,1) de la batalla con un radio mayor
-        return dist.modulo() < 2.5f;
+        return dist.modulo() < radioP;
     }
 };

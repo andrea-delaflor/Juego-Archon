@@ -50,6 +50,8 @@ public:
 
     void finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate);
 
+	void actualizarVidaPiezas(); // Nueva función para gestionar la curación al final de cada turno
+
     //Comprobar victoria
     void comprobarVictoria();
     int obtenerGanador() const { return ganadorPartida; }
@@ -85,6 +87,7 @@ public:
     Tablero& getTablero() { return tablero; }
     float getValorLuz() { return valorLuz; }
     void setValorLuz(float nuevoValor) { valorLuz = nuevoValor; }
+
     // Getters de Listas de Piezas y Cementerios
     std::vector<Pieza*>& getPiezasLuz() { return piezasLuz; }
     std::vector<Pieza*>& getPiezasOscuridad() { return piezasOscuridad; }
