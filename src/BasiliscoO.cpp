@@ -1,4 +1,4 @@
-#include "BasiliscoO.h"
+﻿#include "BasiliscoO.h"
 
 void BasiliscoO::dibuja() {
     actualizar(0.0005f);
@@ -22,4 +22,15 @@ void BasiliscoO::dibuja() {
         glPopAttrib();
         glPopMatrix();
     }
+}
+
+void BasiliscoO::dibujaEnBatalla(){
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor3ub(255, 255, 255);
+
+    sprite->setPos(0.0f, 0.0f);  // ← siempre en el origen
+    sprite->setSize(0.9f, 0.9f);
+    sprite->draw();
 }

@@ -1,4 +1,4 @@
-#include "BrujaO.h"
+ï»¿#include "BrujaO.h"
 
 void BrujaO::dibuja() {
     if (sprite != nullptr) {
@@ -6,7 +6,7 @@ void BrujaO::dibuja() {
         float y_gl = 4.0f - (float)posicion.y;
 
         // 1. GUARDAR EL ESTADO ACTUAL
-        glPushMatrix();          // Guarda la posición de la cámara
+        glPushMatrix();          // Guarda la posiciÃ³n de la cÃ¡mara
         glPushAttrib(GL_ALL_ATTRIB_BITS); // Guarda todos los colores, texturas y luces
 
         // 2. CONFIGURAR PARA EL SPRITE
@@ -20,6 +20,17 @@ void BrujaO::dibuja() {
 
         // 3. RECUPERAR EL ESTADO ANTERIOR
         glPopAttrib();  // Restaura los colores y texturas anteriores
-        glPopMatrix();  // Restaura la cámara a como estaba antes del mago
+        glPopMatrix();  // Restaura la cÃ¡mara a como estaba antes del mago
     }
+}
+
+void BrujaO::dibujaEnBatalla(){
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor3ub(255, 255, 255);
+
+    sprite->setPos(0.0f, 0.0f);  // â† siempre en el origen
+    sprite->setSize(0.9f, 0.9f);
+    sprite->draw();
 }
