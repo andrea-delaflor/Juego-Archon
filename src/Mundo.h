@@ -50,6 +50,8 @@ public:
 
     void finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate);
 
+	void actualizarVidaPiezas(); // Nueva función para gestionar la curación al final de cada turno
+
     //Comprobar victoria
     void comprobarVictoria();
     int obtenerGanador() const { return ganadorPartida; }

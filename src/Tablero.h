@@ -25,11 +25,11 @@ public:
     Pieza* obtenerOcupante(int i, int j);
     void colocarPieza(int i, int j, Pieza* p); // Para poder meter las fichas
 
-private:
-    Pieza* casillas[9][9]; //Matriz de punteros --> la usamos para determinar entre casilla ocupada y libre
-
     // Punto de poder : E5, A5, I5, E1, E9
     bool esPowerPoint(int i, int j);
+
+private:
+    Pieza* casillas[9][9]; //Matriz de punteros --> la usamos para determinar entre casilla ocupada y libre
 
     // Casillas variables: Cruz central + diagonales
     bool esVariable(int i, int j);

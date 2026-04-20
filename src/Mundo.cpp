@@ -21,6 +21,27 @@ Mundo::~Mundo() {
     for (auto h : libroLuz) delete h;
     for (auto h : libroOscuridad) delete h;
 }
+
+void Mundo::actualizarVidaPiezas() {
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            Pieza* p = tablero.obtenerOcupante(i, j);
+            if (p != nullptr) {
+                // Usamos tu clase Vida.h
+                if (tablero.esPowerPoint(i, j)) {
+                    // Curación rápida en puntos de poder (ej. medio corazón)
+                    p->getVida().heal(10);
+                    std::cout << p->obtenerNombre() << " se cura rapido en punto de poder." << std::endl;
+                }
+                else {
+                    // Curación lenta en cualquier casilla (ej. 2 puntos)
+                    p->getVida().heal(2);
+                }
+            }
+        }
+    }
+}
+
 void Mundo::inicializa(int estado) {
     // Limpieza previa
     for (auto p : piezasLuz) delete p;
@@ -246,6 +267,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
         // 2. ¿El hechizo considera que ya ha terminado su trabajo?
         if (hechizoSeleccionado->estaUsado()) {
+            actualizarVidaPiezas();
             modoMagiaActivo = false;
             hechizoSeleccionado = nullptr;
             seleccionada = nullptr;
@@ -322,6 +344,8 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
                 seleccionada->establecerPosicion(c);
                 tablero.colocarPieza((int)c.x, (int)c.y, seleccionada);
+
+                actualizarVidaPiezas();
 
                 faseActual = ANIMANDO_MOVIMIENTO;
             }

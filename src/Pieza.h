@@ -64,8 +64,11 @@ public:
     bool estaAnimando() const { return animando; }
 
     // OBTENER VIDA ÚNICO
-    int obtenerVida() const {
+	int obtenerVida() const { // Devuelve la vida actual o 0 si no hay salud
         return (salud != nullptr) ? salud->getActual() : 0;
+    }
+	Vida& getVida() { // Devuelve una referencia a la vida para saber cuanta vida tiene la pieza
+        return *salud;
     }
 
     // SETTERS
