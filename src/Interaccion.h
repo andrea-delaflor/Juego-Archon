@@ -17,4 +17,10 @@ public:
         // Compensamos el glScalef(2,2,1) de la batalla con un radio mayor
         return dist.modulo() < radioP;
     }
+
+    static bool colisionConEscudo(Vector2D posRival, Vector2D posEscudo) {
+        Vector2D dist = posRival - posEscudo;
+        
+        return dist.modulo() < 1.3f;
+    }
 };

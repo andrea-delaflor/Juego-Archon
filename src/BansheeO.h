@@ -19,7 +19,7 @@ public:
             2.0f,   // velocidad de ataque
             45.0f, // alcance (ataque a distancia)
             9,      // rango de movimiento 
-            TipoArma::BOLA_DE_FUEGO,
+            TipoArma::ESCUDO,
             pos)
 
     {
@@ -41,4 +41,5 @@ public:
     std::string obtenerNombreSprite() override { return "oscuridad_banshee"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

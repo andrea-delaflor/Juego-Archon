@@ -138,22 +138,33 @@ void Batalla::dibuja() {
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+    if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
+    if (l2) l2->actualizarEscudo(dt);
+
     //LÓGICA DE PROYECTILES
     //GESTIÓN DE PROYECTILES
     for (auto it = proyectiles.begin(); it != proyectiles.end(); ) {
         (*it)->mueve(dt);
         bool impactado = false;
 
-        // Colisión simple por distancia
         if ((*it)->esDeJugador1()) {
-            if (Interaccion::colision(**it, pos2)) { // Usamos la clase Interaccion
+            // [NUEVO] comprobar si hay escudo en J2
+            if (l2 && l2->tieneEscudoActivo() && Interaccion::colision(**it, pos2)) {
+                impactado = true;
+            }
+            // si no hay escudo entra aqui
+            else if (Interaccion::colision(**it, pos2)) {
                 l2->getVida().damage((*it)->getDanio());
-                hp2 = l2->getVida().getActual(); // Actualizamos HP local para el chequeo de fin
+                hp2 = l2->getVida().getActual();
                 impactado = true;
             }
         }
         else {
-            if (Interaccion::colision(**it, pos1)) {
+            // [NUEVO] comprobar si J1 tiene escudo
+            if (l1 && l1->tieneEscudoActivo() && Interaccion::colision(**it, pos1)) {
+                impactado = true;
+            }
+            else if (Interaccion::colision(**it, pos1)) {
                 l1->getVida().damage((*it)->getDanio());
                 hp1 = l1->getVida().getActual();
                 impactado = true;
@@ -169,26 +180,16 @@ void Batalla::mueve() {
             ++it;
         }
     }
+
     // LÓGICA DE LOS OBSTÁCULOS
-    // GENERACIÓN DE OBSTÁCULOS
-    // 1. Si la arena es de las "peligrosas", generamos nuevos objetos cada cierto tiempo
     if (arenaConObstaculos) {
         temporizadorObstaculos += dt;
-
-        // Cada 2 segundos (aprox) cae un nuevo objeto
         if (temporizadorObstaculos > 2.0f) {
             temporizadorObstaculos = 0.0f;
-
-            // Posición aleatoria arriba de la pantalla (x entre -8 y 8, y = 10)
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
-            Vector2D posObj(xAleatorio, 10.0f); 
-
-            // Caen hacia abajo a velocidad 3
-            Vector2D velObj(0.0f, -3.0f);// velocidad de caida 
-
-            // Elegimos un tipo al azar (0, 1 o 2)
+            Vector2D posObj(xAleatorio, 10.0f);
+            Vector2D velObj(0.0f, -3.0f);
             TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
-
             obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
         }
     }
@@ -198,25 +199,26 @@ void Batalla::mueve() {
         (*it)->mueve(dt);
         bool borrar = false;
 
-        // Comprobar Jugador 1 (Oscuridad / Atacante)
+        // Comprobar Jugador 1
         if (Interaccion::colision(**it, pos1, l1->getRadio())) {
-            if ((*it)->getTipo() == TipoObstaculo::DANO) {
+            // [NUEVO] Solo hace daño si NO tiene el escudo activo
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo()) {
                 l1->getVida().damage(10);
                 hp1 = l1->getVida().getActual();
             }
             borrar = true;
         }
 
-        // Comprobar Jugador 2 (Luz / Defensor)     
+        // Comprobar Jugador 2     
         if (!borrar && Interaccion::colision(**it, pos2, l2->getRadio())) {
-            if ((*it)->getTipo() == TipoObstaculo::DANO) {
+            // [NUEVO] Solo hace daño si NO tiene el escudo activo
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo()) {
                 l2->getVida().damage(10);
                 hp2 = l2->getVida().getActual();
             }
             borrar = true;
         }
 
-        // Si se sale por debajo de la pantalla
         if (!borrar && (*it)->getPos().y < -12.0f) {
             borrar = true;
         }
@@ -229,9 +231,20 @@ void Batalla::mueve() {
             ++it;
         }
     }
+
+    //  DAÑO POR CONTACTO DEL ESCUDO 
+    
+    if (l1 && l2 && l1->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos2, pos1)) {
+        l2->getVida().damage(0.8f); // Daño aumentado para que se note
+        hp2 = l2->getVida().getActual();
+    }
+    if (l2 && l1 && l2->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos1, pos2)) {
+        l1->getVida().damage(0.8f);
+        hp1 = l1->getVida().getActual();
+    }
+
     //CONDICIÓN DE VICTORIA
-    // Comprobar fin de batalla
-    if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; } 
+    if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; }
     else if (l2->getVida().muerto()) { terminado = true; ganador = l1; perdedor = l2; }
 }
 
@@ -258,16 +271,25 @@ void Batalla::tecla(unsigned char key) {
     if (pos1.y > 9.5f) pos1.y = 9.5f;
     if (pos1.y < -9.5f) pos1.y = -9.5f;
 
-    // Activar animación Golem (el arma rota al puslar la tecla)
-    if ((key == 't' || key == 'T') && l1) {
-        l1->iniciarAnimacion();
+    // Para el Jugador 1
+    if ((key == 't' || key == 'T') && l1) {                       //vamos a utilizar las mismas teclas para activar los poderes, asi es mas facil de jugar
+        if (l1->obtenerArma() == TipoArma::ESCUDO) {
+            l1->activarEscudo();
+        }
+        else {
+            l1->iniciarAnimacion(); // Esto es para el Golem y su llave
+        }
     }
 
-    // Activar animación Troll (el arma rota al pulsar la tecla)
+    // Para el Jugador 2
     if ((key == 'y' || key == 'Y') && l2) {
-        l2->iniciarAnimacion();
+        if (l2->obtenerArma() == TipoArma::ESCUDO) {
+            l2->activarEscudo();
+        }
+        else {
+            l2->iniciarAnimacion(); // Esto es para el Troll y su código
+        }
     }
-
 
 }
 
