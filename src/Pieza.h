@@ -12,7 +12,8 @@ enum class TipoArma {
     BOLA_DE_FUEGO,
     RAYO_LASER,
     RAYO_NUMERICO,
-    ACTAS
+    ACTAS,
+    ESCUDO
 };
 
 class Tablero;
@@ -110,6 +111,24 @@ public:
     void iniciarAnimacion() { atacando = true; }
     void actualizaAnimacionAtaque(float dt);
 
+    void actualizarEscudo(float dt) {
+        if (escudoActivado) {
+            tiempoEscudoActivo -= dt;
+            if (tiempoEscudoActivo <= 0) escudoActivado = false;
+        }
+        if (bloqueoEscudo > 0) bloqueoEscudo -= dt;
+    }
+
+    void activarEscudo() {
+        if (bloqueoEscudo <= 0) {
+            escudoActivado = true;
+            tiempoEscudoActivo = 4.0f;  // Dura 4 segundos
+            bloqueoEscudo = 10.0f;     // Recarga en 10 segundos
+        }
+    }
+
+    bool tieneEscudoActivo() { return escudoActivado; }
+
 protected:
     std::string nombre;
     Bando bando;
@@ -129,6 +148,10 @@ protected:
     float anguloAtaque = 0.0f;
     bool atacando = false;
     float luzDeCaptura = 0.0f;
+
+    float bloqueoEscudo = 0.0f;
+    float tiempoEscudoActivo = 0.0f;
+    bool escudoActivado = false;
 
     // PUNTERO ÚNICO A SALUD
     Vida* salud = nullptr;
