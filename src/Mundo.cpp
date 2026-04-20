@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Vector2D.h"
 #include <iostream>
+#include "Movimiento.h"
 
 Mundo::Mundo() {
     modoMagiaActivo = false;
@@ -71,19 +72,41 @@ void Mundo::inicializa(int estado) {
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
 
-		// Inicializar piezas en el tablero
-        // Luz
-        piezasLuz.push_back(new GolemL(Vector2D(6, 4)));
-        piezasLuz.push_back(new MagoL(Vector2D(0, 4)));
-        piezasLuz.push_back(new DjiniL(Vector2D(2, 4)));
-        piezasLuz.push_back(new ArqueraL(Vector2D(1, 2)));
-        piezasLuz.push_back(new FenixL(Vector2D(1, 3)));
-		// Oscuridad
-        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4)));
-        piezasOscuridad.push_back(new DragonO(Vector2D(6, 6)));
-        piezasOscuridad.push_back(new BasiliscoO(Vector2D(7, 6)));
-        piezasOscuridad.push_back(new TrollO(Vector2D(3, 2)));
-        piezasOscuridad.push_back(new BansheeO(Vector2D(5, 2)));
+		// PIEZAS DEL BANDO DE LA LUZ!!
+
+        // EMPEZAMOS CON LA FILA 0 (aqui iran el mago y las piezas no peon == golem)
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 0)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 1)));
+        piezasLuz.push_back(new DjiniL(Vector2D(0, 2)));
+        piezasLuz.push_back(new FenixL(Vector2D(0, 3)));
+        piezasLuz.push_back(new MagoL(Vector2D(0, 4))); // El es el principal lo ponemos en el medio en el punto de poder!!
+        piezasLuz.push_back(new FenixL(Vector2D(0, 5)));
+        piezasLuz.push_back(new DjiniL(Vector2D(0, 6)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 7)));
+        piezasLuz.push_back(new ArqueraL(Vector2D(0, 8)));
+
+        //FILA 1 ---> peones == golem
+        for (int i = 0; i < 9; i++) {
+            piezasLuz.push_back(new GolemL(Vector2D(1, i)));
+        }
+		
+        //PIEZAS DEL BANDO DE LA OSCURIDAD
+
+        // EMPEZAMOS CON LA FILA 8 (aqui iran el mago y las piezas no peon == troll)
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 0)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 1)));
+        piezasOscuridad.push_back(new BansheeO(Vector2D(8, 2)));
+        piezasOscuridad.push_back(new DragonO(Vector2D(8, 3)));
+        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4))); //  El es el principal lo ponemos en el medio en el punto de poder!!
+        piezasOscuridad.push_back(new DragonO(Vector2D(8, 5)));
+        piezasOscuridad.push_back(new BansheeO(Vector2D(8, 6)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 7)));
+        piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 8)));
+
+        //FILA 9 ---> peones == trol
+        for (int i = 0; i < 9; i++) {
+            piezasOscuridad.push_back(new TrollO(Vector2D(7, i)));
+        }
 
 		// Inicializar libros de hechizos 
         // Luz
@@ -192,6 +215,42 @@ void Mundo::dibuja(int estado) {
 
     case 2:
         tablero.dibuja(valorLuz);
+
+        // al seleccionar una pieza nos de opciones de sus movimientos posibles
+        if (seleccionada != nullptr && faseActual != ANIMANDO_MOVIMIENTO) {
+            //Aqui calculamos los posibles movimientos de la pieza seleccionada
+            std::vector<Vector2D> movimientosValidos = seleccionada->obtenerMovimientosValidos(&tablero);
+
+            //Configuramos OpenGL para debujar lineas
+            glDisable(GL_LIGHTING);
+            glDisable(GL_TEXTURE_2D);
+            glLineWidth(3.0f); // este es el grosor de la linea por si queremos mas o menos
+            glColor3f(0.2f, 1.0f, 0.2f); //este color es verde fosforito pero lo podemos cambiar
+
+            //Aqui es donde dibujamos el marco del movimiento posible
+            for (Vector2D mov : movimientosValidos) {
+                // Traducimos la coordenada de la matriz a las de OpenGL
+                float x_gl = (float)mov.x - 4.0f;
+                float y_gl = 4.0f - (float)mov.y;
+
+                glBegin(GL_LINE_LOOP);
+                //Usaos el mismo valor que habiamos usado en Tablero.cpp
+                glVertex2f(x_gl - 0.48f, y_gl - 0.48f);
+                glVertex2f(x_gl + 0.48f, y_gl - 0.48f);
+                glVertex2f(x_gl + 0.48f, y_gl + 0.48f);
+                glVertex2f(x_gl - 0.48f, y_gl + 0.48f);
+                glEnd();
+            }
+
+            // Restauramos las configuraciones para no estropear el resto del dibujo
+            glLineWidth(1.0f);
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_LIGHTING);
+            glColor3f(1.0f, 1.0f, 1.0f);
+        }
+
+
+
         raton.dibuja();
 
         glEnable(GL_TEXTURE_2D);

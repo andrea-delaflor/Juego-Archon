@@ -176,7 +176,7 @@ void Coordinador::tecla(unsigned char key) {
             mundo.inicializa(estado);
         }
         else if (key == '2') {
-            modoUnJugador = true;
+            modoUnJugador = false;
             estado = JUEGO;
             mundo.inicializa(estado);
         }
@@ -281,6 +281,7 @@ void Coordinador::mueve() {
                 else {
                     fondo = ETSIDI::Sprite("imagenes/victoriaalumnos.png", 0, 0, 20, 20);
                 }
+                
             }
             else if (mundo.obtenerGanador() == 2) {
                 estado = VICTORIA_PROFESORES;
@@ -289,6 +290,7 @@ void Coordinador::mueve() {
                 } else {
                     fondo = ETSIDI::Sprite("imagenes/victoriaprofes.png", 0, 0, 20, 20);
                 }
+                
             }
             else {
                 //esto seria para lo del empate.....
