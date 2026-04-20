@@ -138,22 +138,40 @@ void Batalla::dibuja() {
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+
+    if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
+    if (l2) l2->actualizarEscudo(dt);
+
     //LÓGICA DE PROYECTILES
     //GESTIÓN DE PROYECTILES
     for (auto it = proyectiles.begin(); it != proyectiles.end(); ) {
         (*it)->mueve(dt);
         bool impactado = false;
 
-        // Colisión simple por distancia
+        
         if ((*it)->esDeJugador1()) {
-            if (Interaccion::colision(**it, pos2)) { // Usamos la clase Interaccion
+            
+
+          // comprobar si hay escudo
+            if (l2->tieneEscudoActivo() && Interaccion::colision(**it, pos2)) {
+                impactado = true; 
+            }
+            // si no hay escudo entra aqui
+            else if (Interaccion::colision(**it, pos2)) {
                 l2->getVida().damage((*it)->getDanio());
-                hp2 = l2->getVida().getActual(); // Actualizamos HP local para el chequeo de fin
+                hp2 = l2->getVida().getActual();
                 impactado = true;
             }
         }
         else {
-            if (Interaccion::colision(**it, pos1)) {
+            
+
+            // comprobar si tiene escudo
+            if (l1->tieneEscudoActivo() && Interaccion::colision(**it, pos1)) {
+                impactado = true; // El proyectil desaparece sin hacer daño
+            }
+           
+            else if (Interaccion::colision(**it, pos1)) {
                 l1->getVida().damage((*it)->getDanio());
                 hp1 = l1->getVida().getActual();
                 impactado = true;
@@ -229,6 +247,17 @@ void Batalla::mueve() {
             ++it;
         }
     }
+
+    // DAÑO POR CONTACTO DEL ESCUDO
+    if (l1->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos2, pos1)) {
+        l2->getVida().damage(0.5f); // Quema al rival por estar cerca
+        hp2 = l2->getVida().getActual();
+    }
+    if (l2->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos1, pos2)) {
+        l1->getVida().damage(0.5f);
+        hp1 = l1->getVida().getActual();
+    }
+
     //CONDICIÓN DE VICTORIA
     // Comprobar fin de batalla
     if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; } 
