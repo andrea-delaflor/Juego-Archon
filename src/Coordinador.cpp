@@ -267,8 +267,16 @@ void Coordinador::mueve() {
         mundo.mueve();
 
         if (mundo.hayCombate && mundo.seleccionada != nullptr && !mundo.seleccionada->estaAnimando()) {
+            float luzActual = mundo.getValorLuz();
+            int ventaja = 0; // Por defecto Gris/Neutral
+
+            if (luzActual > 0.7f) ventaja = 1; // Blanco (Ventaja Alumnos)
+            else if (luzActual < 0.3f) ventaja = 2; // Negro (Ventaja Profesores)
+            else ventaja = 0; // Gris (Neutral)
+
+            // Cambiamos el estado a BATALLA
             estado = BATALLA;
-            batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate);
+            batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate, ventaja);
         }
 
         // Comprobamos si hay ganador y quien 

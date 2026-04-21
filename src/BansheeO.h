@@ -18,13 +18,12 @@ public:
             35,     // poder de ataque (mucha magia)
             2.0f,   // velocidad de ataque
             45.0f, // alcance (ataque a distancia)
-            9,      // rango de movimiento 
+            3,      // rango de movimiento 
             TipoArma::ESCUDO,
             pos)
 
     {
         salud = new Vida(50, 20.0f);
-        // PARA PONER LA IMAGEN
         sprite = new ETSIDI::Sprite("imagenes/profes/bansheesinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 

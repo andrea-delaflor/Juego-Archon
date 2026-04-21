@@ -17,7 +17,7 @@ public:
             40,     // poder de ataque (mucha magia)
             1.2f,   // velocidad de ataque
             100.0f, // alcance (ataque a distancia)
-            9,      // rango de movimiento 
+            3,      // rango de movimiento 
             TipoArma::ESCUDO,
             pos)
 

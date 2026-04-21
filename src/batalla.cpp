@@ -32,14 +32,17 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
 }
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
-void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
+void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ventajaRecibida) {
     l1 = atacante;
     l2 = defensor;
+    ventaja = ventajaRecibida;
 
     terminado = false;
     empate = false;
     ganador = nullptr;
     perdedor = nullptr;
+
+    std::cout << "Iniciando batalla. Ventaja tipo: " << ventaja << std::endl;
 
     // Sincronizamos los HP con la vida real de la pieza (clase Vida)
     hp1 = l1->obtenerVida();
@@ -139,16 +142,7 @@ void Batalla::dibuja() {
     for (auto p : proyectiles) p->dibuja();
     for (auto o : obstaculos)  o->dibuja();
 
-    /*
-    for (auto p : proyectiles) {
-        p->dibuja();
-    }
-
-    //  Dibujar los obstáculos cayendo
-    for (auto o : obstaculos) {
-        o->dibuja();
-    }
-    */
+    
 }
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
@@ -166,25 +160,39 @@ void Batalla::mueve() {
 
         if ((*it)->esDeJugador1()) {
             Vector2D dist = (*it)->getPos() - pos2;
-            // [NUEVO] comprobar si hay escudo en J2
+            // comprobar si hay escudo en J2
             if (l2 && l2->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
             // si no hay escudo entra aqui
             else if (dist.modulo() < 1.5f) {
-                l2->getVida().damage((*it)->getDanio());
+                float factor = 1.0f;
+                
+                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
+                    factor = 0.5f;
+                }
+                
+                l2->getVida().damage((*it)->getDanio() * factor);
                 hp2 = l2->getVida().getActual();
                 impactado = true;
             }
         }
         else {
             Vector2D dist = (*it)->getPos() - pos1;
-            // [NUEVO] comprobar si J1 tiene escudo
+            // comprobar si J1 tiene escudo
             if (l1 && l1->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
             else if (dist.modulo() < 1.5f) {
-                l1->getVida().damage((*it)->getDanio());
+                float factor = 1.0f;
+                // Si la arena es LUZ (1) y el defensor es LUZ, recibe menos daño
+                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) {
+                    factor = 0.5f;
+                }
+
+                l1->getVida().damage((*it)->getDanio()*factor);
                 hp1 = l1->getVida().getActual();
                 impactado = true;
             }
@@ -208,8 +216,10 @@ void Batalla::mueve() {
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
             Vector2D posObj(xAleatorio, 10.0f);
             Vector2D velObj(0.0f, -3.0f);
-            TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
-            obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+            //TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
+            //obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+
+            obstaculos.push_back(new Obstaculo(posObj, velObj, TipoObstaculo::DANO));
         }
     }
 
@@ -223,9 +233,15 @@ void Batalla::mueve() {
 
         // Comprobar Jugador 1
         if (distL1.modulo() < 1.5f) {
-            // [NUEVO] Solo hace daño si NO tiene el escudo activo
+            // Solo hace daño si NO tiene el escudo activo
             if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo()) {
-                l1->getVida().damage(10);
+                float factorObs = 1.0f;
+                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) {
+                    factorObs = 0.5f; // Resistencia a obstáculos
+				}
+                
+                l1->getVida().damage(10*factorObs);
                 hp1 = l1->getVida().getActual();
             }
             borrar = true;
@@ -233,9 +249,15 @@ void Batalla::mueve() {
 
         // Comprobar Jugador 2     
         else if (distL2.modulo() < 1.5f) {
-            // [NUEVO] Solo hace daño si NO tiene el escudo activo
+            // Solo hace daño si NO tiene el escudo activo
             if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo()) {
-                l2->getVida().damage(10);
+                float factorObs = 1.0f;
+                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
+                    factorObs = 0.5f;
+                }
+                
+                l2->getVida().damage(10*factorObs);
                 hp2 = l2->getVida().getActual();
             }
             borrar = true;

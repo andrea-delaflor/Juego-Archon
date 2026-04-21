@@ -24,4 +24,6 @@ private:
     Vector2D velocidad;
     TipoObstaculo tipo;
     float radio; // Tamaño de la bola para calcular el choque
+
+    ETSIDI::Sprite spriteObs;
 };
