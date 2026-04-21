@@ -4,6 +4,7 @@
 #include "Interaccion.h"
 #include <iostream>
 #include <cstdlib> // Necesario para rand()
+#include <cmath> // Necesario para sin() y cos() ciculo bonus visual
 
 
 Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
@@ -117,6 +118,60 @@ void Batalla::dibuja() {
 
         glPushMatrix();
         glTranslatef(pos1.x, pos1.y, 0);
+        if (temporizadorBonusJ1 > 0) {
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_LIGHTING);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // 1. Calcular animación basada en el tiempo real
+            float tiempoObj = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+            float pulso = sin(tiempoObj * 8.0f) * 0.15f; // Efecto de latido
+            float radio = 1.4f + pulso;
+
+            // 2. Definir los colores base según el bonus
+            float r = 1.0f, g = 1.0f, b = 1.0f;
+            if (invulnerableJ1) { r = 0.0f; g = 1.0f; b = 1.0f; } // Hielo: Cian brillante
+            else if (velJ1 > 0.5f) { r = 1.0f; g = 1.0f; b = 0.0f; } // Rayo: Amarillo eléctrico
+            else if (multDanoJ1 > 1.0f) { r = 1.0f; g = 0.1f; b = 0.1f; } // Nube: Rojo sangre
+
+            // 3. Dibujar el núcleo del aura (Degradado radial difuminado)
+            glBegin(GL_TRIANGLE_FAN);
+            glColor4f(r, g, b, 0.6f); // Centro muy brillante
+            glVertex2f(0.0f, 0.0f);
+            glColor4f(r, g, b, 0.0f); // Bordes invisibles para suavizar
+            for (int i = 0; i <= 360; i += 10) {
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * radio, sin(theta) * radio);
+            }
+            glEnd();
+
+            // 4. Dibujar runas/anillos mágicos giratorios alrededor
+            glPushMatrix();
+            glRotatef(tiempoObj * 120.0f, 0.0f, 0.0f, 1.0f); // Rota el primer anillo hacia la derecha
+
+            glLineWidth(2.5f);
+            glColor4f(r, g, b, 0.8f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 0; i < 360; i += 60) { // Un hexágono mágico
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * (radio + 0.2f), sin(theta) * (radio + 0.2f));
+            }
+            glEnd();
+
+            glRotatef(-tiempoObj * 200.0f, 0.0f, 0.0f, 1.0f); // Rota el segundo anillo muy rápido a la izquierda
+            glBegin(GL_LINE_LOOP);
+            for (int i = 30; i < 390; i += 60) { // Otro hexágono desfasado
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * (radio + 0.1f), sin(theta) * (radio + 0.1f));
+            }
+            glEnd();
+            glPopMatrix();
+
+            glLineWidth(1.0f); // Restaurar grosor de línea por defecto
+            glEnable(GL_TEXTURE_2D);
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Restaurar a blanco puro
+        }
         glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
 
         // dibuja la pieza + el arma
@@ -136,6 +191,56 @@ void Batalla::dibuja() {
 
         glPushMatrix();
         glTranslatef(pos2.x, pos2.y, 0);
+        if (temporizadorBonusJ2 > 0) {
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_LIGHTING);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            float tiempoObj = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+            float pulso = sin(tiempoObj * 8.0f) * 0.15f;
+            float radio = 1.4f + pulso;
+
+            float r = 1.0f, g = 1.0f, b = 1.0f;
+            if (invulnerableJ2) { r = 0.0f; g = 1.0f; b = 1.0f; }
+            else if (velJ2 > 0.5f) { r = 1.0f; g = 1.0f; b = 0.0f; }
+            else if (multDanoJ2 > 1.0f) { r = 1.0f; g = 0.1f; b = 0.1f; }
+
+            glBegin(GL_TRIANGLE_FAN);
+            glColor4f(r, g, b, 0.6f);
+            glVertex2f(0.0f, 0.0f);
+            glColor4f(r, g, b, 0.0f);
+            for (int i = 0; i <= 360; i += 10) {
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * radio, sin(theta) * radio);
+            }
+            glEnd();
+
+            glPushMatrix();
+            glRotatef(tiempoObj * 120.0f, 0.0f, 0.0f, 1.0f);
+
+            glLineWidth(2.5f);
+            glColor4f(r, g, b, 0.8f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 0; i < 360; i += 60) {
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * (radio + 0.2f), sin(theta) * (radio + 0.2f));
+            }
+            glEnd();
+
+            glRotatef(-tiempoObj * 200.0f, 0.0f, 0.0f, 1.0f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 30; i < 390; i += 60) {
+                float theta = i * 3.14159f / 180.0f;
+                glVertex2f(cos(theta) * (radio + 0.1f), sin(theta) * (radio + 0.1f));
+            }
+            glEnd();
+            glPopMatrix();
+
+            glLineWidth(1.0f);
+            glEnable(GL_TEXTURE_2D);
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        }
         glScalef(2.0f, 2.0f, 1.0f);
 
         l2->dibujaEnBatalla();
