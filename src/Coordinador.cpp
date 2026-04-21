@@ -1,4 +1,5 @@
 #include "Coordinador.h"
+#include <iostream>
 
 Coordinador::Coordinador() :
     fondo("imagenes/fondoinicio.png", 0, 0, 20, 20)
@@ -139,6 +140,22 @@ void Coordinador::dibuja()
 
     case VICTORIA_ALUMNOS:
     case VICTORIA_PROFESORES:
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // 1. Dibujamos la imagen gigante
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        fondo.draw();
+        glDisable(GL_TEXTURE_2D);
+
+        // 2. Un texto parpadeante o normal para volver al menú
+        ETSIDI::setTextColor(1, 1, 1);
+        ETSIDI::setFont("fuentes/bitwise.ttf", 20);
+        ETSIDI::printxy("PULSA ENTER PARA VOLVER AL MENU", -6.0f, -8.0f);
         break;
     }
 }
@@ -154,21 +171,27 @@ void Coordinador::tecla(unsigned char key) {
 
     case MENU:
         if (key == '1') {
+            modoUnJugador = true; //se ha activado modo con IA
             estado = JUEGO;
             mundo.inicializa(estado);
         }
         else if (key == '2') {
+            modoUnJugador = false;
             estado = JUEGO;
             mundo.inicializa(estado);
         }
         break;
 
     case JUEGO:
+        mundo.teclahechizos(key);
+       
         if (key == 'p' || key == 'P') {
-            estadoAnterior = estado; //aqui estamos guardando que venimos de JUEGO
+            estadoAnterior = estado;
             estado = PAUSA;
         }
-        break;
+        
+        
+            break;
 
     case PAUSA:
         if (key == 'r' || key == 'R') {
@@ -185,8 +208,17 @@ void Coordinador::tecla(unsigned char key) {
             batalla.tecla(key); // Si no es la P, pasamos las teclas a la pelea
         }
         break;
+    case VICTORIA_ALUMNOS:
+    case VICTORIA_PROFESORES:
+        if (key == 13) { // Tecla ENTER
+            estado = MENU;
+            fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
+            mundo.inicializa(0); // Reseteamos el mundo
+        }
+        break;
     }
 }
+
 
 void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
     switch (estado) {
@@ -235,9 +267,46 @@ void Coordinador::mueve() {
         mundo.mueve();
 
         if (mundo.hayCombate && mundo.seleccionada != nullptr && !mundo.seleccionada->estaAnimando()) {
+            float luzActual = mundo.getValorLuz();
+            int ventaja = 0; // Por defecto Gris/Neutral
+
+            if (luzActual > 0.7f) ventaja = 1; // Blanco (Ventaja Alumnos)
+            else if (luzActual < 0.3f) ventaja = 2; // Negro (Ventaja Profesores)
+            else ventaja = 0; // Gris (Neutral)
+
+            // Cambiamos el estado a BATALLA
             estado = BATALLA;
-            batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate);
+            batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate, ventaja);
         }
+
+        // Comprobamos si hay ganador y quien 
+        if (mundo.faseActual == Mundo::FIN_PARTIDA) {
+            if (mundo.obtenerGanador() == 1) {
+                estado = VICTORIA_ALUMNOS;
+                if (modoUnJugador) {
+                    fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
+                }
+                else {
+                    fondo = ETSIDI::Sprite("imagenes/victoriaalumnos.png", 0, 0, 20, 20);
+                }
+                
+            }
+            else if (mundo.obtenerGanador() == 2) {
+                estado = VICTORIA_PROFESORES;
+                if (modoUnJugador) {
+                    fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
+                } else {
+                    fondo = ETSIDI::Sprite("imagenes/victoriaprofes.png", 0, 0, 20, 20);
+                }
+                
+            }
+            else {
+                //esto seria para lo del empate.....
+                estado = MENU;
+            }
+        }
+
+
         break;
 
     case BATALLA:
@@ -294,6 +363,8 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
     case BATALLA:
         break;
     }
+    //Forzamos que la caja de texto siga al ratón
+    glutPostRedisplay();
 }
 
 void Coordinador::teclaEspecial(int key) {

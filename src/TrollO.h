@@ -9,6 +9,7 @@ namespace ETSIDI { class Sprite; }
 class TrollO : public Pieza {
 private:
     ETSIDI::Sprite* sprite;
+    ETSIDI::Sprite* spriteCodigo;
 public:
 
     TrollO(Vector2D pos) :
@@ -22,14 +23,21 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        salud = new Vida(100, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/profes/orgaestadistica.png", 0, 0, 0.9f, 0.9f);
+        // CARGAMOS EL SPRITE DEL ARMA   
+        spriteCodigo = new ETSIDI::Sprite("imagenes/armas/codigotecnico.png", 0, 0, 0.8f, 0.8f);
+
     }
 
     // El destructor para que no haya fugas de memoria
     virtual ~TrollO() {
         delete sprite;
+        delete spriteCodigo;
     }
+
+    float getRadio() override { return 2.5f; }
 
    // le indicamos a Pieza el Tipo de Movimiento que usa
     TipoMovimiento obtenerTipoMovimiento() override {
@@ -39,4 +47,5 @@ public:
     std::string obtenerNombreSprite() override { return "osc_troll"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

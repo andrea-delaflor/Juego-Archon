@@ -29,6 +29,9 @@
     <ClCompile Include="..\src\DragonO.cpp" />
     <ClCompile Include="..\src\FenixL.cpp" />
     <ClCompile Include="..\src\GolemL.cpp" />
+    <ClCompile Include="..\src\Hechizo.cpp" />
+    <ClCompile Include="..\src\Interaccion.cpp" />
+    <ClCompile Include="..\src\ListadeHechizos.cpp" />
     <ClCompile Include="..\src\MagoL.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Movimiento.cpp" />
@@ -39,6 +42,7 @@
     <ClCompile Include="..\src\Tablero.cpp" />
     <ClCompile Include="..\src\TrollO.cpp" />
     <ClCompile Include="..\src\Vector2D.cpp" />
+    <ClCompile Include="..\src\Vida.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ArqueraL.h" />
@@ -51,6 +55,9 @@
     <ClInclude Include="..\src\DragonO.h" />
     <ClInclude Include="..\src\FenixL.h" />
     <ClInclude Include="..\src\GolemL.h" />
+    <ClInclude Include="..\src\Hechizo.h" />
+    <ClInclude Include="..\src\Interaccion.h" />
+    <ClInclude Include="..\src\ListadeHechizos.h" />
     <ClInclude Include="..\src\MagoL.h" />
     <ClInclude Include="..\src\Movimiento.h" />
     <ClInclude Include="..\src\Mundo.h" />
@@ -63,6 +70,7 @@
     <ClInclude Include="..\src\Tablero.h" />
     <ClInclude Include="..\src\TrollO.h" />
     <ClInclude Include="..\src\Vector2D.h" />
+    <ClInclude Include="..\src\Vida.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -128,6 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

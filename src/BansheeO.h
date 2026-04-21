@@ -18,12 +18,12 @@ public:
             35,     // poder de ataque (mucha magia)
             2.0f,   // velocidad de ataque
             45.0f, // alcance (ataque a distancia)
-            9,      // rango de movimiento 
-            TipoArma::MAGIA,
+            3,      // rango de movimiento 
+            TipoArma::ESCUDO,
             pos)
 
     {
-        // PARA PONER LA IMAGEN
+        salud = new Vida(50, 20.0f);
         sprite = new ETSIDI::Sprite("imagenes/profes/bansheesinfondo.png", 0, 0, 0.9f, 0.9f);
     }
 
@@ -32,10 +32,13 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
+
     //le indicamos que tipo de moviemiento tiene la pieza
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
 
     std::string obtenerNombreSprite() override { return "oscuridad_banshee"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

@@ -18,9 +18,10 @@ public:
             1.0f,   // velocidad de ataque
             3.0f,   // alcance
             4,      // rango de movimiento
-            TipoArma::MAGIA,
+            TipoArma::RAYO_LASER,
             posInicial)
     {
+        salud = new Vida(100, 20.0f);
         // Ruta de imagen original del Djinn
         sprite = new ETSIDI::Sprite("imagenes/alumnos/djinisinfondo.png", 0, 0, 0.8f, 0.8f);
     }
@@ -28,10 +29,12 @@ public:
     virtual ~DjiniL() {
         delete sprite;
     }
+    float getRadio() override { return 6.0f; }
 
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
     std::string obtenerNombreSprite() override { return "luz_djinn"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };
 

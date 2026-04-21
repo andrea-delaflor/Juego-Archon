@@ -18,9 +18,10 @@ public:
             0.8f,        // Velocidad de ataque
             40.0f,       // Alcance
             3,           // Rango de movimiento tablero
-            TipoArma::VENENO,
+            TipoArma::RAYO_NUMERICO,
             pos)
     {
+        salud = new Vida(90, 20.0f);
         sprite = new ETSIDI::Sprite("imagenes/profes/mate.png", 0, 0, 0.9f, 0.9f);
     }
 
@@ -28,8 +29,11 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
+
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TERRESTRE; }
     std::string obtenerNombreSprite() override { return "oscuridad_basilisco"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

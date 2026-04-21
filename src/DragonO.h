@@ -21,6 +21,7 @@ public:
             TipoArma::BOLA_DE_FUEGO,
             posInicial)
     {
+        salud = new Vida(150, 20.0f);
         // Ruta de imagen original del dragón
         sprite = new ETSIDI::Sprite("imagenes/profes/dragonsinfondo.png", 0, 0, 0.8f, 0.8f);
     }
@@ -29,8 +30,11 @@ public:
         delete sprite;
     }
 
+    float getRadio() override { return 2.5f; }
+
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
     std::string obtenerNombreSprite() override { return "oscuridad_dragon"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

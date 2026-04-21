@@ -10,6 +10,7 @@ namespace ETSIDI { class Sprite; }
 class GolemL : public Pieza {
 private:
     ETSIDI::Sprite* sprite;
+    ETSIDI::Sprite* spriteLlave;
 public:
 
     GolemL(Vector2D pos) :
@@ -23,14 +24,20 @@ public:
             TipoArma::CUERPO_A_CUERPO,
             pos)
     {
+        salud = new Vida(100, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/alumnos/motostudent2.png", 0, 0, 0.9f, 0.9f);
+        //el sprite del arma
+        spriteLlave = new ETSIDI::Sprite("imagenes/armas/llaveinglesa.png", 0, 0, 0.8f, 0.8f);
     }
 
     // El destructor para que no haya fugas de memoria
     virtual ~GolemL() {
         delete sprite;
+        delete spriteLlave;
     }
+
+    float getRadio() override { return 6.0f; }
 
     // Le comunicamos a nuestra Pieza.cpp que se trata de una Pieza tipo TERRESTRE-----> clase Moviemiento
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::TERRESTRE; }
@@ -39,4 +46,5 @@ public:
     std::string obtenerNombreSprite() override { return "luz_golem"; }
 
     void dibuja() override;
+    void dibujaEnBatalla() override;
 };

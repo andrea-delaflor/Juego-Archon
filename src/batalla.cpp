@@ -1,6 +1,7 @@
 #include "batalla.h"
 #include "glut.h" 
 #include "ProyectilHijos.h"
+#include "Interaccion.h"
 #include <iostream>
 #include <cstdlib> // Necesario para rand()
 
@@ -12,8 +13,12 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
     perdedor = nullptr;
     l1 = nullptr;
     l2 = nullptr;
-    hp1 = 100;
-    hp2 = 100;
+    hp1 = 0;
+    hp2 = 0;
+
+
+    temporizadorObstaculos = 0.0f;
+    arenaConObstaculos = false;
 
     //  Rellenamos nuestra lista de arenas con imágenes de prueba
     // Tienen que estar en la carpeta bin/imagenes
@@ -27,16 +32,21 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
 }
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
-void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena) {
+void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ventajaRecibida) {
     l1 = atacante;
     l2 = defensor;
+    ventaja = ventajaRecibida;
 
     terminado = false;
     empate = false;
     ganador = nullptr;
     perdedor = nullptr;
-    hp1 = 100;
-    hp2 = 100;
+
+    std::cout << "Iniciando batalla. Ventaja tipo: " << ventaja << std::endl;
+
+    // Sincronizamos los HP con la vida real de la pieza (clase Vida)
+    hp1 = l1->obtenerVida();
+    hp2 = l2->obtenerVida();
 
     pos1 = Vector2D(-4, 0);
     pos2 = Vector2D(4, 0);
@@ -91,60 +101,99 @@ void Batalla::dibuja() {
     fondoArena.draw();
     glDisable(GL_TEXTURE_2D);
 
+  
+    //  JUGADOR 1
     if (l1 != nullptr) {
+        //vamos a forzar la posicionVisual para que coincida sprite con hitbox:
+        Vector2D backup1 = l1->obtenerPosicionVisual();
+        l1->forzarPosicionVisual(Vector2D(0, 0));
+
         glPushMatrix();
-        //Calculamos el offset exacto que hace la pieza al dibujarse
-        float offsetX_l1 = l1->obtenerPosicion().x - 4.0f;
-        float offsetY_l1 = 4.0f - l1->obtenerPosicion().y;
-        // Le restamos ese offset a nuestra posición de batalla para que cuadre perfecto
-        glTranslatef(pos1.x - offsetX_l1, pos1.y - offsetY_l1, 0);
-        //hacemos la pieza un poco mas grande
-        glScalef(2.0f, 2.0f, 1.5f);
-        l1->dibuja();
+        glTranslatef(pos1.x, pos1.y, 0);
+        glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
+
+        // dibuja la pieza + el arma
+        l1->dibujaEnBatalla();
         glPopMatrix();
+
+        l1->forzarPosicionVisual(backup1);
+
+        // Dibujamos corazones vida
+        l1->dibujaCorazones(-9.0f, 8.5f, 1.5f);
     }
 
+    //JUGADOR 2
     if (l2 != nullptr) {
+        Vector2D backup2 = l2->obtenerPosicionVisual();
+        l2->forzarPosicionVisual(Vector2D(0, 0));
+
         glPushMatrix();
-        // Hacemos exactamente lo mismo para el defensor
-        float offsetX_l2 = l2->obtenerPosicion().x - 4.0f;
-        float offsetY_l2 = 4.0f - l2->obtenerPosicion().y;
-        glTranslatef(pos2.x - offsetX_l2, pos2.y - offsetY_l2, 0);
-        //hacemos la pieza un poco mas grande
-        glScalef(2.0f, 2.0f, 1.5f);
-        l2->dibuja();
+        glTranslatef(pos2.x, pos2.y, 0);
+        glScalef(2.0f, 2.0f, 1.0f);
+
+        l2->dibujaEnBatalla();
         glPopMatrix();
+
+        l2->forzarPosicionVisual(backup2);
+
+        l2->dibujaCorazones(8.0f, 8.5f, 1.5f);
     }
+    
+    for (auto p : proyectiles) p->dibuja();
+    for (auto o : obstaculos)  o->dibuja();
 
     
-    for (auto p : proyectiles) {
-        p->dibuja();
-    }
-
-    //  Dibujar los obstáculos cayendo
-    for (auto o : obstaculos) {
-        o->dibuja();
-    }
 }
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+    if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
+    if (l2) l2->actualizarEscudo(dt);
+
+    //LÓGICA DE PROYECTILES
+    //GESTIÓN DE PROYECTILES
     for (auto it = proyectiles.begin(); it != proyectiles.end(); ) {
         (*it)->mueve(dt);
-
         bool impactado = false;
-        // Colisión simple por distancia
+
         if ((*it)->esDeJugador1()) {
-            if (((*it)->getPos() - pos2).modulo() < 1.2f) { // Choca con rival
-                hp2 -= (*it)->getDanio();
+            Vector2D dist = (*it)->getPos() - pos2;
+            // comprobar si hay escudo en J2
+            if (l2 && l2->tieneEscudoActivo() && dist.modulo() < 1.5f) {
+                impactado = true;
+            }
+            // si no hay escudo entra aqui
+            else if (dist.modulo() < 1.5f) {
+                float factor = 1.0f;
+                
+                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
+                    factor = 0.5f;
+                }
+                
+                l2->getVida().damage((*it)->getDanio() * factor);
+                hp2 = l2->getVida().getActual();
                 impactado = true;
             }
         }
         else {
-            if (((*it)->getPos() - pos1).modulo() < 1.2f) { // Choca con rival
-                hp1 -= (*it)->getDanio();
+            Vector2D dist = (*it)->getPos() - pos1;
+            // comprobar si J1 tiene escudo
+            if (l1 && l1->tieneEscudoActivo() && dist.modulo() < 1.5f) {
+                impactado = true;
+            }
+            else if (dist.modulo() < 1.5f) {
+                float factor = 1.0f;
+                // Si la arena es LUZ (1) y el defensor es LUZ, recibe menos daño
+                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) {
+                    factor = 0.5f;
+                }
+
+                l1->getVida().damage((*it)->getDanio()*factor);
+                hp1 = l1->getVida().getActual();
                 impactado = true;
             }
         }
@@ -158,65 +207,89 @@ void Batalla::mueve() {
             ++it;
         }
     }
+
     // LÓGICA DE LOS OBSTÁCULOS
-    // 1. Si la arena es de las "peligrosas", generamos nuevos objetos cada cierto tiempo
     if (arenaConObstaculos) {
         temporizadorObstaculos += dt;
-
-        // Cada 2 segundos (aprox) cae un nuevo objeto
         if (temporizadorObstaculos > 2.0f) {
             temporizadorObstaculos = 0.0f;
-
-            // Posición aleatoria arriba de la pantalla (x entre -8 y 8, y = 10)
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
-            Vector2D posObj(xAleatorio, 10.0f); 
+            Vector2D posObj(xAleatorio, 10.0f);
+            Vector2D velObj(0.0f, -3.0f);
+            //TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
+            //obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
 
-            // Caen hacia abajo a velocidad 3
-            Vector2D velObj(0.0f, -3.0f);// velocidad de caida 
-
-            // Elegimos un tipo al azar (0, 1 o 2)
-            TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
-
-            obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+            obstaculos.push_back(new Obstaculo(posObj, velObj, TipoObstaculo::DANO));
         }
     }
 
-    // 2. Mover obstáculos y comprobar colisiones
+    // 2. COLISIÓN DE OBSTÁCULOS
     for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
         (*it)->mueve(dt);
-
         bool borrar = false;
 
-        // Comprobar colisión con el atacante (L1)
-        if ((*it)->colisionaCon(pos1)) {
-            std::cout << "¡El Jugador L1 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
-            // Aquí en el futuro le sumaremos/restaremos vida
+        Vector2D distL1 = (*it)->getPos() - pos1;
+        Vector2D distL2 = (*it)->getPos() - pos2;
+
+        // Comprobar Jugador 1
+        if (distL1.modulo() < 1.5f) {
+            // Solo hace daño si NO tiene el escudo activo
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo()) {
+                float factorObs = 1.0f;
+                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) {
+                    factorObs = 0.5f; // Resistencia a obstáculos
+				}
+                
+                l1->getVida().damage(10*factorObs);
+                hp1 = l1->getVida().getActual();
+            }
             borrar = true;
         }
-        // Comprobar colisión con el defensor (L2)
-        else if ((*it)->colisionaCon(pos2)) {
-            std::cout << "¡El Jugador L2 ha tocado un objeto tipo " << (int)(*it)->getTipo() << "!" << std::endl;
-            // Aquí en el futuro le sumaremos/restaremos vida
+
+        // Comprobar Jugador 2     
+        else if (distL2.modulo() < 1.5f) {
+            // Solo hace daño si NO tiene el escudo activo
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo()) {
+                float factorObs = 1.0f;
+                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) ||
+                    (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
+                    factorObs = 0.5f;
+                }
+                
+                l2->getVida().damage(10*factorObs);
+                hp2 = l2->getVida().getActual();
+            }
             borrar = true;
         }
-        // Comprobar si la bola se ha caído fuera de la pantalla por abajo
+
         else if ((*it)->getPos().y < -12.0f) {
             borrar = true;
         }
 
-        // Si ha chocado o se ha salido, lo borramos de la memoria
         if (borrar) {
             delete* it;
             it = obstaculos.erase(it);
         }
         else {
-            ++it; // Si no, pasamos a comprobar la siguiente bola
+            ++it;
         }
     }
 
-    // Comprobar fin de batalla
-    if (hp1 <= 0) { terminado = true; ganador = l2; perdedor = l1; }
-    else if (hp2 <= 0) { terminado = true; ganador = l1; perdedor = l2; }
+    //  DAÑO POR CONTACTO DEL ESCUDO 
+    
+    if (l1 && l2 && l1->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos2, pos1)) {
+        l2->getVida().damage(0.8f); // Daño aumentado para que se note
+        hp2 = l2->getVida().getActual();
+    }
+    if (l2 && l1 && l2->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos1, pos2)) {
+        l1->getVida().damage(0.8f);
+        hp1 = l1->getVida().getActual();
+    }
+
+    //CONDICIÓN DE VICTORIA
+    if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; }
+    else if (l2->getVida().muerto()) { terminado = true; ganador = l1; perdedor = l2; }
 }
 
 
@@ -225,7 +298,7 @@ void Batalla::mueve() {
 void Batalla::tecla(unsigned char key) {
     float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
 
-    // JUGADOR 2
+    // JUGADOR 1
     if (key == 'w' || key == 'W') pos1.y += vel;
     if (key == 's' || key == 'S') pos1.y -= vel;
     if (key == 'a' || key == 'A') pos1.x -= vel;
@@ -242,13 +315,32 @@ void Batalla::tecla(unsigned char key) {
     if (pos1.y > 9.5f) pos1.y = 9.5f;
     if (pos1.y < -9.5f) pos1.y = -9.5f;
 
+    // Para el Jugador 1
+    if ((key == 't' || key == 'T') && l1) {                       //vamos a utilizar las mismas teclas para activar los poderes, asi es mas facil de jugar
+        if (l1->obtenerArma() == TipoArma::ESCUDO) {
+            l1->activarEscudo();
+        }
+        else {
+            l1->iniciarAnimacion(); // Esto es para el Golem y su llave
+        }
+    }
+
+    // Para el Jugador 2
+    if ((key == 'y' || key == 'Y') && l2) {
+        if (l2->obtenerArma() == TipoArma::ESCUDO) {
+            l2->activarEscudo();
+        }
+        else {
+            l2->iniciarAnimacion(); // Esto es para el Troll y su código
+        }
+    }
 
 }
 
 void Batalla::teclaEspecial(int key) {
     float vel = 0.5f;
 
-    // JUGADOR 1
+    // JUGADOR 2
     if (key == GLUT_KEY_UP)    pos2.y += vel;
     if (key == GLUT_KEY_DOWN)  pos2.y -= vel;
     if (key == GLUT_KEY_LEFT)  pos2.x -= vel;
@@ -264,13 +356,37 @@ void Batalla::teclaEspecial(int key) {
 void Batalla::generarDisparo(bool esJugador1) {
     Pieza* p = esJugador1 ? l1 : l2;
     Vector2D posDisparo = esJugador1 ? pos1 : pos2;
+    /*
+    Vector2D posPieza = esJugador1 ? pos1 : pos2;
+    float offsetX = -2.0f;
+    float offsetY = 3.75f;
+    Vector2D posDisparo = posPieza + Vector2D(offsetX, offsetY);
+    */
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
-    Vector2D vel = esJugador1 ? Vector2D(8, 0) : Vector2D(-8, 0);
+    Vector2D vel = esJugador1 ? Vector2D(10, 0) : Vector2D(-10, 0);
 
-    if (p->obtenerArma() == TipoArma::FLECHA) {
+    switch (p->obtenerArma()) {
+    case TipoArma::PELOTAFUTBOL: // Arquera
         proyectiles.push_back(new PelotaFutbol(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
-    }
-    else if (p->obtenerArma() == TipoArma::BOLA_DE_FUEGO) {
+        break;
+
+    case TipoArma::BOLA_DE_FUEGO: // Dragón
         proyectiles.push_back(new BolaFuego(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_LASER: // Djinni (Láser)
+        proyectiles.push_back(new RayoLaser(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::RAYO_NUMERICO: // Basilisco (Cálculo)
+        proyectiles.push_back(new RayoNumerico(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    case TipoArma::ACTAS: // Mago y Bruja (Actas)
+        proyectiles.push_back(new Acta(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        break;
+
+    default:
+        break;
     }
 }
