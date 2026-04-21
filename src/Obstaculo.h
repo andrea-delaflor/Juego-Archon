@@ -2,8 +2,8 @@
 #include "Vector2D.h"
 #include "Pieza.h"
 
-// Los 3 tipos de objetos que pueden caer
-enum class TipoObstaculo { DANO, VELOCIDAD, CONGELACION };
+// Los 4 tipos de objetos que pueden caer
+enum class TipoObstaculo { DANO, VELOCIDAD, CONGELACION, AUMENTO_DANO};
 
 class Obstaculo {
 public:

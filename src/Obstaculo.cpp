@@ -12,12 +12,16 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
         spriteObs.setCenter(0.4f, 0.9f); // El centro es siempre la MITAD del ancho y la MITAD del alto
     }
     else if (tipo == TipoObstaculo::VELOCIDAD) {
-       // spriteObs = ETSIDI::Sprite("imagenes/rayo.png", 0, 0, 1.5f, 1.5f);
-        //spriteObs.setCenter(0.75f, 0.75f);
+        spriteObs = ETSIDI::Sprite("imagenes/rayo.png", 0, 0, 1.5f, 1.5f);
+       spriteObs.setCenter(0.75f, 0.75f);
     }
     else if (tipo == TipoObstaculo::CONGELACION) {
-      //  spriteObs = ETSIDI::Sprite("imagenes/hielo.png", 0, 0, 1.5f, 1.5f);
-        //spriteObs.setCenter(0.75f, 0.75f);
+        spriteObs = ETSIDI::Sprite("imagenes/armas/laser.png", 0, 0, 1.5f, 1.5f);
+        spriteObs.setCenter(0.75f, 0.75f);
+    }
+    else if (tipo == TipoObstaculo::AUMENTO_DANO) {
+        spriteObs = ETSIDI::Sprite("imagenes/armas/rayolaser.png", 0, 0, 1.5f, 1.5f);
+        spriteObs.setCenter(0.75f, 0.75f);
     }
 
     
