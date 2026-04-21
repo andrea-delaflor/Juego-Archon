@@ -33,6 +33,7 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
 void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ventajaRecibida) {
+   
     l1 = atacante;
     l2 = defensor;
     ventaja = ventajaRecibida;
@@ -43,6 +44,12 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
     perdedor = nullptr;
 
     std::cout << "Iniciando batalla. Ventaja tipo: " << ventaja << std::endl;
+
+    //resetear los poderes cada vez que empieza una pelea
+    velJ1 = 0.5f; velJ2 = 0.5f;
+    invulnerableJ1 = false; invulnerableJ2 = false;
+    multDanoJ1 = 1.0f; multDanoJ2 = 1.0f;
+    temporizadorBonusJ1 = 0.0f; temporizadorBonusJ2 = 0.0f;
 
     // Sincronizamos los HP con la vida real de la pieza (clase Vida)
     hp1 = l1->obtenerVida();
@@ -173,8 +180,10 @@ void Batalla::mueve() {
                     factor = 0.5f;
                 }
                 
-                l2->getVida().damage((*it)->getDanio() * factor);
-                hp2 = l2->getVida().getActual();
+                if (!invulnerableJ2) {
+                    l2->getVida().damage((*it)->getDanio() * factor * multDanoJ1);
+                    hp2 = l2->getVida().getActual();
+                }
                 impactado = true;
             }
         }
@@ -192,8 +201,10 @@ void Batalla::mueve() {
                     factor = 0.5f;
                 }
 
-                l1->getVida().damage((*it)->getDanio()*factor);
-                hp1 = l1->getVida().getActual();
+                if (!invulnerableJ1) {
+                    l1->getVida().damage((*it)->getDanio() * factor * multDanoJ2);
+                    hp1 = l1->getVida().getActual();
+                }
                 impactado = true;
             }
         }
@@ -216,11 +227,27 @@ void Batalla::mueve() {
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
             Vector2D posObj(xAleatorio, 10.0f);
             Vector2D velObj(0.0f, -3.0f);
+
+            TipoObstaculo tipoObj;
+            if (indiceArenaActual == 0) tipoObj = TipoObstaculo::DANO; // Casilla Blanca -> Velas
+            else if (indiceArenaActual == 1) tipoObj = TipoObstaculo::VELOCIDAD; // Casilla Negra -> Rayo
+            else if (indiceArenaActual == 2) tipoObj = TipoObstaculo::CONGELACION; // Variable -> Hielo
+            else tipoObj = TipoObstaculo::AUMENTO_DANO; // Punto Poder -> Nube
             //TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
             //obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
 
-            obstaculos.push_back(new Obstaculo(posObj, velObj, TipoObstaculo::DANO));
+            obstaculos.push_back(new Obstaculo(posObj, velObj, tipoObj));
+           
         }
+    }
+    // GESTIÓN DE TIEMPOS DE LOS BONUS (Duran 5 segundos)
+    if (temporizadorBonusJ1 > 0) {
+        temporizadorBonusJ1 -= dt;
+        if (temporizadorBonusJ1 <= 0) { velJ1 = 0.5f; invulnerableJ1 = false; multDanoJ1 = 1.0f; }
+    }
+    if (temporizadorBonusJ2 > 0) {
+        temporizadorBonusJ2 -= dt;
+        if (temporizadorBonusJ2 <= 0) { velJ2 = 0.5f; invulnerableJ2 = false; multDanoJ2 = 1.0f; }
     }
 
     // 2. COLISIÓN DE OBSTÁCULOS
@@ -233,47 +260,34 @@ void Batalla::mueve() {
 
         // Comprobar Jugador 1
         if (distL1.modulo() < 1.5f) {
-            // Solo hace daño si NO tiene el escudo activo
-            if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo()) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo() && !invulnerableJ1) {
                 float factorObs = 1.0f;
-                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) ||
-                    (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) {
-                    factorObs = 0.5f; // Resistencia a obstáculos
-				}
-                
-                l1->getVida().damage(10*factorObs);
+                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) || (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) factorObs = 0.5f;
+                l1->getVida().damage(10 * factorObs);
                 hp1 = l1->getVida().getActual();
             }
+            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) { velJ1 = 1.0f; temporizadorBonusJ1 = 5.0f; }
+            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) { invulnerableJ1 = true; temporizadorBonusJ1 = 5.0f; }
+            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) { multDanoJ1 = 2.0f; temporizadorBonusJ1 = 5.0f; }
             borrar = true;
         }
-
-        // Comprobar Jugador 2     
+        // Comprobar Jugador 2
         else if (distL2.modulo() < 1.5f) {
-            // Solo hace daño si NO tiene el escudo activo
-            if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo()) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo() && !invulnerableJ2) {
                 float factorObs = 1.0f;
-                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) ||
-                    (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
-                    factorObs = 0.5f;
-                }
-                
-                l2->getVida().damage(10*factorObs);
+                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) || (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) factorObs = 0.5f;
+                l2->getVida().damage(10 * factorObs);
                 hp2 = l2->getVida().getActual();
             }
+            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) { velJ2 = 1.0f; temporizadorBonusJ2 = 5.0f; }
+            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) { invulnerableJ2 = true; temporizadorBonusJ2 = 5.0f; }
+            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) { multDanoJ2 = 2.0f; temporizadorBonusJ2 = 5.0f; }
             borrar = true;
         }
+        else if ((*it)->getPos().y < -12.0f) borrar = true;
 
-        else if ((*it)->getPos().y < -12.0f) {
-            borrar = true;
-        }
-
-        if (borrar) {
-            delete* it;
-            it = obstaculos.erase(it);
-        }
-        else {
-            ++it;
-        }
+        if (borrar) { delete* it; it = obstaculos.erase(it); }
+        else ++it;
     }
 
     //  DAÑO POR CONTACTO DEL ESCUDO 
@@ -296,13 +310,13 @@ void Batalla::mueve() {
 
 
 void Batalla::tecla(unsigned char key) {
-    float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
+   // float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
 
     // JUGADOR 1
-    if (key == 'w' || key == 'W') pos1.y += vel;
-    if (key == 's' || key == 'S') pos1.y -= vel;
-    if (key == 'a' || key == 'A') pos1.x -= vel;
-    if (key == 'd' || key == 'D') pos1.x += vel;
+    if (key == 'w' || key == 'W') pos1.y += velJ1;
+    if (key == 's' || key == 'S') pos1.y -= velJ1;
+    if (key == 'a' || key == 'A') pos1.x -= velJ1;
+    if (key == 'd' || key == 'D') pos1.x += velJ1;
 
     // Disparos y Controles
     if (key == ' ') generarDisparo(true);  //pulsando espacio jugador 1 usa su poder
@@ -338,13 +352,13 @@ void Batalla::tecla(unsigned char key) {
 }
 
 void Batalla::teclaEspecial(int key) {
-    float vel = 0.5f;
+    //float vel = 0.5f;
 
-    // JUGADOR 2
-    if (key == GLUT_KEY_UP)    pos2.y += vel;
-    if (key == GLUT_KEY_DOWN)  pos2.y -= vel;
-    if (key == GLUT_KEY_LEFT)  pos2.x -= vel;
-    if (key == GLUT_KEY_RIGHT) pos2.x += vel;
+   // JUGADOR 2
+    if (key == GLUT_KEY_UP)    pos2.y += velJ2;
+    if (key == GLUT_KEY_DOWN)  pos2.y -= velJ2;
+    if (key == GLUT_KEY_LEFT)  pos2.x -= velJ2;
+    if (key == GLUT_KEY_RIGHT) pos2.x += velJ2;
 
     // Límites de la pantalla 
     if (pos2.x > 9.5f) pos2.x = 9.5f;
