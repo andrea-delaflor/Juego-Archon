@@ -30,7 +30,7 @@ private:
     Vector2D pos1;
     Vector2D pos2;
 
-    int hp1;
+	int hp1; 
     int hp2;
 
     bool terminado;

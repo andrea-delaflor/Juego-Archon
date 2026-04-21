@@ -139,16 +139,7 @@ void Batalla::dibuja() {
     for (auto p : proyectiles) p->dibuja();
     for (auto o : obstaculos)  o->dibuja();
 
-    /*
-    for (auto p : proyectiles) {
-        p->dibuja();
-    }
-
-    //  Dibujar los obstáculos cayendo
-    for (auto o : obstaculos) {
-        o->dibuja();
-    }
-    */
+    
 }
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
