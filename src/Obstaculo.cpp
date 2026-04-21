@@ -19,6 +19,10 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
       //  spriteObs = ETSIDI::Sprite("imagenes/hielo.png", 0, 0, 1.5f, 1.5f);
         //spriteObs.setCenter(0.75f, 0.75f);
     }
+    else if (tipo == TipoObstaculo::AUMENTO_DANO) {
+       // spriteObs = ETSIDI::Sprite("imagenes/nube.png", 0, 0, 1.5f, 1.5f);
+       // spriteObs.setCenter(0.75f, 0.75f);
+    }
 
     
     
