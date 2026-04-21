@@ -221,6 +221,13 @@ void Coordinador::tecla(unsigned char key) {
 
 
 void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
+    //Aqui vamos a calcular las coordenadas de OpenGL y asi como usamos switch no hay que añadir{}
+    int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
+    int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
+    float mouseX = ((float)x / (float)anchoVentana) * 20.0f - 10.0f;
+    float mouseY = ((1.0f - (float)y / (float)altoVentana)) * 20.0f - 10.0f;
+
+
     switch (estado) {
     case INICIO:
         if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
@@ -228,6 +235,27 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
         }
         break;
     case MENU:
+        if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
+
+            //esto es el rango para el "boton" de 1 jugador
+            if (mouseX >= -5.5f && mouseX <= -0.6f && mouseY >= -4.45f && mouseY <= 0.125f) {
+                modoUnJugador = true;
+                estado = JUEGO;
+                mundo.inicializa(estado);
+            }
+            //esto es el rango para el "boton" de 2 jugadores
+            else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
+                modoUnJugador = false;
+                estado = JUEGO;
+                mundo.inicializa(estado);
+            }
+            // --- BOTÓN INSTRUCCIONES ---
+            else if (mouseX >= -2.175f && mouseX <= 2.125f && mouseY >= -7.2f && mouseY <= -4.825f) {
+                // hay que añadir esto.....
+                //estado = INSTRUCCIONES;
+                //fondo = ETSIDI::Sprite("imagenes/.png", 0, 0, 20, 20);
+            }
+        }
         break;
     case JUEGO:
         mundo.clickRaton(boton, estadoR, x, y);
