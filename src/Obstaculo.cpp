@@ -45,5 +45,5 @@ bool Obstaculo::colisionaCon(Vector2D posJugador) const {
 
     // ARREGLO: Subimos el rango a 2.5f para compensar el glScalef de los personajes.
     // Si sigue costando cogerlas, puedes subir este número a 3.0f
-    return dist.modulo() < (radio + 2.5f);
+    return dist.modulo() < (radio + 1.0f);
 }
