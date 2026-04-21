@@ -8,11 +8,17 @@
 #include <list>
 #include "Obstaculo.h"
 
+// Ventaja de la arena: dependiendo del tipo de casillas que haya, un bando u otro tendrá ventaja en el combate. 
+enum class Ventaja { NEUTRAL, LUZ, OSCURIDAD };
+
+
+
+
 class Batalla {
 public:
     Batalla();
 
-    void inicializa(Pieza* atacante, Pieza* defensor, int tipoArena);
+    void inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ventaja);
     void dibuja();
     void mueve();
     void tecla(unsigned char key);
@@ -26,6 +32,7 @@ public:
 private:
     Pieza* l1;
     Pieza* l2;
+    int ventaja; // 0: Neutral, 1: Alumnos(Luz), 2: Profes(Oscuridad), 3: PowerPoint
 
     Vector2D pos1;
     Vector2D pos2;

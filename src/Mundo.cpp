@@ -28,7 +28,7 @@ void Mundo::actualizarVidaPiezas() {
         for (int j = 0; j < 9; j++) {
             Pieza* p = tablero.obtenerOcupante(i, j);
             if (p != nullptr) {
-                // Usamos tu clase Vida.h
+                // Usamos clase Vida.h
                 if (tablero.esPowerPoint(i, j)) {
                     // Curación rápida en puntos de poder (ej. medio corazón)
                     p->getVida().heal(10);
