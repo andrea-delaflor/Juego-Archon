@@ -56,4 +56,10 @@ private:
     std::list<Obstaculo*> obstaculos; // Lista donde guardaremos los que van cayendo
     bool arenaConObstaculos;          // ¿Tiene o no tiene trampas esta arena?
     float temporizadorObstaculos;     // Reloj para saber cuándo tirar el siguiente objeto
+
+    // Variables para controlar los Bonus
+    float velJ1, velJ2;
+    bool invulnerableJ1, invulnerableJ2;
+    float multDanoJ1, multDanoJ2;
+    float temporizadorBonusJ1, temporizadorBonusJ2;
 };
