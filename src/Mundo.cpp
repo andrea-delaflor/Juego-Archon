@@ -253,12 +253,82 @@ void Mundo::dibuja(int estado) {
 
         raton.dibuja();
 
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor3ub(255, 255, 255);
-        for (auto p : piezasLuz) p->dibuja();
-        for (auto p : piezasOscuridad) p->dibuja();
+        {
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glColor3ub(255, 255, 255);
+            for (auto p : piezasLuz) p->dibuja();
+            for (auto p : piezasOscuridad) p->dibuja();
+
+            //  CÁRCEL MÁGICA PARA PIEZAS ENCARCELADAS 
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_LIGHTING);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // Hacemos que la cárcel parpadee un poco
+            float tiempoCarcel = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+            float parpadeo = (sin(tiempoCarcel * 5.0f) + 1.0f) / 2.0f; // Va de 0 a 1
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    Pieza* p = tablero.obtenerOcupante(i, j);
+                    // Si hay una pieza y está encarcelada, le dibujamos la jaula
+                    if (p != nullptr && p->estaEncarcelada()) {
+
+                        // Calculamos dónde está la pieza en coordenadas de pantalla
+                        float x_gl = (float)i - 4.0f;
+                        float y_gl = 4.0f - (float)j;
+
+                        glPushMatrix();
+                        glTranslatef(x_gl, y_gl, 0.0f);
+
+                        // 1. DIBUJAR LOS BARROTES MÁGICOS (Color Morado Neón)
+                        glLineWidth(3.0f);
+                        glColor4f(0.8f, 0.1f, 1.0f, 0.5f + parpadeo * 0.5f); // Morado que palpita
+
+                        glBegin(GL_LINES);
+                        // Barrotes verticales
+                        for (float bx = -0.4f; bx <= 0.4f; bx += 0.2f) {
+                            glVertex2f(bx, -0.45f);
+                            glVertex2f(bx, 0.45f);
+                        }
+                        // Dos barrotes horizontales para asegurar la jaula
+                        glVertex2f(-0.45f, 0.3f);
+                        glVertex2f(0.45f, 0.3f);
+                        glVertex2f(-0.45f, -0.3f);
+                        glVertex2f(0.45f, -0.3f);
+                        glEnd();
+
+                        // 2. DIBUJAR MARCO DE LA JAULA
+                        glLineWidth(5.0f);
+                        glBegin(GL_LINE_LOOP);
+                        glVertex2f(-0.45f, -0.45f);
+                        glVertex2f(0.45f, -0.45f);
+                        glVertex2f(0.45f, 0.45f);
+                        glVertex2f(-0.45f, 0.45f);
+                        glEnd();
+
+                        // 3. DIBUJAR UNA GRAN 'X' ROJA EN EL CENTRO (Para que se entienda que está bloqueada)
+                        glColor4f(1.0f, 0.0f, 0.0f, 0.8f); // Rojo intenso
+                        glBegin(GL_LINES);
+                        glVertex2f(-0.3f, -0.3f);
+                        glVertex2f(0.3f, 0.3f);
+                        glVertex2f(-0.3f, 0.3f);
+                        glVertex2f(0.3f, -0.3f);
+                        glEnd();
+
+                        glPopMatrix();
+                    }
+                }
+            }
+
+            // Restaurar opciones de dibujado
+            glLineWidth(1.0f);
+            glEnable(GL_TEXTURE_2D);
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        }
          
         // LÓGICA PARA INFO VIDA PIEZAS CON CURSOR RATÓN
         {
