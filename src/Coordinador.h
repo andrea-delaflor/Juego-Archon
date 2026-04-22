@@ -5,11 +5,12 @@
 
 class Coordinador {
 public:
-    enum Estado { INICIO, MENU, JUEGO, PAUSA, BATALLA, VICTORIA_ALUMNOS, VICTORIA_PROFESORES };
+    enum Estado { INICIO, MENU, INSTRUCCIONES, JUEGO, PAUSA, BATALLA, VICTORIA_ALUMNOS, VICTORIA_PROFESORES };
 
 private:
     Estado estado;
     Estado estadoAnterior; //necesitamos esto para despues de la pausa volver al estado en el que estabamos
+    int paginaInstrucciones = 1; //esto lo añado poruq en Intrucciones quiero dos hojas
     Mundo mundo;
     Batalla batalla;
     ETSIDI::Sprite fondo;

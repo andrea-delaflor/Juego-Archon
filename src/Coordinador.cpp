@@ -62,6 +62,27 @@ void Coordinador::dibuja()
         mundo.dibuja(estado);
         break;
 
+    case INSTRUCCIONES:
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // Dibujamos la página actual
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        fondo.draw();
+        glDisable(GL_TEXTURE_2D);
+
+        //Imprimimos este texto para indicar al usuario como moverse por el menu
+        ETSIDI::setTextColor(1, 1, 1);
+        ETSIDI::setFont("fuentes/bitwise.ttf", 20);
+
+        // Lo ponemos un poco más a la izquierda (-8.0) 
+        ETSIDI::printxy("FLECHAS <- -> PASAR PAGINA  |  ESC PARA SALIR", -8.0f, -8.0f);
+
+        break;
     case PAUSA:
         //esto lo vamos a poner para que cuando estemos en JUEGO ponga el fondo del tablero y en BATALLA el de la pelea
         if (estadoAnterior == JUEGO) {
@@ -181,7 +202,13 @@ void Coordinador::tecla(unsigned char key) {
             mundo.inicializa(estado);
         }
         break;
-
+    case INSTRUCCIONES:
+        // El código ASCII de la tecla ESC es 27
+        if (key == 27) {
+            estado = MENU;
+            fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
+        }
+        break;
     case JUEGO:
         mundo.teclahechizos(key);
        
@@ -240,20 +267,23 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
             //esto es el rango para el "boton" de 1 jugador
             if (mouseX >= -5.5f && mouseX <= -0.6f && mouseY >= -4.45f && mouseY <= 0.125f) {
                 modoUnJugador = true;
+                std::cout << "se ha seleccionado modo 1 jugador" << std::endl;
                 estado = JUEGO;
                 mundo.inicializa(estado);
             }
             //esto es el rango para el "boton" de 2 jugadores
             else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
                 modoUnJugador = false;
+                std::cout << "se ha seleccionado modo 2 jugador" << std::endl;
                 estado = JUEGO;
                 mundo.inicializa(estado);
             }
             // --- BOTÓN INSTRUCCIONES ---
             else if (mouseX >= -2.175f && mouseX <= 2.125f && mouseY >= -7.2f && mouseY <= -4.825f) {
-                // hay que añadir esto.....
-                //estado = INSTRUCCIONES;
-                //fondo = ETSIDI::Sprite("imagenes/.png", 0, 0, 20, 20);
+                std::cout << "Entrando al Grimorio........ " << std::endl;
+                estado = INSTRUCCIONES;
+                paginaInstrucciones = 1; //lo ponemos a 1 para no empezar en la hoja 2
+                fondo = ETSIDI::Sprite("imagenes/Instrucciones.png", 0, 0, 20, 20);
             }
         }
         break;
@@ -399,5 +429,19 @@ void Coordinador::teclaEspecial(int key) {
     // Las flechas solo hacen algo si estamos en la pantalla de batalla
     if (estado == BATALLA) {
         batalla.teclaEspecial(key);
+    }
+    //añadimos esto para movernos entre las hojas de instrucciones
+    else if (estado == INSTRUCCIONES) {
+
+        // Si pulsamos DERECHA y estamos en la hoja 1, pasamos a la hoja 2
+        if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
+            paginaInstrucciones = 2;
+            fondo = ETSIDI::Sprite("imagenes/Bestiario2.png", 0, 0, 20, 20);
+        }
+        // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
+        else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
+            paginaInstrucciones = 1;
+            fondo = ETSIDI::Sprite("imagenes/Instrucciones.png", 0, 0, 20, 20);
+        }
     }
 }
