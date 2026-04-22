@@ -252,6 +252,7 @@ void Mundo::dibuja(int estado) {
 
 
         raton.dibuja();
+        // DIBUJO DE PIEZAS Y CÁRCEL
 
         {
             glEnable(GL_TEXTURE_2D);
@@ -330,6 +331,67 @@ void Mundo::dibuja(int estado) {
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         }
          
+        // LÓGICA DE INTERFAZ DE HECHIZOS (NUEVO BLOQUE)
+        if (modoMagiaActivo) {
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_LIGHTING);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // PANEL FONDO: Lo hacemos más ancho (de 1.5 a 5.9) 
+            // y más alto (de -5.8 a 1.0)
+            glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
+            glBegin(GL_QUADS);
+            glVertex2f(1.5f, -5.8f);
+            glVertex2f(5.9f, -5.8f);
+            glVertex2f(5.9f, 1.0f);
+            glVertex2f(1.5f, 1.0f);
+            glEnd();
+
+            // TÍTULO: Un poco más arriba
+            ETSIDI::setTextColor(1, 1, 0);
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 18);
+            ETSIDI::printxy("GRIMORIO", 2.0f, 0.4f);
+
+            std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
+
+            // LISTA DE HECHIZOS: Aumentamos el salto de línea a 0.7f
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 12);
+            for (int i = 0; i < (int)libro.size(); i++) {
+                // Aumentamos la separación multiplicando por 0.7f en lugar de 0.5f o 0.6f
+                float yPos = -0.3f - (i * 0.7f);
+
+                if (libro[i]->estaUsado()) {
+                    ETSIDI::setTextColor(0.5f, 0.5f, 0.5f);
+                }
+                else {
+                    ETSIDI::setTextColor(1, 1, 1);
+                }
+
+                std::string texto = std::to_string(i + 1) + ". " + libro[i]->getNombre();
+                // Lo pegamos un poco más a la izquierda del panel (2.0f)
+                ETSIDI::printxy(texto.c_str(), 2.0f, yPos);
+            }
+
+            // PIE DE MENÚ
+            ETSIDI::setTextColor(1, 1, 1);
+            ETSIDI::printxy("PULSA 1 - 7", 3.0f, -5.4f);
+
+            glEnable(GL_TEXTURE_2D);
+        }
+
+        // INDICADOR DE HECHIZO SELECCIONADO (NUEVO BLOQUE)
+        if (hechizoSeleccionado != nullptr) {
+            glDisable(GL_TEXTURE_2D);
+            ETSIDI::setTextColor(0, 1, 1); // Cian brillante
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 14);
+
+            // Lo posicionamos un poco alejado del cursor para que no lo tape
+            std::string msg = "USANDO: " + hechizoSeleccionado->getNombre();
+            ETSIDI::printxy(msg.c_str(), raton.posicion.x + 0.3f, raton.posicion.y + 0.3f);
+            glEnable(GL_TEXTURE_2D);
+        }
+
         // LÓGICA PARA INFO VIDA PIEZAS CON CURSOR RATÓN
         {
             Vector2D c = raton.casilla; // Obtenemos la casilla del ratón
@@ -397,6 +459,17 @@ void Mundo::dibuja(int estado) {
                     
                 }
             }
+        }
+
+        if (hechizoSeleccionado != nullptr) {
+            // Dibujar el nombre del hechizo pegado al cursor
+            float rx = raton.posicion.x + 0.2f;
+            float ry = raton.posicion.y + 0.2f;
+
+            ETSIDI::setTextColor(0, 1, 1); // Cian para resaltar
+            ETSIDI::setFont("fuentes/bitwise.ttf", 14);
+            std::string msg = "USANDO: " + hechizoSeleccionado->getNombre();
+            ETSIDI::printxy(msg.c_str(), rx, ry);
         }
 
         break;
