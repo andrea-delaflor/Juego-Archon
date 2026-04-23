@@ -333,49 +333,53 @@ void Mundo::dibuja(int estado) {
          
         // LÓGICA DE INTERFAZ DE HECHIZOS (NUEVO BLOQUE)
         if (modoMagiaActivo) {
+            // 1. Limpieza total de estado para evitar símbolos raros
             glDisable(GL_TEXTURE_2D);
             glDisable(GL_LIGHTING);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            // PANEL FONDO: Lo hacemos más ancho (de 1.5 a 5.9) 
-            // y más alto (de -5.8 a 1.0)
+            // 2. Fondo del Grimorio: CAJA MUCHO MÁS GRANDE
+            // X: De 1.8 hasta 6.0 (el borde de tu pantalla)
+            // Y: De -6.0 hasta 4.0 (damos mucho espacio por arriba)
             glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
             glBegin(GL_QUADS);
-            glVertex2f(1.5f, -5.8f);
-            glVertex2f(5.9f, -5.8f);
-            glVertex2f(5.9f, 1.0f);
-            glVertex2f(1.5f, 1.0f);
+            glVertex2f(1.8f, -6.0f);
+            glVertex2f(6.0f, -6.0f);
+            glVertex2f(6.0f, 4.0f);  // Techo alto para que el título no pise nada
+            glVertex2f(1.8f, 4.0f);
             glEnd();
 
-            // TÍTULO: Un poco más arriba
-            ETSIDI::setTextColor(1, 1, 0);
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 18);
-            ETSIDI::printxy("GRIMORIO", 2.0f, 0.4f);
+            // 3. Título del Menú
+            ETSIDI::setTextColor(1, 1, 0); // Amarillo
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
+            ETSIDI::printxy("GRIMORIO", 2.2f, 3.2f); // Posicionado en la parte superior
 
+            // 4. Listado de Hechizos
             std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 13); // Un pelín más grande para legibilidad
 
-            // LISTA DE HECHIZOS: Aumentamos el salto de línea a 0.7f
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 12);
             for (int i = 0; i < (int)libro.size(); i++) {
-                // Aumentamos la separación multiplicando por 0.7f en lugar de 0.5f o 0.6f
-                float yPos = -0.3f - (i * 0.7f);
+                // AJUSTE DE ESPACIADO:
+                // Empezamos en 2.2f y bajamos 1.1f por cada hechizo.
+                // Esto garantiza que entre cada línea haya espacio de sobra.
+                float yPos = 2.2f - (i * 1.1f);
 
                 if (libro[i]->estaUsado()) {
-                    ETSIDI::setTextColor(0.5f, 0.5f, 0.5f);
+                    ETSIDI::setTextColor(0.5f, 0.5f, 0.5f); // Gris
                 }
                 else {
-                    ETSIDI::setTextColor(1, 1, 1);
+                    ETSIDI::setTextColor(1, 1, 1); // Blanco
                 }
 
                 std::string texto = std::to_string(i + 1) + ". " + libro[i]->getNombre();
-                // Lo pegamos un poco más a la izquierda del panel (2.0f)
-                ETSIDI::printxy(texto.c_str(), 2.0f, yPos);
+                ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
             }
 
-            // PIE DE MENÚ
+            // 5. Instrucción de uso
             ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::printxy("PULSA 1 - 7", 3.0f, -5.4f);
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
+            ETSIDI::printxy("PULSA NUM DEL 1 AL 7", 2.2f, -5.5f);
 
             glEnable(GL_TEXTURE_2D);
         }

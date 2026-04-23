@@ -63,6 +63,7 @@ public:
     float getLuzDeCaptura() const { return luzDeCaptura; }
     Vector2D obtenerPosicionVisual() const { return posicionVisual; }
     bool estaAnimando() const { return animando; }
+    float obtenerVelocidad() const { return velocidad; }
 
     // OBTENER VIDA ÚNICO 
 	//SPARA IMPRIMIR VIDA EN LA PANTALLA, NO PARA GESTIONAR VIDA

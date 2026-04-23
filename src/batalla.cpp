@@ -47,7 +47,8 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
     std::cout << "Iniciando batalla. Ventaja tipo: " << ventaja << std::endl;
 
     //resetear los poderes cada vez que empieza una pelea
-    velJ1 = 0.5f; velJ2 = 0.5f;
+    velJ1 = l1->obtenerVelocidad();
+    velJ2 = l2->obtenerVelocidad();
     invulnerableJ1 = false; invulnerableJ2 = false;
     multDanoJ1 = 1.0f; multDanoJ2 = 1.0f;
     temporizadorBonusJ1 = 0.0f; temporizadorBonusJ2 = 0.0f;
