@@ -177,6 +177,7 @@ void Coordinador::dibuja()
         ETSIDI::setTextColor(1, 1, 1);
         ETSIDI::setFont("fuentes/bitwise.ttf", 20);
         ETSIDI::printxy("PULSA ENTER PARA VOLVER AL MENU", -6.0f, -8.0f);
+
         break;
     }
 }

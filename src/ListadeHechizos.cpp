@@ -186,3 +186,5 @@ void HechizoSummon::aplicar(Mundo* mundo, Vector2D destino) {
         usado = true;
     }
 }
+
+// NADA
