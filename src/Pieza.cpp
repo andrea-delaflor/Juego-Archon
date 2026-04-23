@@ -115,6 +115,14 @@ void Pieza::establecerViva(bool _viva) {
     viva = _viva;
 }
 
+void Pieza::restaurarVidaCompleta() {
+    if (salud != nullptr) {
+        salud->restaurarAlMaximo(); // Ahora Vida se encarga de saber cuál es su máximo
+    }
+    viva = true;
+    encarcelada = false; // Aprovechamos para limpiar estados negativos
+}
+
 /*float Pieza::obtenerBonusCombate(Bando bandoCasilla) {
     if (bandoCasilla == bando) return 1.25f;
     return 0.85f;
