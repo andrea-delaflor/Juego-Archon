@@ -72,7 +72,11 @@ public:
 	
 
     //SISTEMA DE MAGIA
-    bool modoMagiaActivo = false; // Indica si estamos en proceso de lanzar un hechizo
+   //
+    void setModoMagia(bool v) {
+        modoMagiaActivo = v;
+        if (!v) setIndiceSeleccionado(-1); // Limpia el índice al salir
+    }
     Hechizo* hechizoSeleccionado = nullptr; // Guarda qué hechizo se va a aplicar
 
     // Getters y Setters para Hechizos y Revive
@@ -113,6 +117,9 @@ private:
     float valorLuz = 0.5f;
     float angulo = 0.0f;
 	
+
+    bool modoMagiaActivo = false; // Indica si estamos en proceso de lanzar un hechizo
+
     // Listas de piezas vivas
     std::vector<Pieza*> piezasLuz;
     std::vector<Pieza*> piezasOscuridad;

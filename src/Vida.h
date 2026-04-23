@@ -41,4 +41,8 @@ public:
             spriteCorazon.draw();
         }
     }
+
+    void restaurarAlMaximo() {
+        actual = maximo;
+    }
 };

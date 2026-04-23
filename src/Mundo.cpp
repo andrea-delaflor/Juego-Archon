@@ -516,6 +516,8 @@ void Mundo::teclahechizos(unsigned char key) {
               std::cout << "Haz click en el tablero para actuar." << std::endl;
           }
     }
+
+
     
 }
 
@@ -563,6 +565,11 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                 if ((faseActual == TURNO_LUZ && piezaEnCasilla->obtenerBando() == Bando::LUZ) ||
                     (faseActual == TURNO_OSCURIDAD && piezaEnCasilla->obtenerBando() == Bando::OSCURIDAD)) {
 
+                    // Si clicamos una pieza aliada, SIEMPRE reseteamos magia y cambiamos selección
+                    setModoMagia(false);
+                    seleccionada = piezaEnCasilla;
+                    std::cout << "Nueva pieza seleccionada: " << seleccionada->obtenerNombre() << std::endl;
+
                     if (piezaEnCasilla->estaEncarcelada()) {
                         std::cout << "¡ESTA PIEZA ESTA ENCARCELADA! No puede moverse hasta que cambie el ciclo." << std::endl;
                         return; // Importante: salimos para que 'seleccionada' siga siendo nullptr
@@ -581,16 +588,21 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                         std::cout << "7.Summon: invoca una nueva pieza temporalmente en el tablero." << std::endl;
                         modoMagiaActivo = true;
                     }
+                    return;
                 }
+              
+                    
             }
         }
         else {
             std::vector<Vector2D> validos = seleccionada->obtenerMovimientosValidos(&tablero);
             bool esDestinoValido = false;
+           
 
             for (auto& v : validos) {
                 if ((int)v.x == (int)c.x && (int)v.y == (int)c.y) {
                     esDestinoValido = true;
+                    
                     break;
                 }
             }

@@ -95,12 +95,7 @@ public:
         }
     }*/
 
-    void restaurarVidaCompleta() {
-        if (salud != nullptr) {
-            salud->heal(1000); // Cura al máximo
-        }
-        viva = true;
-    }
+    void restaurarVidaCompleta();
 
     void dibujaCorazones(float x, float y, float e) {
         if (salud != nullptr) salud->dibuja(x, y, e);

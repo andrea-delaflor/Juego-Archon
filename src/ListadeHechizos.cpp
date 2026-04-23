@@ -16,6 +16,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
             mundo->seleccionada = piezaEnClick;
             std::cout << "Pieza elegida para Teleport: " << piezaEnClick->obtenerNombre() << std::endl;
             std::cout << "Ahora selecciona el destino vacio." << std::endl;
+            mundo->setModoMagia(false);
             // IMPORTANTE: No ponemos 'usado = true' porque solo hemos seleccionado
             return;
         }
@@ -31,6 +32,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
         tablero.colocarPieza((int)destino.x, (int)destino.y, mundo->seleccionada);
 
         usado = true; // AQUÍ es donde se gasta el hechizo
+        mundo->setModoMagia(false);
         std::cout << "Teletransporte completado." << std::endl;
     }
     else {
@@ -45,6 +47,7 @@ void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
     if (p) {
         p->restaurarVidaCompleta();
         usado = true;
+        mundo->setModoMagia(false);
     }
 }
 
@@ -56,6 +59,7 @@ void HechizoShiftTime::aplicar(Mundo* mundo, Vector2D destino) {
     std::cout << "Hechizo Shift Time aplicado correctamente." << std::endl;
 
     usado = true;
+    mundo->setModoMagia(false);
 }
 
 // 4. EXCHANGE
@@ -72,6 +76,7 @@ void HechizoExchange::aplicar(Mundo* mundo, Vector2D destino) {
         }
         else {
             std::cout << "Haz click sobre una pieza real." << std::endl;
+            mundo->setModoMagia(false);
         }
         return; // Salimos sin marcar 'usado = true' porque falta el segundo click
     }
@@ -90,6 +95,7 @@ void HechizoExchange::aplicar(Mundo* mundo, Vector2D destino) {
         // Limpiamos para el próximo uso y finalizamos
         primeraPieza = nullptr;
         usado = true;
+        mundo->setModoMagia(false);
     }
     else {
         std::cout << "Selecciona una pieza diferente a la primera." << std::endl;
@@ -108,6 +114,7 @@ void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
 
         std::cout << "IMPRISON: " << p->obtenerNombre() << " ha sido neutralizada." << std::endl;
         usado = true;
+        mundo->setModoMagia(false);
     }
     else if (p != nullptr) {
         std::cout << "No puedes encarcelar a tus propios aliados." << std::endl;
@@ -121,21 +128,55 @@ void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
 void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
     bool esLuz = (mundo->faseActual == Mundo::TURNO_LUZ);
-    std::vector<Pieza*>& cementerio = esLuz ? mundo->getCementerioLuz() : mundo->getCementerioOscuridad();
-    int idx = mundo->getIndiceSeleccionado();
+    auto& cementerio = esLuz ? mundo->getCementerioLuz() : mundo->getCementerioOscuridad();
 
-    if (idx >= 0 && idx < (int)cementerio.size()) {
-        Pieza* p = cementerio[idx];
-        cementerio.erase(cementerio.begin() + idx);
-        p->restaurarVidaCompleta();
-        p->establecerPosicion(destino);
-        p->establecerViva(true);
-        tablero.colocarPieza((int)destino.x, (int)destino.y, p);
-        if (esLuz) mundo->getPiezasLuz().push_back(p);
-        else mundo->getPiezasOscuridad().push_back(p);
-        usado = true;
-        mundo->setIndiceSeleccionado(-1);
+    if (cementerio.empty()) {
+        std::cout << "Cementerio vacio. Cancelando hechizo..." << std::endl;
+        mundo->setModoMagia(false); // <--- IMPORTANTE: Desbloquea el mundo
+        return;
     }
+
+    Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
+
+    // --- MODO SELECCIÓN (Clic en cualquier pieza viva) ---
+    if (ocupante != nullptr) {
+        std::cout << "\n--- CEMENTERIO ---" << std::endl;
+        for (int i = 0; i < (int)cementerio.size(); i++) {
+            std::cout << "[" << i << "] " << cementerio[i]->obtenerNombre() << std::endl;
+        }
+
+        int actual = mundo->getIndiceSeleccionado();
+        actual = (actual + 1) % cementerio.size(); // Ciclo automático
+        if (actual < 0) actual = 0;
+        
+        mundo->setIndiceSeleccionado(actual);
+        std::cout << ">> ELEGIDA: [" << actual << "] " << cementerio[actual]->obtenerNombre() << std::endl;
+        return; // Seguimos en modo magia esperando el clic en el suelo
+    }
+
+    // --- MODO EJECUCIÓN (Clic en suelo vacío) ---
+    int idx = mundo->getIndiceSeleccionado();
+    if (idx < 0 || idx >= (int)cementerio.size()) idx = 0;
+
+    Pieza* p = cementerio[idx];
+
+    // Acción de revivir
+    cementerio.erase(cementerio.begin() + idx);
+    p->restaurarVidaCompleta();
+    p->establecerPosicion(destino);
+    p->forzarPosicionVisual(destino);
+    p->establecerViva(true);
+
+    tablero.colocarPieza((int)destino.x, (int)destino.y, p);
+    if (esLuz) mundo->getPiezasLuz().push_back(p);
+    else mundo->getPiezasOscuridad().push_back(p);
+
+    std::cout << "REVIVE: " << p->obtenerNombre() << " resucitado." << std::endl;
+    
+    // --- DESBLOQUEO DEL JUEGO ---
+    usado = true; 
+    mundo->setModoMagia(false);       // Cerramos el modo magia
+    mundo->setIndiceSeleccionado(-1); // Reseteamos el índice
 }
 
 // 7. SUMMON
