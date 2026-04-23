@@ -283,7 +283,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 std::cout << "Entrando al Grimorio........ " << std::endl;
                 estado = INSTRUCCIONES;
                 paginaInstrucciones = 1; //lo ponemos a 1 para no empezar en la hoja 2
-                fondo = ETSIDI::Sprite("imagenes/Instrucciones.png", 0, 0, 20, 20);
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
             }
         }
         break;
@@ -436,12 +436,12 @@ void Coordinador::teclaEspecial(int key) {
         // Si pulsamos DERECHA y estamos en la hoja 1, pasamos a la hoja 2
         if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
             paginaInstrucciones = 2;
-            fondo = ETSIDI::Sprite("imagenes/Bestiario2.png", 0, 0, 20, 20);
+            fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
         }
         // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
         else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
             paginaInstrucciones = 1;
-            fondo = ETSIDI::Sprite("imagenes/Instrucciones.png", 0, 0, 20, 20);
+            fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
         }
     }
 }
