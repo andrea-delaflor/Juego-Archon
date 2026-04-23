@@ -339,9 +339,7 @@ void Mundo::dibuja(int estado) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            // 2. Fondo del Grimorio: CAJA MUCHO MÁS GRANDE
-            // X: De 1.8 hasta 6.0 (el borde de tu pantalla)
-            // Y: De -6.0 hasta 4.0 (damos mucho espacio por arriba)
+            // 2. Fondo del Grimorio (menú lateral)
             glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
             glBegin(GL_QUADS);
             glVertex2f(1.8f, -6.0f);
@@ -361,8 +359,6 @@ void Mundo::dibuja(int estado) {
 
             for (int i = 0; i < (int)libro.size(); i++) {
                 // AJUSTE DE ESPACIADO:
-                // Empezamos en 2.2f y bajamos 1.1f por cada hechizo.
-                // Esto garantiza que entre cada línea haya espacio de sobra.
                 float yPos = 2.2f - (i * 1.1f);
 
                 if (libro[i]->estaUsado()) {
@@ -407,11 +403,14 @@ void Mundo::dibuja(int estado) {
                     float x_gl = (float)c.x - 4.0f;
                     float y_gl = 4.0f - (float)c.y;
 
+                   // glPushAttrib(GL_ALL_ATTRIB_BITS); // Guarda TODO el estado (colores, texturas, luces, etc.)
                     glPushMatrix();
+
                     // Movemos el origen de dibujo un poco arriba y a la derecha de la pieza
                     glTranslatef(x_gl - 1.6f, y_gl + 1.2f, 0.0f);
 
                     // DIBUJAR FONDO DE ALTO CONTRASTE (Cian oscuro o similar)
+                    //glDisable(GL_TEXTURE_2D);
                     glDisable(GL_LIGHTING);
                     glDisable(GL_DEPTH_TEST);
                     glDisable(GL_TEXTURE_2D);
@@ -446,7 +445,8 @@ void Mundo::dibuja(int estado) {
                     // DIBUJAR TEXTO (En el mismo origen exacto)
                     glEnable(GL_TEXTURE_2D);
                     // Limpiamos profundidad para que el texto siempre gane
-                    glClear(GL_DEPTH_BUFFER_BIT);
+                    //glClear(GL_DEPTH_BUFFER_BIT);
+                    glColor3f(1.0f, 1.0f, 1.0f);
 
                     std::string info = pBajoRaton->obtenerNombre() + ": " +
                         std::to_string(pBajoRaton->obtenerVida()) + " de vida";
@@ -455,10 +455,10 @@ void Mundo::dibuja(int estado) {
                     ETSIDI::setFont("fuentes/bitwise.ttf", 14);
 
                     // Dibujamos en 0,0 porque ya hicimos el glTranslatef
+                    glClear(GL_DEPTH_BUFFER_BIT);
                     ETSIDI::printxy(info.c_str(), 0.0f, 0.0f);
 
                     glPopMatrix(); // Restauramos la matriz original
-                    glColor3f(1.0f, 1.0f, 1.0f);
                     glEnable(GL_DEPTH_TEST);
                     
                 }
@@ -474,6 +474,7 @@ void Mundo::dibuja(int estado) {
             ETSIDI::setFont("fuentes/bitwise.ttf", 14);
             std::string msg = "USANDO: " + hechizoSeleccionado->getNombre();
             ETSIDI::printxy(msg.c_str(), rx, ry);
+            hechizoSeleccionado = nullptr; //Limpiamos selección
         }
 
         break;
@@ -508,17 +509,25 @@ void Mundo::teclahechizos(unsigned char key) {
           std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
 
           // Validamos que el índice exista en nuestro libro
-          if (idx < (int)libro.size()) {
-              if (libro[idx]->estaUsado()) {
+         // if (idx < (int)libro.size()) {
+          if (idx < (int)libro.size() && !libro[idx]->estaUsado()) {
+              /*if (libro[idx]->estaUsado()) {
                   std::cout << "Hechizo ya agotado." << std::endl;
                   return;
-              }
+              }*/
               
               // Simplemente lo marcamos como el hechizo que el ratón va a usar
               hechizoSeleccionado = libro[idx];
+              modoMagiaActivo = false;
               std::cout << "Seleccionado: " << hechizoSeleccionado->getNombre() << std::endl;
               std::cout << "Haz click en el tablero para actuar." << std::endl;
+         
           }
+    }
+    else if (key == '8') {
+        modoMagiaActivo = false;
+        hechizoSeleccionado = nullptr;
+        return;
     }
 
 
@@ -544,18 +553,15 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
         // 2. ¿El hechizo considera que ya ha terminado su trabajo?
         if (hechizoSeleccionado->estaUsado()) {
-            actualizarVidaPiezas();
-            modoMagiaActivo = false;
-            hechizoSeleccionado = nullptr;
-            seleccionada = nullptr;
+            setModoMagia(false);           // Esto quita la leyenda
+            hechizoSeleccionado = nullptr; // Limpiamos la selección
+            seleccionada = nullptr;        // Quitamos la selección del Mago
 
-            // Cambio de turno
+            // Cambio de turno automático tras la magia
             faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
-            std::cout << (faseActual == TURNO_LUZ ? "--> TURNO LUZ" : "--> TURNO OSCURIDAD") << std::endl;
         }
-
         glutPostRedisplay();
-        return;       
+        return;
     }
 
     switch (faseActual) {
@@ -722,10 +728,14 @@ void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
         faseActual = TURNO_LUZ;
         std::cout << "--> TURNO DE LA LUZ" << std::endl;
     }
+    // Reset total de interfaz POST-BATALLA
+    this->hechizoSeleccionado = nullptr;
+    this->setModoMagia(false);
+    this->seleccionada = nullptr;
 
     // 4. Bajamos los interruptores rojos del combate
     resetCombate();
-    seleccionada = nullptr;
+    //seleccionada = nullptr;
     comprobarVictoria();
 }
 
