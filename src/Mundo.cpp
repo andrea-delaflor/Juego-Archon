@@ -394,73 +394,73 @@ void Mundo::dibuja(int estado) {
 
         // LÓGICA PARA INFO VIDA PIEZAS CON CURSOR RATÓN
         {
-            Vector2D c = raton.casilla; // Obtenemos la casilla del ratón
-            if (c.x != -1) { // Si el ratón está sobre el tablero
+            Vector2D c = raton.casilla;
+            if (c.x != -1) {
                 Pieza* pBajoRaton = tablero.obtenerOcupante((int)c.x, (int)c.y);
                 if (pBajoRaton != nullptr) {
 
-                    // Coordenadas visuales (ajustadas al sistema -6 a 6)
+                    std::string info = pBajoRaton->obtenerNombre() + ": " + std::to_string(pBajoRaton->obtenerVida()) + " hp";
+                    float anchoDinamico = (float)info.length() * 0.4f;
+
+                    glPushAttrib(GL_ALL_ATTRIB_BITS);
+                    glMatrixMode(GL_PROJECTION);
+                    glPushMatrix();
+                    glLoadIdentity();
+                    gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+
+                    glMatrixMode(GL_MODELVIEW);
+                    glPushMatrix();
+                    glLoadIdentity();
+
                     float x_gl = (float)c.x - 4.0f;
                     float y_gl = 4.0f - (float)c.y;
 
-                   // glPushAttrib(GL_ALL_ATTRIB_BITS); // Guarda TODO el estado (colores, texturas, luces, etc.)
-                    glPushMatrix();
+                    // --- BLOQUE UNIFICADO ---
+                    // Aplicamos un desplazamiento base para que el conjunto flote sobre la pieza
+                    glTranslatef(x_gl - 1.8f, y_gl + 1.2f, 0.0f);
 
-                    // Movemos el origen de dibujo un poco arriba y a la derecha de la pieza
-                    glTranslatef(x_gl - 1.6f, y_gl + 1.2f, 0.0f);
-
-                    // DIBUJAR FONDO DE ALTO CONTRASTE (Cian oscuro o similar)
-                    //glDisable(GL_TEXTURE_2D);
-                    glDisable(GL_LIGHTING);
                     glDisable(GL_DEPTH_TEST);
+                    glDisable(GL_LIGHTING);
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                    // 1. DIBUJO DE LA CAJA (Coordenadas relativas al nuevo origen 0,0)
                     glDisable(GL_TEXTURE_2D);
-
-                    // COLOR CONSTANTE (Gris oscuro)
-                    glColor4f(0.1f, 0.1f, 0.1f, 0.9f);
-
-                    // 2. DIMENSIONES (Ancho grande para nombres largos)
-                    float x_min = -0.4f;
-                    float x_max = 4.1f;
-                    float y_min = -0.2f;
-                    float y_max = 0.4f;
-
-                     // Caja
+                    glColor4f(1.0f, 1.0f, 1.0f, 0.95f);
                     glBegin(GL_QUADS);
-                    glVertex2f(x_min, y_min);
-                    glVertex2f(x_max, y_min);
-                    glVertex2f(x_max, y_max);
-                    glVertex2f(x_min, y_max);
+                    glVertex2f(-0.2f, -0.2f);
+                    glVertex2f(anchoDinamico - 0.2f, -0.2f);
+                    glVertex2f(anchoDinamico - 0.2f, 0.5f);
+                    glVertex2f(-0.2f, 0.5f);
                     glEnd();
 
-                    // BORDE BLANCO
-                    glColor3f(1.0f, 1.0f, 1.0f);
+                    // Borde negro
+                    glColor3f(0.0f, 0.0f, 0.0f);
                     glLineWidth(2.0f);
                     glBegin(GL_LINE_LOOP);
-                    glVertex2f(x_min, y_min);
-                    glVertex2f(x_max, y_min);
-                    glVertex2f(x_max, y_max);
-                    glVertex2f(x_min, y_max);
+                    glVertex2f(-0.2f, -0.2f);
+                    glVertex2f(anchoDinamico - 0.2f, -0.2f);
+                    glVertex2f(anchoDinamico - 0.2f, 0.5f);
+                    glVertex2f(-0.2f, 0.5f);
                     glEnd();
 
-                    // DIBUJAR TEXTO (En el mismo origen exacto)
+                    // 2. DIBUJO DEL TEXTO (Coordenadas relativas al mismo origen 0,0)
                     glEnable(GL_TEXTURE_2D);
-                    // Limpiamos profundidad para que el texto siempre gane
-                    //glClear(GL_DEPTH_BUFFER_BIT);
-                    glColor3f(1.0f, 1.0f, 1.0f);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-                    std::string info = pBajoRaton->obtenerNombre() + ": " +
-                        std::to_string(pBajoRaton->obtenerVida()) + " de vida";
+                    glColor3f(0.0f, 0.0f, 0.0f);
+                    ETSIDI::setTextColor(0, 0, 0);
+                    ETSIDI::setFont("fuentes/bitwise.ttf", 16);
 
-                    ETSIDI::setTextColor(1, 1, 1); // Blanco
-                    ETSIDI::setFont("fuentes/bitwise.ttf", 14);
-
-                    // Dibujamos en 0,0 porque ya hicimos el glTranslatef
-                    glClear(GL_DEPTH_BUFFER_BIT);
+                    // Al estar bajo el mismo glTranslatef, 0,0 siempre es el interior de la caja
                     ETSIDI::printxy(info.c_str(), 0.0f, 0.0f);
 
-                    glPopMatrix(); // Restauramos la matriz original
-                    glEnable(GL_DEPTH_TEST);
-                    
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+                    glMatrixMode(GL_PROJECTION);
+                    glPopMatrix();
+                    glMatrixMode(GL_MODELVIEW);
+                    glPopMatrix();
+                    glPopAttrib();
                 }
             }
         }
