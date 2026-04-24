@@ -442,6 +442,10 @@ void Batalla::tecla(unsigned char key) {
         }
         else {
             l1->iniciarAnimacion(); // Esto es para el Golem y su llave
+            if (Interaccion::colisionCuerpoACuerpo(pos1, pos2, l1->obtenerAlcance())) {
+                l2->getVida().damage(l1->obtenerPoderAtaque());
+                hp2 = l2->getVida().getActual();
+            }
         }
     }
 
@@ -452,6 +456,10 @@ void Batalla::tecla(unsigned char key) {
         }
         else {
             l2->iniciarAnimacion(); // Esto es para el Troll y su código
+            if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) {
+                l1->getVida().damage(l2->obtenerPoderAtaque());
+                hp1 = l1->getVida().getActual();
+            }
         }
     }
 
