@@ -398,13 +398,28 @@ void Batalla::mueve() {
 
     //  DAÑO POR CONTACTO DEL ESCUDO 
     
-    if (l1 && l2 && l1->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos2, pos1)) {
-        l2->getVida().damage(0.8f); // Daño aumentado para que se note
-        hp2 = l2->getVida().getActual();
-    }
-    if (l2 && l1 && l2->tieneEscudoActivo() && Interaccion::colisionConEscudo(pos1, pos2)) {
-        l1->getVida().damage(0.8f);
-        hp1 = l1->getVida().getActual();
+    static int contadorDano = 0;
+    contadorDano++;
+
+    if (contadorDano >= 2) { // se hace daño cada 2 tiempos, que sino es muy fuerte
+
+        
+        if (l1 && l2 && l1->tieneEscudoActivo()) {
+            if (Interaccion::colisionConEscudo(pos2, pos1)) {
+                l2->getVida().damage(1); 
+                hp2 = l2->getVida().getActual(); 
+            }
+        }
+
+        
+        if (l2 && l1 && l2->tieneEscudoActivo()) {
+            if (Interaccion::colisionConEscudo(pos1, pos2)) {
+                l1->getVida().damage(1); 
+                hp1 = l1->getVida().getActual(); 
+            }
+        }
+
+        contadorDano = 0; // se reincia contador
     }
 
     //CONDICIÓN DE VICTORIA
@@ -442,6 +457,10 @@ void Batalla::tecla(unsigned char key) {
         }
         else {
             l1->iniciarAnimacion(); // Esto es para el Golem y su llave
+            if (Interaccion::colisionCuerpoACuerpo(pos1, pos2, l1->obtenerAlcance())) {
+                l2->getVida().damage(l1->obtenerPoderAtaque());
+                hp2 = l2->getVida().getActual();
+            }
         }
     }
 
@@ -452,6 +471,10 @@ void Batalla::tecla(unsigned char key) {
         }
         else {
             l2->iniciarAnimacion(); // Esto es para el Troll y su código
+            if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) {
+                l1->getVida().damage(l2->obtenerPoderAtaque());
+                hp1 = l1->getVida().getActual();
+            }
         }
     }
 
