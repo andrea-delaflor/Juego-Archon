@@ -401,17 +401,17 @@ void Batalla::mueve() {
     static int contadorDano = 0;
     contadorDano++;
 
-    if (contadorDano >= 5) { // se hace daño cada 5 tiempos, que sino es muy fuerte
+    if (contadorDano >= 2) { // se hace daño cada 2 tiempos, que sino es muy fuerte
 
         
         if (l1 && l2 && l1->tieneEscudoActivo()) {
             if (Interaccion::colisionConEscudo(pos2, pos1)) {
-                l2->getVida().damage(1); /
+                l2->getVida().damage(1); 
                 hp2 = l2->getVida().getActual(); 
             }
         }
 
-        /
+        
         if (l2 && l1 && l2->tieneEscudoActivo()) {
             if (Interaccion::colisionConEscudo(pos1, pos2)) {
                 l1->getVida().damage(1); 

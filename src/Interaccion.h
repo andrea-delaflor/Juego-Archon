@@ -21,7 +21,7 @@ public:
     static bool colisionConEscudo(Vector2D posRival, Vector2D posEscudo) {
         Vector2D dist = posRival - posEscudo;
         
-        return dist.modulo() < 1.3f;
+        return dist.modulo() < 2.5f;
     }
 
     static bool colisionCuerpoACuerpo(Vector2D posAtacante, Vector2D posDefensor, float alcance) {
