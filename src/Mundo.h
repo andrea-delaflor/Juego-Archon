@@ -138,4 +138,13 @@ private:
     int ganadorPartida = 0;
     // Función interna segura para borrar una pieza y que desaparezca gráficamente
     void eliminarPieza(Pieza* p);
+
+
+
+    //organización de codigo en funcion dibuja();
+    void dibujarCajasMovimiento();
+    void dibujarCarceles();
+    void dibujarInterfazSuperior();
+    void dibujarGrimorio();
+    
 };
