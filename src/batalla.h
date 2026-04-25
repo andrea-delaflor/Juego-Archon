@@ -29,6 +29,7 @@ public:
     Pieza* obtenerPerdedor() const { return perdedor; }
     bool esEmpate() const { return empate; }
 
+   
 private:
     Pieza* l1;
     Pieza* l2;
@@ -62,4 +63,10 @@ private:
     bool invulnerableJ1, invulnerableJ2;
     float multDanoJ1, multDanoJ2;
     float temporizadorBonusJ1, temporizadorBonusJ2;
+
+
+
+    float congelarDisparoJ1 = 0.0f; // Tiempo que falta para poder volver a disparar
+    float congelarDisparoJ2 = 0.0f; // Tiempo que falta para poder volver a disparar
+   
 };

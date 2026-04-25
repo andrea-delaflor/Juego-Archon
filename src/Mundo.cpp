@@ -264,6 +264,14 @@ void Mundo::dibuja(int estado) {
 
 void Mundo::teclahechizos(unsigned char key) {
 
+    // Si pulsamos '0' y NO estamos en medio de un proceso de Revive, cancelamos
+    if (key == '0' && (hechizoSeleccionado == nullptr)) {
+        modoMagiaActivo = false;      
+        hechizoSeleccionado = nullptr;
+        std::cout << ">> Menú de hechizos cerrado." << std::endl;
+        return;
+    }
+
     //En caso de elegir REVIVE las teclas 0-9 && a-f eligen a los muertos
     if (modoMagiaActivo && hechizoSeleccionado != nullptr) {
         HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
@@ -642,6 +650,7 @@ void Mundo::comprobarVictoria() {
 
 
 
+
 //********************************************************
 ///encapsular funciones para mundo::dibuja mas legible:
 //*********************************************************
@@ -816,7 +825,9 @@ void Mundo::dibujarGrimorio() {
         if (hechizoSeleccionado == nullptr) {
             ETSIDI::setTextColor(1, 1, 0);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
-            ETSIDI::printxy("HECHIZO O MUEVE", 2.2f, 3.2f);
+            ETSIDI::printxy("LIBRO DE HECHIZOS", 2.2f, 4.2f);
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 12);
+            ETSIDI::printxy("o pulse 0 para cerrar el libro", 2.2f, 3.5f);
 
             std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
             ETSIDI::setFont("fuentes/Bitwise.ttf", 13);
@@ -830,7 +841,7 @@ void Mundo::dibujarGrimorio() {
                 ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
             }
             ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::printxy("PULSA 1-7", 2.2f, -5.5f);
+            ETSIDI::printxy("PULSA 1 a 7", 2.2f, -5.5f);
         }
         // 4. Lista del Revive (Solo si es Revive)
         else if (esRevive) {

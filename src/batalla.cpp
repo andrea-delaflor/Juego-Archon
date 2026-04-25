@@ -262,6 +262,10 @@ void Batalla::dibuja() {
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+
+    if (congelarDisparoJ1 > 0) congelarDisparoJ1 -= dt;
+    if (congelarDisparoJ2 > 0) congelarDisparoJ2 -= dt;
+
     if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
     if (l2) l2->actualizarEscudo(dt);
 
@@ -432,6 +436,7 @@ void Batalla::mueve() {
 
 void Batalla::tecla(unsigned char key) {
    // float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
+    
 
     // JUGADOR 1
     if (key == 'w' || key == 'W') pos1.y += velJ1;
@@ -440,8 +445,20 @@ void Batalla::tecla(unsigned char key) {
     if (key == 'd' || key == 'D') pos1.x += velJ1;
 
     // Disparos y Controles
-    if (key == ' ') generarDisparo(true);  //pulsando espacio jugador 1 usa su poder
-    if (key == 13)  generarDisparo(false); //pulsando enter jugador 2 usa su poder
+    if (key == ' ') {
+        if (congelarDisparoJ1 <= 0.0f) {
+            generarDisparo(true); //pulsando espacio jugador 1 usa su poder
+            congelarDisparoJ1 = 0.5f; // Medio segundo de recarga
+        }
+    }
+        
+       
+    if (key == 13) {
+        if (congelarDisparoJ2 <= 0.0f) {
+			generarDisparo(false); //pulsando enter jugador 2 usa su poder
+            congelarDisparoJ2 = 0.5f; // Medio segundo de recarga
+        }
+    }
     if (key == 'e' || key == 'E') { terminado = true; empate = true; }
 
     // Límites de la pantalla 
@@ -536,3 +553,4 @@ void Batalla::generarDisparo(bool esJugador1) {
         break;
     }
 }
+

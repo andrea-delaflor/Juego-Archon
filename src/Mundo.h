@@ -111,7 +111,7 @@ public:
 
         std::cout << "Shift Time: Angulo desplazado. Nueva luz: " << valorLuz << std::endl;
     }
-	    
+    
 private:
     Tablero tablero;
     float valorLuz = 0.5f;
