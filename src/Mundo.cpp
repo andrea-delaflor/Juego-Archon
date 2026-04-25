@@ -638,7 +638,13 @@ void Mundo::comprobarVictoria() {
 
 
 
-///encapsular funciones para mundo mas legible:
+
+
+
+
+//********************************************************
+///encapsular funciones para mundo::dibuja mas legible:
+//*********************************************************
 
 void Mundo::dibujarCajasMovimiento() {
     if (seleccionada == nullptr) return;
@@ -760,8 +766,8 @@ void Mundo::dibujarInterfazSuperior() { //INTERFAZ DE TURNOS
     // 1. Fondo de la barra superior (de y=5.2 a y=6.0)
     glColor4f(0.0f, 0.0f, 0.0f, 0.75f);
     glBegin(GL_QUADS);
-    glVertex2f(-6.0f, 5.2f);
-    glVertex2f(6.0f, 5.2f);
+    glVertex2f(-6.0f, 4.8f);
+    glVertex2f(6.0f, 4.8f);
     glVertex2f(6.0f, 6.0f);
     glVertex2f(-6.0f, 6.0f);
     glEnd();
@@ -783,197 +789,161 @@ void Mundo::dibujarInterfazSuperior() { //INTERFAZ DE TURNOS
 }
 
 void Mundo::dibujarGrimorio() {
-    if (modoMagiaActivo) {
-        // 1. Limpieza total de estado para evitar símbolos raros
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (!modoMagiaActivo) return;
 
-        // 2. Fondo del Grimorio (menú lateral)
+    // 1. Limpieza de estado
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // --- LÓGICA DE VISIBILIDAD ---
+    // Si hay un hechizo seleccionado y NO es Revive, NO dibujamos el panel lateral.
+    bool esRevive = (hechizoSeleccionado != nullptr && dynamic_cast<HechizoRevive*>(hechizoSeleccionado) != nullptr);
+    bool mostrarPanel = (hechizoSeleccionado == nullptr || esRevive);
+
+    if (mostrarPanel) {
+        // 2. Fondo del Grimorio (Solo si no hay hechizo o es Revive)
         glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
         glBegin(GL_QUADS);
         glVertex2f(1.8f, -6.0f);
         glVertex2f(6.0f, -6.0f);
-        glVertex2f(6.0f, 4.0f);  // Techo alto para que el título no pise nada
-        glVertex2f(1.8f, 4.0f);
+        glVertex2f(6.0f, 5.0f);
+        glVertex2f(1.8f, 5.0f);
         glEnd();
 
-        // 3. Título del Menú
-
-        if (hechizoSeleccionado == nullptr) { //menus dehechizos solo si no hay ehchizo seleccionado
-            ETSIDI::setTextColor(1, 1, 0); // Amarillo
+        // 3. Menú de selección (Solo si no hay hechizo activo)
+        if (hechizoSeleccionado == nullptr) {
+            ETSIDI::setTextColor(1, 1, 0);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
-            ETSIDI::printxy("HECHIZO O MUEVE", 2.2f, 3.2f); // Posicionado en la parte superior
+            ETSIDI::printxy("HECHIZO O MUEVE", 2.2f, 3.2f);
 
-            // 4. Listado de Hechizos
             std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 13); // Un pelín más grande para legibilidad
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 13);
 
             for (int i = 0; i < (int)libro.size(); i++) {
-                // AJUSTE DE ESPACIADO:
                 float yPos = 2.2f - (i * 1.1f);
-
-                if (libro[i]->estaUsado()) {
-                    ETSIDI::setTextColor(0.5f, 0.5f, 0.5f); // Gris
-                }
-                else {
-                    ETSIDI::setTextColor(1, 1, 1); // Blanco
-                }
+                if (libro[i]->estaUsado()) ETSIDI::setTextColor(0.5f, 0.5f, 0.5f);
+                else ETSIDI::setTextColor(1, 1, 1);
 
                 std::string texto = std::to_string(i + 1) + ". " + libro[i]->getNombre();
                 ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
             }
-
-            // 5. Instrucción de uso
             ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
-            ETSIDI::printxy("PULSA NUM DEL 1 AL 7", 2.2f, -5.5f);
+            ETSIDI::printxy("PULSA 1-7", 2.2f, -5.5f);
         }
-        else {
-            ETSIDI::setTextColor(0, 1, 1); // Cian
+        // 4. Lista del Revive (Solo si es Revive)
+        else if (esRevive) {
+            ETSIDI::setTextColor(0, 1, 1);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 18);
-            ETSIDI::printxy("CONJURO ACTIVO", 2.1f, 3.2f);
+            ETSIDI::printxy("CEMENTERIO", 2.1f, 3.2f);
 
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 14);
-            std::string nombreH = hechizoSeleccionado->getNombre();
-            ETSIDI::printxy(nombreH.c_str(), 2.2f, 2.5f);
+            auto& cementerio = (faseActual == TURNO_LUZ) ? cementerioLuz : cementerioOscuridad;
+            for (int i = 0; i < (int)cementerio.size(); i++) {
+                if (i == indiceSeleccionado) ETSIDI::setTextColor(0, 1, 1);
+                else ETSIDI::setTextColor(1, 0.5f, 0);
 
-            // LISTA DE MUERTOS para el Revive
-            HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
-            if (revive != nullptr) {
-                bool esLuz = (faseActual == TURNO_LUZ);
-                auto& cementerio = esLuz ? cementerioLuz : cementerioOscuridad;
-
-                ETSIDI::setFont("fuentes/Bitwise.ttf", 13);
-
-                if (cementerio.empty()) {
-                    ETSIDI::setTextColor(1, 0.3f, 0.3f);
-                    ETSIDI::printxy("Cementerio vacio", 2.2f, -3.5f);
-                }
-                else {
-                    ETSIDI::setTextColor(1, 0.5f, 0);  // Naranja — lista de muertos
-                    ETSIDI::printxy("-- REVIVIR --", 2.2f, -3.0f);
-
-                    for (int i = 0; i < (int)cementerio.size(); i++) {
-                        // Tecla que hay que pulsar: 0-9 para los primeros 10,
-                        // luego a,b,c... para los siguientes
-                        std::string tecla;
-                        if (i < 10) tecla = std::to_string(i);
-                        else        tecla = std::string(1, (char)('a' + i - 10));
-
-                        // La pieza seleccionada actualmente se marca en cian
-                        if (i == indiceSeleccionado)
-                            ETSIDI::setTextColor(0, 1, 1);
-                        else
-                            ETSIDI::setTextColor(1, 0.5f, 0);
-
-                        std::string linea = "[" + tecla + "] " + cementerio[i]->obtenerNombre();
-                        float yPos = -3.8f - (i * 0.9f);
-                        ETSIDI::printxy(linea.c_str(), 2.2f, yPos);
-                    }
-                }
-
-                // Instrucción
-                ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
-                ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
-                ETSIDI::printxy("Pulsa num/letra", 2.2f, -5.0f);
-                ETSIDI::printxy("Click vacio = revivir", 2.2f, -5.5f);
+                std::string tecla = (i < 10) ? std::to_string(i) : std::string(1, (char)('a' + i - 10));
+                std::string linea = "[" + tecla + "] " + cementerio[i]->obtenerNombre();
+                ETSIDI::printxy(linea.c_str(), 2.2f, 2.2f - (i * 0.8f));
             }
-
-            // --- INSTRUCCIONES GENERALES DE LANZAMIENTO ---
-            ETSIDI::setTextColor(1, 1, 0);
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 12);
-            ETSIDI::printxy("PULSA CASILLA DESTINO", 2.1f, -4.5f);
-            ETSIDI::setTextColor(0.7f, 0.7f, 0.7f);
-            ETSIDI::printxy("O CLICA ALIADO PARA CANCELAR", 2.1f, -5.2f);
-
         }
-
-        glEnable(GL_TEXTURE_2D);
     }
 
-    // INDICADOR DE HECHIZO SELECCIONADO (NUEVO BLOQUE)
-    if (hechizoSeleccionado != nullptr) {
-        glDisable(GL_TEXTURE_2D);
-        ETSIDI::setTextColor(0, 1, 1); // Cian brillante
+    // --- INDICADOR MINIMALISTA (Solo cuando el panel se quita) ---
+    if (hechizoSeleccionado != nullptr && !esRevive) {
+        // Un cartelito pequeño arriba para saber qué estás haciendo sin tapar el tablero
+        glColor4f(0.0f, 0.3f, 0.5f, 0.7f);
+        glBegin(GL_QUADS);
+        glVertex2f(-5.8f, 3.4f);
+        glVertex2f(-1.0f, 3.4f);
+        glVertex2f(-1.0f, 4.9f);
+        glVertex2f(-5.8f, 4.9f);
+        glEnd();
+        ETSIDI::setTextColor(1, 1, 1);
         ETSIDI::setFont("fuentes/Bitwise.ttf", 14);
-
-        // Lo posicionamos un poco alejado del cursor para que no lo tape
-        std::string msg = "USANDO: " + hechizoSeleccionado->getNombre();
-        ETSIDI::printxy(msg.c_str(), raton.posicion.x + 0.3f, raton.posicion.y + 0.3f);
-        glEnable(GL_TEXTURE_2D);
+        std::string info = "LANZANDO: " + hechizoSeleccionado->getNombre();
+        ETSIDI::printxy(info.c_str(), -5.5f, 4.9f);
     }
 
-    // LÓGICA PARA INFO VIDA PIEZAS CON CURSOR RATÓN
-    
-        Vector2D c = raton.casilla;
-        if (c.x != -1) {
-            Pieza* pBajoRaton = tablero.obtenerOcupante((int)c.x, (int)c.y);
-            if (pBajoRaton != nullptr) {
+    // 5. El indicador que sigue al ratón 
+    if (hechizoSeleccionado != nullptr) {
+        ETSIDI::setTextColor(1.0f, 0.0f, 0.0f);
+        ETSIDI::setFont("fuentes/games.ttf", 12);
+        std::string msg = "CLICK EN CASILLA";
+        ETSIDI::printxy(msg.c_str(), raton.posicion.x + 0.4f, raton.posicion.y + 0.4f);
+    }
 
-                std::string info = pBajoRaton->obtenerNombre() + ": " + std::to_string(pBajoRaton->obtenerVida()) + " hp";
-                float anchoDinamico = (float)info.length() * 0.4f;
+    // 6. Lógica info de vidas de piezas al cursor del ratón
 
-                glPushAttrib(GL_ALL_ATTRIB_BITS);
-                glMatrixMode(GL_PROJECTION);
-                glPushMatrix();
-                glLoadIdentity();
-                gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+    Vector2D c = raton.casilla;
+    if (c.x != -1) {
+        Pieza* pBajoRaton = tablero.obtenerOcupante((int)c.x, (int)c.y);
+        if (pBajoRaton != nullptr) {
 
-                glMatrixMode(GL_MODELVIEW);
-                glPushMatrix();
-                glLoadIdentity();
+            std::string info = pBajoRaton->obtenerNombre() + ": " + std::to_string(pBajoRaton->obtenerVida()) + " hp";
+            float anchoDinamico = (float)info.length() * 0.4f;
 
-                float x_gl = (float)c.x - 4.0f;
-                float y_gl = 4.0f - (float)c.y;
+            glPushAttrib(GL_ALL_ATTRIB_BITS);
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
 
-                // --- BLOQUE UNIFICADO ---
-                // Aplicamos un desplazamiento base para que el conjunto flote sobre la pieza
-                glTranslatef(x_gl - 1.8f, y_gl + 1.2f, 0.0f);
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glLoadIdentity();
 
-                glDisable(GL_DEPTH_TEST);
-                glDisable(GL_LIGHTING);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            float x_gl = (float)c.x - 4.0f;
+            float y_gl = 4.0f - (float)c.y;
 
-                // 1. DIBUJO DE LA CAJA (Coordenadas relativas al nuevo origen 0,0)
-                glDisable(GL_TEXTURE_2D);
-                glColor4f(1.0f, 1.0f, 1.0f, 0.95f);
-                glBegin(GL_QUADS);
-                glVertex2f(-0.2f, -0.2f);
-                glVertex2f(anchoDinamico - 0.2f, -0.2f);
-                glVertex2f(anchoDinamico - 0.2f, 0.5f);
-                glVertex2f(-0.2f, 0.5f);
-                glEnd();
+            // --- BLOQUE UNIFICADO ---
+            // Aplicamos un desplazamiento base para que el conjunto flote sobre la pieza
+            glTranslatef(x_gl - 1.8f, y_gl + 1.2f, 0.0f);
 
-                // Borde negro
-                glColor3f(0.0f, 0.0f, 0.0f);
-                glLineWidth(2.0f);
-                glBegin(GL_LINE_LOOP);
-                glVertex2f(-0.2f, -0.2f);
-                glVertex2f(anchoDinamico - 0.2f, -0.2f);
-                glVertex2f(anchoDinamico - 0.2f, 0.5f);
-                glVertex2f(-0.2f, 0.5f);
-                glEnd();
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_LIGHTING);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-                // 2. DIBUJO DEL TEXTO (Coordenadas relativas al mismo origen 0,0)
-                glEnable(GL_TEXTURE_2D);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+            // A. DIBUJO DE LA CAJA (Coordenadas relativas al nuevo origen 0,0)
+            glDisable(GL_TEXTURE_2D);
+            glColor4f(1.0f, 1.0f, 1.0f, 0.95f);
+            glBegin(GL_QUADS);
+            glVertex2f(-0.2f, -0.2f);
+            glVertex2f(anchoDinamico - 0.2f, -0.2f);
+            glVertex2f(anchoDinamico - 0.2f, 0.5f);
+            glVertex2f(-0.2f, 0.5f);
+            glEnd();
 
-                glColor3f(0.0f, 0.0f, 0.0f);
-                ETSIDI::setTextColor(0, 0, 0);
-                ETSIDI::setFont("fuentes/bitwise.ttf", 16);
+            // Borde negro
+            glColor3f(0.0f, 0.0f, 0.0f);
+            glLineWidth(2.0f);
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(-0.2f, -0.2f);
+            glVertex2f(anchoDinamico - 0.2f, -0.2f);
+            glVertex2f(anchoDinamico - 0.2f, 0.5f);
+            glVertex2f(-0.2f, 0.5f);
+            glEnd();
 
-                // Al estar bajo el mismo glTranslatef, 0,0 siempre es el interior de la caja
-                ETSIDI::printxy(info.c_str(), 0.0f, 0.0f);
+            // B. DIBUJO DEL TEXTO (Coordenadas relativas al mismo origen 0,0)
+            glEnable(GL_TEXTURE_2D);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                glMatrixMode(GL_PROJECTION);
-                glPopMatrix();
-                glMatrixMode(GL_MODELVIEW);
-                glPopMatrix();
-                glPopAttrib();
-            }
+            glColor3f(0.0f, 0.0f, 0.0f);
+            ETSIDI::setTextColor(0, 0, 0);
+            ETSIDI::setFont("fuentes/bitwise.ttf", 16);
+
+            // Al estar bajo el mismo glTranslatef, 0,0 siempre es el interior de la caja
+            ETSIDI::printxy(info.c_str(), 0.0f, 0.0f);
+
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+            glPopMatrix();
+            glPopAttrib();
         }
+    }
+    glEnable(GL_TEXTURE_2D);
 }
