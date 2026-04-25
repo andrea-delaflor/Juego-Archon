@@ -331,7 +331,7 @@ void Mundo::dibuja(int estado) {
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         }
          
-        // LÓGICA DE INTERFAZ DE HECHIZOS (NUEVO BLOQUE)
+        // LÓGICA DE INTERFAZ DE HECHIZOS ---> GRIMORIO
         if (modoMagiaActivo) {
             // 1. Limpieza total de estado para evitar símbolos raros
             glDisable(GL_TEXTURE_2D);
@@ -376,6 +376,49 @@ void Mundo::dibuja(int estado) {
             ETSIDI::setTextColor(1, 1, 1);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
             ETSIDI::printxy("PULSA NUM DEL 1 AL 7", 2.2f, -5.5f);
+
+
+            // LISTA DE MUERTOS para el Revive
+            HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
+            if (revive != nullptr) {
+                bool esLuz = (faseActual == TURNO_LUZ);
+                auto& cementerio = esLuz ? cementerioLuz : cementerioOscuridad;
+
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 13);
+
+                if (cementerio.empty()) {
+                    ETSIDI::setTextColor(1, 0.3f, 0.3f);
+                    ETSIDI::printxy("Cementerio vacio", 2.2f, -3.5f);
+                }
+                else {
+                    ETSIDI::setTextColor(1, 0.5f, 0);  // Naranja — lista de muertos
+                    ETSIDI::printxy("-- REVIVIR --", 2.2f, -3.0f);
+
+                    for (int i = 0; i < (int)cementerio.size(); i++) {
+                        // Tecla que hay que pulsar: 0-9 para los primeros 10,
+                        // luego a,b,c... para los siguientes
+                        std::string tecla;
+                        if (i < 10) tecla = std::to_string(i);
+                        else        tecla = std::string(1, (char)('a' + i - 10));
+
+                        // La pieza seleccionada actualmente se marca en cian
+                        if (i == indiceSeleccionado)
+                            ETSIDI::setTextColor(0, 1, 1);
+                        else
+                            ETSIDI::setTextColor(1, 0.5f, 0);
+
+                        std::string linea = "[" + tecla + "] " + cementerio[i]->obtenerNombre();
+                        float yPos = -3.8f - (i * 0.9f);
+                        ETSIDI::printxy(linea.c_str(), 2.2f, yPos);
+                    }
+
+                    // Instrucción
+                    ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
+                    ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
+                    ETSIDI::printxy("Pulsa num/letra", 2.2f, -5.0f);
+                    ETSIDI::printxy("Click vacio = revivir", 2.2f, -5.5f);
+                }
+            }
 
             glEnable(GL_TEXTURE_2D);
         }
@@ -465,6 +508,7 @@ void Mundo::dibuja(int estado) {
             }
         }
 
+        /* ESTA DUPLICADO
         if (hechizoSeleccionado != nullptr) {
             // Dibujar el nombre del hechizo pegado al cursor
             float rx = raton.posicion.x + 0.2f;
@@ -474,8 +518,8 @@ void Mundo::dibuja(int estado) {
             ETSIDI::setFont("fuentes/bitwise.ttf", 14);
             std::string msg = "USANDO: " + hechizoSeleccionado->getNombre();
             ETSIDI::printxy(msg.c_str(), rx, ry);
-            hechizoSeleccionado = nullptr; //Limpiamos selección
         }
+        */
 
         break;
 
@@ -498,38 +542,101 @@ void Mundo::dibuja(int estado) {
 
 void Mundo::teclahechizos(unsigned char key) {
 
-    // Si no hemos hecho click en el Mago, las teclas no hacen nada
-    if (!modoMagiaActivo || hechizoSeleccionado != nullptr) return;
-    std::cout << "Tecla pulsada: " << key << " | Modo Magia: " << modoMagiaActivo << std::endl;
+    //En caso de elegir REVIVE las teclas 0-9 && a-f eligen a los muertos
+    if (modoMagiaActivo && hechizoSeleccionado != nullptr) {
+        HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
+        if (revive != nullptr) {
+            bool esLuz = (faseActual == TURNO_LUZ);
+            auto& cementerio = esLuz ? cementerioLuz : cementerioOscuridad;
 
+            if (!cementerio.empty()) {
+                int nuevoIdx = -1;
 
-    // Rango de teclas de hechizos
-    if (key >= '1' && key <= '7') {
-          int idx = key - '1';
-          std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
+                // Teclas 0-9
+                if (key >= '0' && key <= '9') {
+                    nuevoIdx = key - '0';
+                }
+                // Teclas a-f para índices 10-15
+                else if (key >= 'a' && key <= 'f') {
+                    nuevoIdx = 10 + (key - 'a');
+                }
+                else if (key >= 'A' && key <= 'F') {
+                    nuevoIdx = 10 + (key - 'A');
+                }
 
-          // Validamos que el índice exista en nuestro libro
-         // if (idx < (int)libro.size()) {
-          if (idx < (int)libro.size() && !libro[idx]->estaUsado()) {
-              /*if (libro[idx]->estaUsado()) {
-                  std::cout << "Hechizo ya agotado." << std::endl;
-                  return;
-              }*/
-              
-              // Simplemente lo marcamos como el hechizo que el ratón va a usar
-              hechizoSeleccionado = libro[idx];
-              modoMagiaActivo = false;
-              std::cout << "Seleccionado: " << hechizoSeleccionado->getNombre() << std::endl;
-              std::cout << "Haz click en el tablero para actuar." << std::endl;
-         
-          }
+                if (nuevoIdx >= 0 && nuevoIdx < (int)cementerio.size()) {
+                    indiceSeleccionado = nuevoIdx;
+                    std::cout << ">> Pieza para revivir: ["
+                        << nuevoIdx << "] "
+                        << cementerio[nuevoIdx]->obtenerNombre()
+                        << " — Ahora haz click en casilla vacia." << std::endl;
+                }
+                else if (nuevoIdx >= 0) {
+                    std::cout << "No hay pieza en el indice " << nuevoIdx << std::endl;
+                }
+            }
+        }
+        return; // Bloqueamos el resto de teclas mientras hay hechizo activo ----> SUPER IMPORTANTE PORQUE SINO NO DEJA SELECC MUERTOS
     }
+
+    //solo TRUE si lider selecc ---> mago o bruja
+    if (seleccionada == nullptr || !seleccionada->esLider()) return;
+
+    auto& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
+
+    int indice = -1;
+    if (key >= '1' && key <= '7') indice = key - '1';
+    if (indice < 0 || indice >= (int)libro.size()) return;
+
+    Hechizo* h = libro[indice];
+    if (h->estaUsado()) {
+        std::cout << "El hechizo '" << h->getNombre() << "' ya fue usado." << std::endl;
+        return;
+    }
+
+    // ShiftTime: Este hechizo es instantaneo no necesita mas acciones por parte del usuario
+    if (key == '3') {
+        h->aplicar(this, Vector2D(0, 0));
+        return;
+    }
+
+    // Para hechizo REVIVE ---> te muestra piezas muertas y te da a elegir
+    if (key == '6') {
+        bool esLuz = (faseActual == TURNO_LUZ);
+        auto& cementerio = esLuz ? cementerioLuz : cementerioOscuridad;
+
+        if (cementerio.empty()) {
+            std::cout << "Cementerio vacio. No hay piezas que revivir." << std::endl;
+            return;
+        }
+
+        hechizoSeleccionado = h;
+        modoMagiaActivo = true;
+        indiceSeleccionado = 0;  // Por defecto la primera
+
+        std::cout << "=== REVIVE ===" << std::endl;
+        for (int i = 0; i < (int)cementerio.size(); i++) {
+            std::string tecla = (i < 10) ? std::to_string(i)
+                : std::string(1, (char)('a' + i - 10));
+            std::cout << "[" << tecla << "] " << cementerio[i]->obtenerNombre() << std::endl;
+        }
+        std::cout << "Pulsa la tecla de la pieza que quieres revivir." << std::endl;
+        std::cout << "Luego haz click en una casilla vacia del tablero." << std::endl;
+        return;
+    }
+
+    // Resto de hechizos: activar y esperar click
+    hechizoSeleccionado = h;
+    modoMagiaActivo = true;
+    std::cout << "Hechizo activado: " << h->getNombre() << " — Haz click en la casilla objetivo." << std::endl;
+    
+    /* Añadir mas adelante ....
     else if (key == '8') {
         modoMagiaActivo = false;
         hechizoSeleccionado = nullptr;
         return;
     }
-
+    */
 
     
 }
