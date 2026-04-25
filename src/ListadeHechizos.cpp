@@ -74,6 +74,8 @@ void HechizoShiftTime::aplicar(Mundo* mundo, Vector2D destino) {
 
     usado = true;
     mundo->setModoMagia(false);
+    mundo->seleccionada = nullptr; //para bloquear el mago y no se mueva tras conjurar
+
 }
 
 // 4. EXCHANGE

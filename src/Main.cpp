@@ -46,6 +46,7 @@ void glueRatonPasivo(int x, int y) {
     coordinador.gestionaRatonPasivo(x, y);
 }
 
+
 int main(int argc, char* argv[]) {
     //Inicializamos GLUT y creamos la ventana
     glutInit(&argc, argv);

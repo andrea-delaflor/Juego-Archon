@@ -262,6 +262,10 @@ void Batalla::dibuja() {
 void Batalla::mueve() {
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
+
+    if (congelarDisparoJ1 > 0) congelarDisparoJ1 -= dt;
+    if (congelarDisparoJ2 > 0) congelarDisparoJ2 -= dt;
+
     if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
     if (l2) l2->actualizarEscudo(dt);
 
@@ -432,6 +436,7 @@ void Batalla::mueve() {
 
 void Batalla::tecla(unsigned char key) {
    // float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
+    
 
     // JUGADOR 1
     if (key == 'w' || key == 'W') pos1.y += velJ1;
@@ -440,8 +445,20 @@ void Batalla::tecla(unsigned char key) {
     if (key == 'd' || key == 'D') pos1.x += velJ1;
 
     // Disparos y Controles
-    if (key == ' ') generarDisparo(true);  //pulsando espacio jugador 1 usa su poder
-    if (key == 13)  generarDisparo(false); //pulsando enter jugador 2 usa su poder
+    if (key == ' ') {
+        if (congelarDisparoJ1 <= 0.0f) {
+            generarDisparo(true); //pulsando espacio jugador 1 usa su poder
+            congelarDisparoJ1 = 0.5f; // Medio segundo de recarga
+        }
+    }
+        
+       
+    if (key == 13) {
+        if (congelarDisparoJ2 <= 0.0f) {
+			generarDisparo(false); //pulsando enter jugador 2 usa su poder
+            congelarDisparoJ2 = 0.5f; // Medio segundo de recarga
+        }
+    }
     if (key == 'e' || key == 'E') { terminado = true; empate = true; }
 
     // Límites de la pantalla 
@@ -505,31 +522,35 @@ void Batalla::generarDisparo(bool esJugador1) {
     float offsetY = 3.75f;
     Vector2D posDisparo = posPieza + Vector2D(offsetX, offsetY);
     */
+
+    int ataque = p->obtenerPoderAtaque(); //obtenemos el poder de ataque de cada pieza
+
     // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
     Vector2D vel = esJugador1 ? Vector2D(10, 0) : Vector2D(-10, 0);
 
     switch (p->obtenerArma()) {
     case TipoArma::PELOTAFUTBOL: // Arquera
-        proyectiles.push_back(new PelotaFutbol(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        proyectiles.push_back(new PelotaFutbol(posDisparo, vel, ataque,  esJugador1));
         break;
 
     case TipoArma::BOLA_DE_FUEGO: // Dragón
-        proyectiles.push_back(new BolaFuego(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        proyectiles.push_back(new BolaFuego(posDisparo, vel * 0.7f, ataque, esJugador1));
         break;
 
     case TipoArma::RAYO_LASER: // Djinni (Láser)
-        proyectiles.push_back(new RayoLaser(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        proyectiles.push_back(new RayoLaser(posDisparo, vel* 1.3f, ataque, esJugador1));
         break;
 
     case TipoArma::RAYO_NUMERICO: // Basilisco (Cálculo)
-        proyectiles.push_back(new RayoNumerico(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        proyectiles.push_back(new RayoNumerico(posDisparo, vel*1.15f, ataque, esJugador1));
         break;
 
     case TipoArma::ACTAS: // Mago y Bruja (Actas)
-        proyectiles.push_back(new Acta(posDisparo, vel, p->obtenerPoderAtaque(), esJugador1));
+        proyectiles.push_back(new Acta(posDisparo, vel * 0.5f, ataque, esJugador1));
         break;
 
     default:
         break;
     }
 }
+
