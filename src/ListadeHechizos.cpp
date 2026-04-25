@@ -126,9 +126,10 @@ void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
 
 // 6. REVIVE
 void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
-    Tablero& tablero = mundo->getTablero();
+    
     bool esLuz = (mundo->faseActual == Mundo::TURNO_LUZ);
     auto& cementerio = esLuz ? mundo->getCementerioLuz() : mundo->getCementerioOscuridad();
+
 
     if (cementerio.empty()) {
         std::cout << "Cementerio vacio. Cancelando hechizo..." << std::endl;
@@ -136,42 +137,37 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
         return;
     }
 
-    Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
-
-    // --- MODO SELECCIÓN (Clic en cualquier pieza viva) ---
-    if (ocupante != nullptr) {
-        std::cout << "\n--- CEMENTERIO ---" << std::endl;
-        for (int i = 0; i < (int)cementerio.size(); i++) {
-            std::cout << "[" << i << "] " << cementerio[i]->obtenerNombre() << std::endl;
-        }
-
-        int actual = mundo->getIndiceSeleccionado();
-        actual = (actual + 1) % cementerio.size(); // Ciclo automático
-        if (actual < 0) actual = 0;
-        
-        mundo->setIndiceSeleccionado(actual);
-        std::cout << ">> ELEGIDA: [" << actual << "] " << cementerio[actual]->obtenerNombre() << std::endl;
-        return; // Seguimos en modo magia esperando el clic en el suelo
-    }
-
     // --- MODO EJECUCIÓN (Clic en suelo vacío) ---
     int idx = mundo->getIndiceSeleccionado();
     if (idx < 0 || idx >= (int)cementerio.size()) idx = 0;
 
-    Pieza* p = cementerio[idx];
+    Tablero& tablero = mundo->getTablero();
+
+
+    // Si la casilla esta ocupada esperamos a que den otro click en otro lado
+    if (tablero.obtenerOcupante((int)destino.x, (int)destino.y) != nullptr) {
+        std::cout << "Casilla ocupada. Elige una casilla VACIA para revivir a: "
+            << cementerio[idx]->obtenerNombre() << std::endl;
+        mundo->setModoMagia(true);  // seguimos esperando
+        return;
+    }
 
     // Acción de revivir
+    Pieza* p = cementerio[idx];
     cementerio.erase(cementerio.begin() + idx);
+
     p->restaurarVidaCompleta();
-    p->establecerPosicion(destino);
-    p->forzarPosicionVisual(destino);
     p->establecerViva(true);
 
+    //Colocamos pieza revivida en el tablero
+    p->forzarPosicionVisual(destino);
     tablero.colocarPieza((int)destino.x, (int)destino.y, p);
+
     if (esLuz) mundo->getPiezasLuz().push_back(p);
     else mundo->getPiezasOscuridad().push_back(p);
 
     std::cout << "REVIVE: " << p->obtenerNombre() << " resucitado." << std::endl;
+    std::cout << "Ha vuelto en (" << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
     
     // --- DESBLOQUEO DEL JUEGO ---
     usado = true; 
