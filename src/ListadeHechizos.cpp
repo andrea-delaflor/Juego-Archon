@@ -40,15 +40,29 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     }
 }
 
-//este hechizo no se puede hacer hasta que este la clase vida, pero lo dejo aquí para que se vea la estructura de los hechizos
 // 2. HEAL
+//Cura a las piezas del MISMO bando a su vida max
 void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
-    if (p) {
-        p->restaurarVidaCompleta();
-        usado = true;
-        mundo->setModoMagia(false);
+    if (p == nullptr) {
+        //si la casilla no tiene pieza---> no es valido hay que esperar que haga click en una casilla con pieza
+        std::cout << "Casilla vacia. Selecciona una pieza ALIADA para curarla." << std::endl;
+        mundo->setModoMagia(true);   // seguimos esperando
+        return;
     }
+
+    if (p->obtenerBando() != mundo->bandoActual()) {
+        //si la pieza NO es de NUESTRO bando no se puede avisamos
+        std::cout << "No puedes curar a los enemigos! Selecciona una pieza ALIADA." << std::endl;
+        mundo->setModoMagia(true);   // seguimos esperando
+        return;
+    }
+
+    //CURAR
+    p->getVida().restaurarAlMaximo();
+    std::cout << "HEAL: " << p->obtenerNombre() << " ha recuperado toda su vida." << std::endl;
+    usado = true;
+    mundo->setModoMagia(false);
 }
 
 // 3. SHIFT TIME
