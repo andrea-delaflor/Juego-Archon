@@ -80,7 +80,7 @@ void Coordinador::dibuja()
         ETSIDI::setFont("fuentes/bitwise.ttf", 20);
 
         // Lo ponemos un poco más a la izquierda (-8.0) 
-        ETSIDI::printxy("FLECHAS <- -> PASAR PAGINA  |  ESC PARA SALIR", -8.0f, -8.0f);
+        ETSIDI::printxy("FLECHAS IZQ/DER PASAR PAGINA  |  ESC PARA SALIR", -8.0f, -8.0f);
 
         break;
     case PAUSA:
