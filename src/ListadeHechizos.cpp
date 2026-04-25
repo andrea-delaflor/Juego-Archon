@@ -1,4 +1,4 @@
-#include "ListadeHechizos.h"
+ï»¿#include "ListadeHechizos.h"
 #include "Mundo.h"
 #include "Tablero.h"
 #include "Pieza.h"
@@ -9,8 +9,8 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
     Pieza* piezaEnClick = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
 
-    // PASO 1: Si la pieza seleccionada es el Mago, el jugador está eligiendo a quién teletransportar
-    // (O si no hay nada seleccionado aún)
+    // PASO 1: Si la pieza seleccionada es el Mago, el jugador estÃ¡ eligiendo a quiÃ©n teletransportar
+    // (O si no hay nada seleccionado aÃºn)
     if (mundo->seleccionada == nullptr || mundo->seleccionada->esLider()) {
         if (piezaEnClick != nullptr && piezaEnClick->obtenerBando() == mundo->bandoActual()) {
             mundo->seleccionada = piezaEnClick;
@@ -22,8 +22,8 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
         }
     }
 
-    // PASO 2: Si ya tenemos una pieza seleccionada (que no es el líder o ya es el objetivo)
-    // y el destino está vacío, ejecutamos el salto.
+    // PASO 2: Si ya tenemos una pieza seleccionada (que no es el lÃ­der o ya es el objetivo)
+    // y el destino estÃ¡ vacÃ­o, ejecutamos el salto.
     if (mundo->seleccionada != nullptr && piezaEnClick == nullptr) {
         Vector2D antigua = mundo->seleccionada->obtenerPosicion();
         tablero.colocarPieza((int)antigua.x, (int)antigua.y, nullptr);
@@ -31,7 +31,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
         mundo->seleccionada->establecerPosicion(destino);
         tablero.colocarPieza((int)destino.x, (int)destino.y, mundo->seleccionada);
 
-        usado = true; // AQUÍ es donde se gasta el hechizo
+        usado = true; // AQUÃ es donde se gasta el hechizo
         mundo->setModoMagia(false);
         std::cout << "Teletransporte completado." << std::endl;
     }
@@ -40,7 +40,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     }
 }
 
-//este hechizo no se puede hacer hasta que este la clase vida, pero lo dejo aquí para que se vea la estructura de los hechizos
+//este hechizo no se puede hacer hasta que este la clase vida, pero lo dejo aquÃ­ para que se vea la estructura de los hechizos
 // 2. HEAL
 void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
@@ -53,7 +53,7 @@ void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
 
 // 3. SHIFT TIME
 void HechizoShiftTime::aplicar(Mundo* mundo, Vector2D destino) {
-    // Usamos el método público para que Mundo gestione sus variables privadas
+    // Usamos el mÃ©todo pÃºblico para que Mundo gestione sus variables privadas
     mundo->invertirCicloTiempo();
 
     std::cout << "Hechizo Shift Time aplicado correctamente." << std::endl;
@@ -90,9 +90,9 @@ void HechizoExchange::aplicar(Mundo* mundo, Vector2D destino) {
         tablero.colocarPieza((int)pos2.x, (int)pos2.y, primeraPieza);
         tablero.colocarPieza((int)pos1.x, (int)pos1.y, piezaActual);
 
-        std::cout << "¡INTERCAMBIO COMPLETADO!" << std::endl;
+        std::cout << "Â¡INTERCAMBIO COMPLETADO!" << std::endl;
 
-        // Limpiamos para el próximo uso y finalizamos
+        // Limpiamos para el prÃ³ximo uso y finalizamos
         primeraPieza = nullptr;
         usado = true;
         mundo->setModoMagia(false);
@@ -138,7 +138,7 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
 
     Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
 
-    // --- MODO SELECCIÓN (Clic en cualquier pieza viva) ---
+    // --- MODO SELECCIÃ“N (Clic en cualquier pieza viva) ---
     if (ocupante != nullptr) {
         std::cout << "\n--- CEMENTERIO ---" << std::endl;
         for (int i = 0; i < (int)cementerio.size(); i++) {
@@ -146,7 +146,7 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
         }
 
         int actual = mundo->getIndiceSeleccionado();
-        actual = (actual + 1) % cementerio.size(); // Ciclo automático
+        actual = (actual + 1) % cementerio.size(); // Ciclo automÃ¡tico
         if (actual < 0) actual = 0;
         
         mundo->setIndiceSeleccionado(actual);
@@ -154,13 +154,13 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
         return; // Seguimos en modo magia esperando el clic en el suelo
     }
 
-    // --- MODO EJECUCIÓN (Clic en suelo vacío) ---
+    // --- MODO EJECUCIÃ“N (Clic en suelo vacÃ­o) ---
     int idx = mundo->getIndiceSeleccionado();
     if (idx < 0 || idx >= (int)cementerio.size()) idx = 0;
 
     Pieza* p = cementerio[idx];
 
-    // Acción de revivir
+    // AcciÃ³n de revivir
     cementerio.erase(cementerio.begin() + idx);
     p->restaurarVidaCompleta();
     p->establecerPosicion(destino);
@@ -176,15 +176,44 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     // --- DESBLOQUEO DEL JUEGO ---
     usado = true; 
     mundo->setModoMagia(false);       // Cerramos el modo magia
-    mundo->setIndiceSeleccionado(-1); // Reseteamos el índice
+    mundo->setIndiceSeleccionado(-1); // Reseteamos el Ã­ndice
 }
 
 // 7. SUMMON
+/*
+Consiste en hacer aparecer a un golem/troll en una casilla vacia
+*/
 void HechizoSummon::aplicar(Mundo* mundo, Vector2D destino) {
-    if (mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y) == nullptr) {
-        // Aquí puedes crear una pieza genérica o específica
-        usado = true;
+    Tablero& tablero = mundo->getTablero();
+    Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
+
+    // Casilla ocupada â†’ avisar y esperar
+    if (ocupante != nullptr) {
+        std::cout << "La casilla esta ocupada. Elige una casilla VACIA para invocar." << std::endl;
+        mundo->setModoMagia(true);
+        return;
     }
+
+    // Casilla vacÃ­a â†’ invocar pieza segÃºn bando
+    Pieza* nuevaPieza = nullptr;
+
+    if (mundo->bandoActual() == Bando::LUZ) {
+        nuevaPieza = new GolemL(destino);
+        mundo->getPiezasLuz().push_back(nuevaPieza);
+        std::cout << "SUMMON: Golem invocado en ("
+            << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
+    }
+    else {
+        nuevaPieza = new TrollO(destino);
+        mundo->getPiezasOscuridad().push_back(nuevaPieza);
+        std::cout << "SUMMON: Troll invocado en ("
+            << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
+    }
+
+    tablero.colocarPieza((int)destino.x, (int)destino.y, nuevaPieza);
+    usado = true;
+    mundo->setModoMagia(false);
+
 }
 
-// NADA
+
