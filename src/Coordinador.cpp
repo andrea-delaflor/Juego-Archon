@@ -374,7 +374,7 @@ void Coordinador::mueve() {
         if (batalla.combateTerminado()) {
             estado = JUEGO;
 
-            // ¡AQUÍ ESTÁ EL ARREGLO! Ahora le pasamos 3 argumentos (ganador, perdedor, y si es empate)
+            // Ahora le pasamos 3 argumentos (ganador, perdedor, y si es empate)
             mundo.finalizaCombate(batalla.obtenerGanador(), batalla.obtenerPerdedor(), batalla.esEmpate());
         }
         break;

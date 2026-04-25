@@ -349,34 +349,44 @@ void Mundo::dibuja(int estado) {
             glEnd();
 
             // 3. Título del Menú
-            ETSIDI::setTextColor(1, 1, 0); // Amarillo
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
-            ETSIDI::printxy("GRIMORIO", 2.2f, 3.2f); // Posicionado en la parte superior
 
-            // 4. Listado de Hechizos
-            std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 13); // Un pelín más grande para legibilidad
+            if (hechizoSeleccionado == nullptr) { //menus dehechizos solo si no hay ehchizo seleccionado
+                ETSIDI::setTextColor(1, 1, 0); // Amarillo
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
+                ETSIDI::printxy("HECHIZO O MUEVE", 2.2f, 3.2f); // Posicionado en la parte superior
 
-            for (int i = 0; i < (int)libro.size(); i++) {
-                // AJUSTE DE ESPACIADO:
-                float yPos = 2.2f - (i * 1.1f);
+                // 4. Listado de Hechizos
+                std::vector<Hechizo*>& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 13); // Un pelín más grande para legibilidad
 
-                if (libro[i]->estaUsado()) {
-                    ETSIDI::setTextColor(0.5f, 0.5f, 0.5f); // Gris
+                for (int i = 0; i < (int)libro.size(); i++) {
+                    // AJUSTE DE ESPACIADO:
+                    float yPos = 2.2f - (i * 1.1f);
+
+                    if (libro[i]->estaUsado()) {
+                        ETSIDI::setTextColor(0.5f, 0.5f, 0.5f); // Gris
+                    }
+                    else {
+                        ETSIDI::setTextColor(1, 1, 1); // Blanco
+                    }
+
+                    std::string texto = std::to_string(i + 1) + ". " + libro[i]->getNombre();
+                    ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
                 }
-                else {
-                    ETSIDI::setTextColor(1, 1, 1); // Blanco
-                }
 
-                std::string texto = std::to_string(i + 1) + ". " + libro[i]->getNombre();
-                ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
+                // 5. Instrucción de uso
+                ETSIDI::setTextColor(1, 1, 1);
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
+                ETSIDI::printxy("PULSA NUM DEL 1 AL 7", 2.2f, -5.5f);
             }
+            else {
+                ETSIDI::setTextColor(0, 1, 1); // Cian
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 18);
+                ETSIDI::printxy("CONJURO ACTIVO", 2.1f, 3.2f);
 
-            // 5. Instrucción de uso
-            ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::setFont("fuentes/Bitwise.ttf", 11);
-            ETSIDI::printxy("PULSA NUM DEL 1 AL 7", 2.2f, -5.5f);
-
+                ETSIDI::setFont("fuentes/Bitwise.ttf", 14);
+                std::string nombreH = hechizoSeleccionado->getNombre();
+                ETSIDI::printxy(nombreH.c_str(), 2.2f, 2.5f);
 
             // LISTA DE MUERTOS para el Revive
             HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
@@ -411,6 +421,7 @@ void Mundo::dibuja(int estado) {
                         float yPos = -3.8f - (i * 0.9f);
                         ETSIDI::printxy(linea.c_str(), 2.2f, yPos);
                     }
+                }
 
                     // Instrucción
                     ETSIDI::setTextColor(0.8f, 0.8f, 0.8f);
@@ -418,6 +429,14 @@ void Mundo::dibuja(int estado) {
                     ETSIDI::printxy("Pulsa num/letra", 2.2f, -5.0f);
                     ETSIDI::printxy("Click vacio = revivir", 2.2f, -5.5f);
                 }
+
+            // --- INSTRUCCIONES GENERALES DE LANZAMIENTO ---
+            ETSIDI::setTextColor(1, 1, 0);
+            ETSIDI::setFont("fuentes/Bitwise.ttf", 12);
+            ETSIDI::printxy("PULSA CASILLA DESTINO", 2.1f, -4.5f);
+            ETSIDI::setTextColor(0.7f, 0.7f, 0.7f);
+            ETSIDI::printxy("O CLICA ALIADO PARA CANCELAR", 2.1f, -5.2f);
+
             }
 
             glEnable(GL_TEXTURE_2D);
@@ -597,6 +616,14 @@ void Mundo::teclahechizos(unsigned char key) {
     // ShiftTime: Este hechizo es instantaneo no necesita mas acciones por parte del usuario
     if (key == '3') {
         h->aplicar(this, Vector2D(0, 0));
+
+         // al no hacer click en el tablero no es automatico el cambio de turno qu ehay en la funcion click raton
+        if (h->estaUsado()) {
+            setModoMagia(false);
+            hechizoSeleccionado = nullptr;
+            seleccionada = nullptr;
+            faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
+        }
         return;
     }
 
