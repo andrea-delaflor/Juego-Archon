@@ -7,9 +7,15 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
     tipo = t;
     radio = 0.6f; // Tamaño genérico del obstáculo
 
-    if (tipo == TipoObstaculo::DANO) {
+    if (tipo == TipoObstaculo::DANO_VELA) {
         spriteObs = ETSIDI::Sprite("imagenes/vela.png", 0, 0, 0.8f, 1.8f);
         spriteObs.setCenter(0.4f, 0.9f); // El centro es siempre la MITAD del ancho y la MITAD del alto
+    }
+    else if (tipo == TipoObstaculo::DANO_CALABAZA) {
+        // IMPORTANTE: Debes descargar una imagen que se llame "calabaza.png" 
+        // y meterla en tu carpeta bin/imagenes/
+        spriteObs = ETSIDI::Sprite("imagenes/calabaza.png", 0, 0, 1.2f, 1.2f);
+        spriteObs.setCenter(0.6f, 0.6f);
     }
     else if (tipo == TipoObstaculo::VELOCIDAD) {
         spriteObs = ETSIDI::Sprite("imagenes/rayo.png", 0, 0, 1.5f, 1.5f);
