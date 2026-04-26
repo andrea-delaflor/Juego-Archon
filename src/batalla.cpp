@@ -516,6 +516,8 @@ void Batalla::teclaEspecial(int key) {
 void Batalla::generarDisparo(bool esJugador1) {
     Pieza* p = esJugador1 ? l1 : l2;
     Vector2D posDisparo = esJugador1 ? pos1 : pos2;
+    // Identificamos la posición del enemigo para apuntar
+    Vector2D posEnemigo = esJugador1 ? pos2 : pos1;
     /*
     Vector2D posPieza = esJugador1 ? pos1 : pos2;
     float offsetX = -2.0f;
@@ -524,9 +526,21 @@ void Batalla::generarDisparo(bool esJugador1) {
     */
 
     int ataque = p->obtenerPoderAtaque(); //obtenemos el poder de ataque de cada pieza
+     // calculo de la dinamica de movimento del proyectil para que vaya hacia el enemigo
+    Vector2D direccion = posEnemigo - posDisparo; // Vector que une origen y objetivo
+    float distancia = direccion.modulo();         // Calculamos la distancia
 
-    // El J1 dispara a la derecha (positivo), el J2 a la izquierda (negativo)
-    Vector2D vel = esJugador1 ? Vector2D(10, 0) : Vector2D(-10, 0);
+    float rapidezBase = 12.0f; // Puedes subir este valor para que sea más difícil de esquivar
+    Vector2D vel;
+
+    if (distancia > 0.1f) {
+        // Normalizamos el vector (direccion / distancia) y multiplicamos por la rapidez
+        vel = direccion * (rapidezBase / distancia);
+    }
+    else {
+        // Caso de seguridad: si están pegados, dispara hacia su lado original
+        vel = esJugador1 ? Vector2D(rapidezBase, 0) : Vector2D(-rapidezBase, 0);
+    }
 
     switch (p->obtenerArma()) {
     case TipoArma::PELOTAFUTBOL: // Arquera
