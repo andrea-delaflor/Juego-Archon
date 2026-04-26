@@ -83,6 +83,13 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
     int tiradaDado = rand() % 100;
     arenaConObstaculos = (tiradaDado < 80);
 
+    //Decidir el obstáculo de la arena variable
+    if (rand() % 2 == 0) {
+        tipoObstaculoVariable = TipoObstaculo::VELOCIDAD; // Rayo
+    }
+    else {
+        tipoObstaculoVariable = TipoObstaculo::CONGELACION; // Hielo
+    }
     temporizadorObstaculos = 0.0f;
 
     if (arenaConObstaculos) {
@@ -330,24 +337,32 @@ void Batalla::mueve() {
     }
 
     // LÓGICA DE LOS OBSTÁCULOS
-    if (arenaConObstaculos) {
+    if (arenaConObstaculos && obstaculos.empty()) {
         temporizadorObstaculos += dt;
-        if (temporizadorObstaculos > 2.0f) {
+
+        // Espera 1 segundo después de que desaparezca el anterior
+        if (temporizadorObstaculos > 1.0f) {
             temporizadorObstaculos = 0.0f;
             float xAleatorio = -8.0f + (rand() % 1600) / 100.0f;
             Vector2D posObj(xAleatorio, 10.0f);
             Vector2D velObj(0.0f, -3.0f);
 
             TipoObstaculo tipoObj;
-            if (indiceArenaActual == 0) tipoObj = TipoObstaculo::DANO; // Casilla Blanca -> Velas
-            else if (indiceArenaActual == 1) tipoObj = TipoObstaculo::VELOCIDAD; // Casilla Negra -> Rayo
-            else if (indiceArenaActual == 2) tipoObj = TipoObstaculo::CONGELACION; // Variable -> Hielo
-            else tipoObj = TipoObstaculo::AUMENTO_DANO; // Punto Poder -> Nube
-            //TipoObstaculo tipoAleatorio = static_cast<TipoObstaculo>(rand() % 3);
-            //obstaculos.push_back(new Obstaculo(posObj, velObj, tipoAleatorio));
+            if (indiceArenaActual == 0) {
+                tipoObj = TipoObstaculo::DANO_VELA; // Casilla Blanca
+            }
+            else if (indiceArenaActual == 1) {
+                tipoObj = TipoObstaculo::DANO_CALABAZA; // Casilla Negra
+            }
+            else if (indiceArenaActual == 2) {
+                // Casilla Variable -> Usamos el que tocó por sorteo al empezar la pelea
+                tipoObj = tipoObstaculoVariable;
+            }
+            else {
+                tipoObj = TipoObstaculo::AUMENTO_DANO; // Punto de Poder
+            }
 
             obstaculos.push_back(new Obstaculo(posObj, velObj, tipoObj));
-           
         }
     }
     // GESTIÓN DE TIEMPOS DE LOS BONUS (Duran 5 segundos)
@@ -370,28 +385,68 @@ void Batalla::mueve() {
 
         // Comprobar Jugador 1
         if (distL1.modulo() < 1.5f) {
-            if ((*it)->getTipo() == TipoObstaculo::DANO && !l1->tieneEscudoActivo() && !invulnerableJ1) {
-                float factorObs = 1.0f;
-                if ((ventaja == 1 && l1->obtenerBando() == Bando::LUZ) || (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD)) factorObs = 0.5f;
-                l1->getVida().damage(10 * factorObs);
-                hp1 = l1->getVida().getActual();
+
+            // Calculamos la ventaja ignorando si el Tablero se ha equivocado
+            bool j1TieneVentaja = false;
+            if (indiceArenaActual == 0 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true; // Casilla Blanca
+            else if (indiceArenaActual == 1 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true; // Casilla Negra
+            else if (indiceArenaActual == 2) {
+                // Casilla Variable: Aquí sí dependemos de lo que mande el juego
+                if (ventaja == 1 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true;
+                if (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true;
             }
-            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) { velJ1 = 1.0f; temporizadorBonusJ1 = 5.0f; }
-            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) { invulnerableJ1 = true; temporizadorBonusJ1 = 5.0f; }
-            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) { multDanoJ1 = 2.0f; temporizadorBonusJ1 = 5.0f; }
+
+            bool esNeutral = (indiceArenaActual == 3); // Punto de Poder (Beneficios para todos)
+
+            // Si es un obstáculo de daño (sea vela o calabaza)
+            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
+                if (!j1TieneVentaja && !l1->tieneEscudoActivo() && !invulnerableJ1) {
+                    l1->getVida().damage(10);
+                    hp1 = l1->getVida().getActual();
+                }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) {
+                if (j1TieneVentaja || esNeutral) { velJ1 = 1.0f; temporizadorBonusJ1 = 5.0f; }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) {
+                if (j1TieneVentaja || esNeutral) { invulnerableJ1 = true; temporizadorBonusJ1 = 5.0f; }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) {
+                multDanoJ1 = 2.0f; temporizadorBonusJ1 = 5.0f;
+            }
             borrar = true;
         }
-        // Comprobar Jugador 2
+        // --- COMPROBAR JUGADOR 2 ---
         else if (distL2.modulo() < 1.5f) {
-            if ((*it)->getTipo() == TipoObstaculo::DANO && !l2->tieneEscudoActivo() && !invulnerableJ2) {
-                float factorObs = 1.0f;
-                if ((ventaja == 1 && l2->obtenerBando() == Bando::LUZ) || (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD)) factorObs = 0.5f;
-                l2->getVida().damage(10 * factorObs);
-                hp2 = l2->getVida().getActual();
+
+            // Calculamos la ventaja ignorando si el Tablero se ha equivocado
+            bool j2TieneVentaja = false;
+            if (indiceArenaActual == 0 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true; // Casilla Blanca
+            else if (indiceArenaActual == 1 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true; // Casilla Negra
+            else if (indiceArenaActual == 2) {
+                // Casilla Variable
+                if (ventaja == 1 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true;
+                if (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true;
             }
-            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) { velJ2 = 1.0f; temporizadorBonusJ2 = 5.0f; }
-            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) { invulnerableJ2 = true; temporizadorBonusJ2 = 5.0f; }
-            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) { multDanoJ2 = 2.0f; temporizadorBonusJ2 = 5.0f; }
+
+            bool esNeutral = (indiceArenaActual == 3); // Punto de Poder (Beneficios para todos)
+
+            // Si es un obstáculo de daño (sea vela o calabaza)
+            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
+                if (!j2TieneVentaja && !l2->tieneEscudoActivo() && !invulnerableJ2) {
+                    l2->getVida().damage(10);
+                    hp2 = l2->getVida().getActual();
+                }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) {
+                if (j2TieneVentaja || esNeutral) { velJ2 = 1.0f; temporizadorBonusJ2 = 5.0f; }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) {
+                if (j2TieneVentaja || esNeutral) { invulnerableJ2 = true; temporizadorBonusJ2 = 5.0f; }
+            }
+            else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) {
+                multDanoJ2 = 2.0f; temporizadorBonusJ2 = 5.0f;
+            }
             borrar = true;
         }
         else if ((*it)->getPos().y < -12.0f) borrar = true;
