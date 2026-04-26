@@ -64,7 +64,8 @@ private:
     float multDanoJ1, multDanoJ2;
     float temporizadorBonusJ1, temporizadorBonusJ2;
 
-
+   
+    TipoObstaculo tipoObstaculoVariable; // Variable para guardar qué obstáculo toca en la arena variable 
 
     float congelarDisparoJ1 = 0.0f; // Tiempo que falta para poder volver a disparar
     float congelarDisparoJ2 = 0.0f; // Tiempo que falta para poder volver a disparar
