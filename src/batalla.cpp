@@ -34,9 +34,18 @@ Batalla::Batalla() : fondoArena("imagenes/batallacancha.png", 0, 0, 20, 20) {
 
 // INICIALIZA: Se ejecuta CADA VEZ que hay un combate nuevo
 void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ventajaRecibida) {
-   
-    l1 = atacante;
-    l2 = defensor;
+   //Fijar los controles por bando
+    // La Luz siempre será el Jugador 1 (WASD) y la Oscuridad el Jugador 2 (Flechas)
+    if (atacante->obtenerBando() == Bando::LUZ) {
+        l1 = atacante;
+        l2 = defensor;
+    }
+    else {
+        l1 = defensor;
+        l2 = atacante;
+    }
+   // l1 = atacante;
+   // l2 = defensor;
     ventaja = ventajaRecibida;
 
     terminado = false;
