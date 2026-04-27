@@ -217,7 +217,7 @@ void Coordinador::tecla(unsigned char key) {
             estado = MENU;
             fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
             ETSIDI::stopMusica();
-            ETSIDI::playMusica("sonidos/menuppal.wav", true);
+            ETSIDI::playMusica("sonidos/menuppal2.wav", true);
         }
         break;
 
@@ -351,7 +351,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
                 mundo.inicializa(0); // Reseteamos el mundo por si quieren echar otra partida
                 ETSIDI::stopMusica();
-                ETSIDI::playMusica("sonidos/menuppal.wav", true);
+                ETSIDI::playMusica("sonidos/menuppal2.wav", true);
             }
         }
         break;
@@ -409,7 +409,7 @@ void Coordinador::mueve() {
             else {
                 //esto seria para lo del empate.....
                 estado = MENU;
-                ETSIDI::playMusica("sonidos/menuppal.wav", true);
+                ETSIDI::playMusica("sonidos/menuppal2.wav", true);
             }
         }
 
