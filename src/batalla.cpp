@@ -44,8 +44,7 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
         l1 = defensor;
         l2 = atacante;
     }
-   // l1 = atacante;
-   // l2 = defensor;
+  
     ventaja = ventajaRecibida;
 
     terminado = false;
@@ -392,76 +391,78 @@ void Batalla::mueve() {
         Vector2D distL1 = (*it)->getPos() - pos1;
         Vector2D distL2 = (*it)->getPos() - pos2;
 
-        // Comprobar Jugador 1
+        // --- COLISIÓN JUGADOR 1 ---
         if (distL1.modulo() < 1.5f) {
-
-            // Calculamos la ventaja ignorando si el Tablero se ha equivocado
             bool j1TieneVentaja = false;
-            if (indiceArenaActual == 0 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true; // Casilla Blanca
-            else if (indiceArenaActual == 1 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true; // Casilla Negra
+            if (indiceArenaActual == 0 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true;
+            else if (indiceArenaActual == 1 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true;
             else if (indiceArenaActual == 2) {
-                // Casilla Variable: Aquí sí dependemos de lo que mande el juego
                 if (ventaja == 1 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true;
                 if (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true;
             }
 
-            bool esNeutral = (indiceArenaActual == 3); // Punto de Poder (Beneficios para todos)
-
-            // Si es un obstáculo de daño (sea vela o calabaza)
             if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
-                if (!j1TieneVentaja && !l1->tieneEscudoActivo() && !invulnerableJ1) {
-                    l1->getVida().damage(10);
+                float danioBase = 10.0f;
+                if (j1TieneVentaja) danioBase = 5.0f;
+                if (!l1->tieneEscudoActivo() && !invulnerableJ1) {
+                    l1->getVida().damage(danioBase);
                     hp1 = l1->getVida().getActual();
                 }
             }
             else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) {
-                if (j1TieneVentaja || esNeutral) { velJ1 = 1.0f; temporizadorBonusJ1 = 5.0f; }
+                velJ1 = 1.0f; temporizadorBonusJ1 = 5.0f;
             }
             else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) {
-                if (j1TieneVentaja || esNeutral) { invulnerableJ1 = true; temporizadorBonusJ1 = 5.0f; }
+                invulnerableJ1 = true; temporizadorBonusJ1 = 5.0f;
             }
             else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) {
                 multDanoJ1 = 2.0f; temporizadorBonusJ1 = 5.0f;
             }
             borrar = true;
         }
-        // --- COMPROBAR JUGADOR 2 ---
+        // --- COLISIÓN JUGADOR 2 ---
         else if (distL2.modulo() < 1.5f) {
-
-            // Calculamos la ventaja ignorando si el Tablero se ha equivocado
             bool j2TieneVentaja = false;
-            if (indiceArenaActual == 0 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true; // Casilla Blanca
-            else if (indiceArenaActual == 1 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true; // Casilla Negra
+            if (indiceArenaActual == 0 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true;
+            else if (indiceArenaActual == 1 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true;
             else if (indiceArenaActual == 2) {
-                // Casilla Variable
                 if (ventaja == 1 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true;
                 if (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true;
             }
 
-            bool esNeutral = (indiceArenaActual == 3); // Punto de Poder (Beneficios para todos)
-
-            // Si es un obstáculo de daño (sea vela o calabaza)
             if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
-                if (!j2TieneVentaja && !l2->tieneEscudoActivo() && !invulnerableJ2) {
-                    l2->getVida().damage(10);
+                float danioBase = 10.0f;
+                if (j2TieneVentaja) danioBase = 5.0f;
+                // Corregido: l2 comprueba su propio escudo e invulnerabilidad
+                if (!l2->tieneEscudoActivo() && !invulnerableJ2) {
+                    l2->getVida().damage(danioBase);
                     hp2 = l2->getVida().getActual();
                 }
             }
             else if ((*it)->getTipo() == TipoObstaculo::VELOCIDAD) {
-                if (j2TieneVentaja || esNeutral) { velJ2 = 1.0f; temporizadorBonusJ2 = 5.0f; }
+                velJ2 = 1.0f; temporizadorBonusJ2 = 5.0f;
             }
             else if ((*it)->getTipo() == TipoObstaculo::CONGELACION) {
-                if (j2TieneVentaja || esNeutral) { invulnerableJ2 = true; temporizadorBonusJ2 = 5.0f; }
+                invulnerableJ2 = true; temporizadorBonusJ2 = 5.0f;
             }
             else if ((*it)->getTipo() == TipoObstaculo::AUMENTO_DANO) {
                 multDanoJ2 = 2.0f; temporizadorBonusJ2 = 5.0f;
             }
             borrar = true;
         }
-        else if ((*it)->getPos().y < -12.0f) borrar = true;
+        // --- SALIDA DE PANTALLA ---
+        else if ((*it)->getPos().y < -12.0f) {
+            borrar = true;
+        }
 
-        if (borrar) { delete* it; it = obstaculos.erase(it); }
-        else ++it;
+        // --- LIMPIEZA FINAL DEL CICLO ---
+        if (borrar) {
+            delete* it;
+            it = obstaculos.erase(it);
+        }
+        else {
+            ++it;
+        }
     }
 
     //  DAÑO POR CONTACTO DEL ESCUDO 

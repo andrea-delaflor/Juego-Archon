@@ -12,8 +12,6 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
         spriteObs.setCenter(0.4f, 0.9f); // El centro es siempre la MITAD del ancho y la MITAD del alto
     }
     else if (tipo == TipoObstaculo::DANO_CALABAZA) {
-        // IMPORTANTE: Debes descargar una imagen que se llame "calabaza.png" 
-        // y meterla en tu carpeta bin/imagenes/
         spriteObs = ETSIDI::Sprite("imagenes/calabaza.png", 0, 0, 1.2f, 1.2f);
         spriteObs.setCenter(0.6f, 0.6f);
     }
