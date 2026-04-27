@@ -392,6 +392,7 @@ void Batalla::mueve() {
         Vector2D distL2 = (*it)->getPos() - pos2;
 
         // --- COLISIÓN JUGADOR 1 ---
+        // Comprobar ventaja del jugador uno por si el tablero se ha equivocado
         if (distL1.modulo() < 1.5f) {
             bool j1TieneVentaja = false;
             if (indiceArenaActual == 0 && l1->obtenerBando() == Bando::LUZ) j1TieneVentaja = true;
@@ -421,6 +422,7 @@ void Batalla::mueve() {
             borrar = true;
         }
         // --- COLISIÓN JUGADOR 2 ---
+
         else if (distL2.modulo() < 1.5f) {
             bool j2TieneVentaja = false;
             if (indiceArenaActual == 0 && l2->obtenerBando() == Bando::LUZ) j2TieneVentaja = true;
@@ -433,7 +435,7 @@ void Batalla::mueve() {
             if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
                 float danioBase = 10.0f;
                 if (j2TieneVentaja) danioBase = 5.0f;
-                // Corregido: l2 comprueba su propio escudo e invulnerabilidad
+                // l2 comprueba su propio escudo e invulnerabilidad
                 if (!l2->tieneEscudoActivo() && !invulnerableJ2) {
                     l2->getVida().damage(danioBase);
                     hp2 = l2->getVida().getActual();
@@ -460,9 +462,7 @@ void Batalla::mueve() {
             delete* it;
             it = obstaculos.erase(it);
         }
-        else {
-            ++it;
-        }
+        else ++it; 
     }
 
     //  DAÑO POR CONTACTO DEL ESCUDO 
@@ -479,7 +479,6 @@ void Batalla::mueve() {
                 hp2 = l2->getVida().getActual(); 
             }
         }
-
         
         if (l2 && l1 && l2->tieneEscudoActivo()) {
             if (Interaccion::colisionConEscudo(pos1, pos2)) {
@@ -487,7 +486,6 @@ void Batalla::mueve() {
                 hp1 = l1->getVida().getActual(); 
             }
         }
-
         contadorDano = 0; // se reincia contador
     }
 
@@ -583,12 +581,6 @@ void Batalla::generarDisparo(bool esJugador1) {
     Vector2D posDisparo = esJugador1 ? pos1 : pos2;
     // Identificamos la posición del enemigo para apuntar
     Vector2D posEnemigo = esJugador1 ? pos2 : pos1;
-    /*
-    Vector2D posPieza = esJugador1 ? pos1 : pos2;
-    float offsetX = -2.0f;
-    float offsetY = 3.75f;
-    Vector2D posDisparo = posPieza + Vector2D(offsetX, offsetY);
-    */
 
     int ataque = p->obtenerPoderAtaque(); //obtenemos el poder de ataque de cada pieza
      // calculo de la dinamica de movimento del proyectil para que vaya hacia el enemigo
