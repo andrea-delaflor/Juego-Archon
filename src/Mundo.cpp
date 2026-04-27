@@ -272,6 +272,7 @@ void Mundo::teclahechizos(unsigned char key) {
         return;
     }
 
+
     //En caso de elegir REVIVE las teclas 0-9 && a-f eligen a los muertos
     if (modoMagiaActivo && hechizoSeleccionado != nullptr) {
         HechizoRevive* revive = dynamic_cast<HechizoRevive*>(hechizoSeleccionado);
@@ -366,15 +367,22 @@ void Mundo::teclahechizos(unsigned char key) {
     // Resto de hechizos: activar y esperar click
     hechizoSeleccionado = h;
     modoMagiaActivo = true;
-    std::cout << "Hechizo activado: " << h->getNombre() << " — Haz click en la casilla objetivo." << std::endl;
     
-    /* Añadir mas adelante ....
-    else if (key == '8') {
-        modoMagiaActivo = false;
-        hechizoSeleccionado = nullptr;
-        return;
+    if (key == '1') {
+        hechizoSeleccionado = h; // h es el hechizo Teleport que has buscado
+        modoMagiaActivo = true;
+
+        this->seleccionada = nullptr;
+
+        if (faseActual == TURNO_LUZ)
+            std::cout << "Mago (LUZ) deseleccionado. El Teleport Caótico está listo." << std::endl;
+        else
+            std::cout << "Bruja (OSCURIDAD) deseleccionada. El Teleport Caótico está listo." << std::endl;
+
+        std::cout << "Haz click en CUALQUIER ficha (aliada o enemiga, líder o no) para teletransportarla." << std::endl;
     }
-    */
+  
+  
 
     
 }
