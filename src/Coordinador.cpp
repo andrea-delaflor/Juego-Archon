@@ -10,6 +10,12 @@ Coordinador::Coordinador() :
 
 void Coordinador::dibuja()
 {
+    // RESET DE ESTADO: Obligamos a OpenGL a volver al color blanco puro
+    // y a reactivar la iluminación antes de dibujar nada más.
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_LIGHTING);
+    glDisable(GL_BLEND);
+
     switch (estado) {
     case INICIO:
         glMatrixMode(GL_PROJECTION);
@@ -84,22 +90,36 @@ void Coordinador::dibuja()
 
         break;
     case PAUSA:
-        //esto lo vamos a poner para que cuando estemos en JUEGO ponga el fondo del tablero y en BATALLA el de la pelea
+        // Guardamos TODO el estado actual de OpenGL
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+
+        // Dibujamos el fondo
         if (estadoAnterior == JUEGO) {
             mundo.dibuja(estado);
         }
-        else if (estadoAnterior == BATALLA) { //aqui tenemos que mirarlo porque no se ven los botones...
+        else if (estadoAnterior == BATALLA) { // Aquí tenemos que mirarlo porque no se ven los botones
             batalla.dibuja();
         }
 
-        //aqui lo que vamos a hacer es ajustar la camara porque sino se mueve lo que dibujemos cada vez q la ventana cambie de tamaño
+        // Limpiamos el estado
+        glDisable(GL_LIGHTING);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Aquí lo que vamos a hacer es ajustar la camara porque sino se mueve lo que dibujemos cada vez que la ventana cambie de tamaño
         glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
         glLoadIdentity();
         gluOrtho2D(-10.0, 10.0, -10.0, 10.0);
+
         glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
         glLoadIdentity();
         
-        //dibujar el rectangulo traslucido de menu pausa
+        // Dibujar el rectángulo traslúcido de menú pausa
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
@@ -126,7 +146,7 @@ void Coordinador::dibuja()
         glEnd();
 
         //dibujamos un rectangulo rojo que actua como boton abandonar partida
-        if (hoverReanudar == true) {
+        if (hoverAbandonar == true) {
             glColor3f(1.0f, 0.3f, 0.3f);//Esto es lo nuevo de detectar si el raton esta por encima (rojo mas chillon)
         }
         else {
@@ -152,6 +172,13 @@ void Coordinador::dibuja()
         ETSIDI::setFont("fuentes/games.ttf", 50);
         ETSIDI::printxy("PAUSA", -2.5f, 6.0f);
 
+        // Restauración de la cámara
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix(); // Recuperamos la cámara original del juego
+
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix(); // Recuperamos la vista original
+        glPopAttrib(); // Recuperamos luces y colores
 
         break;
 
