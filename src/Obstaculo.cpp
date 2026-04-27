@@ -12,8 +12,6 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
         spriteObs.setCenter(0.4f, 0.9f); // El centro es siempre la MITAD del ancho y la MITAD del alto
     }
     else if (tipo == TipoObstaculo::DANO_CALABAZA) {
-        // IMPORTANTE: Debes descargar una imagen que se llame "calabaza.png" 
-        // y meterla en tu carpeta bin/imagenes/
         spriteObs = ETSIDI::Sprite("imagenes/calabaza.png", 0, 0, 1.2f, 1.2f);
         spriteObs.setCenter(0.6f, 0.6f);
     }
@@ -37,30 +35,7 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
 void Obstaculo::dibuja() {
     spriteObs.setPos(posicion.x, posicion.y);
     spriteObs.draw();
-    /*
-    glPushMatrix();
-    glTranslatef(posicion.x, posicion.y, 0);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    // Cambiamos el color dependiendo de lo que hace el objeto
-    switch (tipo) {
-    case TipoObstaculo::DANO:
-      glColor3f(1.0f, 0.0f, 0.0f); // Rojo (Malo, quita vida)
-        break;
-    case TipoObstaculo::VELOCIDAD:
-        glColor3f(0.0f, 1.0f, 0.0f); // Verde (Bueno, bonus de velocidad)
-        break;
-    case TipoObstaculo::CONGELACION:
-        glColor3f(0.0f, 0.5f, 1.0f); // Azul claro (Te congela)
-        break;
-    }
     
-    // Dibujamos una esfera 3D sencilla para representar el objeto
-    glutSolidSphere(radio, 15, 15);
-
-    glPopMatrix();
-    glColor3f(1.0f, 1.0f, 1.0f); // Restaurar el color a blanco para no pintar otras cosas de rojo
-    */
 }
 
 void Obstaculo::mueve(float dt) {
