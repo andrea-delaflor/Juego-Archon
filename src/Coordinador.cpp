@@ -314,6 +314,8 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 std::cout << "se ha seleccionado modo 2 jugador" << std::endl;
                 estado = JUEGO;
                 mundo.inicializa(estado);
+                ETSIDI::stopMusica();
+                ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
             }
             // --- BOTÓN INSTRUCCIONES ---
             else if (mouseX >= -2.175f && mouseX <= 2.125f && mouseY >= -7.2f && mouseY <= -4.825f) {
