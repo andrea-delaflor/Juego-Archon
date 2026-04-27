@@ -72,11 +72,20 @@ public:
 	
 
     //SISTEMA DE MAGIA
-   //
     void setModoMagia(bool v) {
         modoMagiaActivo = v;
-        if (!v) setIndiceSeleccionado(-1); // Limpia el índice al salir
+
+        if (v == true) {
+            // Al entrar en modo magia, quitamos al Mago de la selección
+            // Esto permite que el primer clic del Teleport sea para elegir al aliado
+            seleccionada = nullptr;
+        }
+        else {
+            // Al salir (v == false), limpiamos el índice del menú
+            setIndiceSeleccionado(-1);
+        }
     }
+
     Hechizo* hechizoSeleccionado = nullptr; // Guarda qué hechizo se va a aplicar
 
     // Getters y Setters para Hechizos y Revive

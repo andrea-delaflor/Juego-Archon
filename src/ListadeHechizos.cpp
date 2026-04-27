@@ -7,36 +7,58 @@
 // 1. TELEPORT
 void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
+
+    // IMPORTANTE: Buscamos qué hay en las coordenadas del clic AQUÍ dentro
     Pieza* piezaEnClick = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
 
-    // PASO 1: Si la pieza seleccionada es el Mago, el jugador está eligiendo a quién teletransportar
-    // (O si no hay nada seleccionado aún)
-    if (mundo->seleccionada == nullptr || mundo->seleccionada->esLider()) {
-        if (piezaEnClick != nullptr && piezaEnClick->obtenerBando() == mundo->bandoActual()) {
-            mundo->seleccionada = piezaEnClick;
-            std::cout << "Pieza elegida para Teleport: " << piezaEnClick->obtenerNombre() << std::endl;
-            std::cout << "Ahora selecciona el destino vacio." << std::endl;
-            mundo->setModoMagia(false);
-            // IMPORTANTE: No ponemos 'usado = true' porque solo hemos seleccionado
-            return;
+    // PASO 1: Seleccionar la pieza (seleccionada es nullptr porque lo pusimos así en la tecla)
+    if (mundo->seleccionada == nullptr) {
+
+        if (piezaEnClick != nullptr) { // ¿Hay una pieza?
+            if (piezaEnClick->obtenerBando() == mundo->bandoActual()) { // ¿Es nuestra?
+                if (!piezaEnClick->esLider()) { // ¿No es el mago?
+
+                    // ASIGNACIÓN CRUCIAL
+                    mundo->seleccionada = piezaEnClick;
+
+                    std::cout << "PIEZA SELECCIONADA: " << piezaEnClick->obtenerNombre() << std::endl;
+                    std::cout << "Ahora haz click en una casilla VACIA para moverla." << std::endl;
+                }
+                else {
+                    std::cout << "No puedes teletransportar al lider." << std::endl;
+                }
+            }
+            else {
+                std::cout << "Esa pieza es enemiga." << std::endl;
+            }
         }
+        else {
+            std::cout << "Has clicado en suelo vacio. Selecciona una pieza primero." << std::endl;
+        }
+
+        // Salimos para que el siguiente clic sea el destino
+        return;
     }
 
-    // PASO 2: Si ya tenemos una pieza seleccionada (que no es el líder o ya es el objetivo)
-    // y el destino está vacío, ejecutamos el salto.
-    if (mundo->seleccionada != nullptr && piezaEnClick == nullptr) {
-        Vector2D antigua = mundo->seleccionada->obtenerPosicion();
-        tablero.colocarPieza((int)antigua.x, (int)antigua.y, nullptr);
-
-        mundo->seleccionada->establecerPosicion(destino);
-        tablero.colocarPieza((int)destino.x, (int)destino.y, mundo->seleccionada);
-
-        usado = true; // AQUÍ es donde se gasta el hechizo
-        mundo->setModoMagia(false);
-        std::cout << "Teletransporte completado." << std::endl;
-    }
+    // PASO 2: Mover la pieza (Solo entra aquí si mundo->seleccionada ya NO es nullptr)
     else {
-        std::cout << "Seleccion de destino invalida para Teleport." << std::endl;
+        if (piezaEnClick == nullptr) { // Destino vacío
+            Vector2D antigua = mundo->seleccionada->obtenerPosicion();
+
+            // Intercambio en el tablero
+            tablero.colocarPieza((int)antigua.x, (int)antigua.y, nullptr);
+            mundo->seleccionada->establecerPosicion(destino);
+            tablero.colocarPieza((int)destino.x, (int)destino.y, mundo->seleccionada);
+
+            // Marcar como finalizado
+            this->usado = true;
+            // IMPORTANTE: No limpies mundo->seleccionada aquí si quieres 
+            // que Mundo::clickRaton lo haga al detectar que estaUsado() es true
+            std::cout << "Hechizo ejecutado con exito." << std::endl;
+        }
+        else {
+            std::cout << "Casilla ocupada. Elige otra." << std::endl;
+        }
     }
 }
 
