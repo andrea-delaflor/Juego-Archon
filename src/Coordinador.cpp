@@ -6,6 +6,7 @@ Coordinador::Coordinador() :
 {
     estado = INICIO;
     mundo.inicializa(estado);
+    ETSIDI::playMusica("sonidos/cantocelestial.wav", true);  //el true es para que la musica suene todo el rato sin parar, el false es para que solo suena una vez
 }
 
 void Coordinador::dibuja()
@@ -215,6 +216,8 @@ void Coordinador::tecla(unsigned char key) {
         if (key == 13) {
             estado = MENU;
             fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
+            ETSIDI::stopMusica();
+            ETSIDI::playMusica("sonidos/menuppal.wav", true);
         }
         break;
 
@@ -223,11 +226,16 @@ void Coordinador::tecla(unsigned char key) {
             modoUnJugador = true; //se ha activado modo con IA
             estado = JUEGO;
             mundo.inicializa(estado);
+            
         }
         else if (key == '2') {
             modoUnJugador = false;
             estado = JUEGO;
             mundo.inicializa(estado);
+        }
+        if (estado == JUEGO) {
+            ETSIDI::stopMusica();
+            ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
         }
         break;
     case INSTRUCCIONES:
@@ -244,7 +252,6 @@ void Coordinador::tecla(unsigned char key) {
             estadoAnterior = estado;
             estado = PAUSA;
         }
-        
         
             break;
 
@@ -298,6 +305,8 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 std::cout << "se ha seleccionado modo 1 jugador" << std::endl;
                 estado = JUEGO;
                 mundo.inicializa(estado);
+                ETSIDI::stopMusica();
+                ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
             }
             //esto es el rango para el "boton" de 2 jugadores
             else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
@@ -339,6 +348,8 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 estado = MENU;
                 fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
                 mundo.inicializa(0); // Reseteamos el mundo por si quieren echar otra partida
+                ETSIDI::stopMusica();
+                ETSIDI::playMusica("sonidos/menuppal.wav", true);
             }
         }
         break;
@@ -362,13 +373,19 @@ void Coordinador::mueve() {
 
             // Cambiamos el estado a BATALLA
             estado = BATALLA;
+
+            ETSIDI::stopMusica();
+            ETSIDI::playMusica("sonidos/pantallabatalla.wav", true);
+
             batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate, ventaja);
         }
 
         // Comprobamos si hay ganador y quien 
         if (mundo.faseActual == Mundo::FIN_PARTIDA) {
+            ETSIDI::stopMusica();
             if (mundo.obtenerGanador() == 1) {
                 estado = VICTORIA_ALUMNOS;
+                ETSIDI::playMusica("sonidos/cantocelestial.wav", false);  //el false es para que suena solo una vez
                 if (modoUnJugador) {
                     fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
                 }
@@ -379,6 +396,7 @@ void Coordinador::mueve() {
             }
             else if (mundo.obtenerGanador() == 2) {
                 estado = VICTORIA_PROFESORES;
+                ETSIDI::playMusica("sonidos/cantocelestial.wav", false);
                 if (modoUnJugador) {
                     fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
                 } else {
@@ -389,6 +407,7 @@ void Coordinador::mueve() {
             else {
                 //esto seria para lo del empate.....
                 estado = MENU;
+                ETSIDI::playMusica("sonidos/menuppal.wav", true);
             }
         }
 
@@ -400,6 +419,8 @@ void Coordinador::mueve() {
 
         if (batalla.combateTerminado()) {
             estado = JUEGO;
+            ETSIDI::stopMusica();
+            ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
 
             // Ahora le pasamos 3 argumentos (ganador, perdedor, y si es empate)
             mundo.finalizaCombate(batalla.obtenerGanador(), batalla.obtenerPerdedor(), batalla.esEmpate());
