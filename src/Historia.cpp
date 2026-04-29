@@ -17,7 +17,7 @@ void Historia::inicializa() {
 
     // CARGA DE LA IMAGEN: Asegúrate de que el archivo existe en esa ruta
     // Usamos 20x20 para que coincida con un gluOrtho2D de -10 a 10
-    diapositivas.push_back(new ETSIDI::Sprite("imagenes/pantallahistoria.png", 0, 0, 20, 20));
+    diapositivas.push_back(new ETSIDI::Sprite("imagenes/pantallahistoria.png", -1, 0, 26, 20));
 }
 
 void Historia::dibuja() {
