@@ -54,15 +54,20 @@ void Coordinador::dibuja()
         break;
 
     case MENU:
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluOrtho2D(-10, 10, -10, 10);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        if (historiaActiva) {
+            historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
+        }
+        else {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluOrtho2D(-10, 10, -10, 10);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
 
-        glEnable(GL_TEXTURE_2D);
-        fondo.draw();
-        glDisable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_2D);
+            fondo.draw();
+            glDisable(GL_TEXTURE_2D);
+        }
         break;
 
     case JUEGO:
@@ -222,22 +227,39 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case MENU:
-        if (key == '1') {
-            modoUnJugador = true; //se ha activado modo con IA
-            estado = JUEGO;
-            mundo.inicializa(estado);
-            
+        // 1. Si la historia está en pantalla, el usuario solo puede pulsar ESPACIO
+        if (historiaActiva) {
+            if (key == ' ') {
+                historia.siguiente();
+                if (historia.esFin()) {
+                    historiaActiva = false;
+                    estado = JUEGO; // El cambio de estado SOLO ocurre aquí
+                    mundo.inicializa(estado);
+
+                    ETSIDI::stopMusica();
+                    ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
+                }
+            }
+            // Este 'return' o 'break' es vital: impide que el programa lea el '1' o '2'
+            // mientras el usuario está intentando pasar la historia con el espacio.
+            return;
         }
-        else if (key == '2') {
-            modoUnJugador = false;
-            estado = JUEGO;
-            mundo.inicializa(estado);
-        }
-        if (estado == JUEGO) {
-            ETSIDI::stopMusica();
-            ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
+
+        // 2. Si NO hay historia (menú principal), elegimos el modo
+        if (key == '1' || key == '2') {
+            // Guardamos la elección (siempre se guarda antes de la historia)
+            if (key == '1') modoUnJugador = true;
+            else modoUnJugador = false;
+
+            // ACTIVAMOS LA HISTORIA
+            historia.inicializa();
+            historiaActiva = true;
+
+            // ¡CUIDADO! Aquí NO debe haber "estado = JUEGO"
+            // Si pones estado = JUEGO aquí, ignorarás el orden que acabamos de crear.
         }
         break;
+
     case INSTRUCCIONES:
         // El código ASCII de la tecla ESC es 27
         if (key == 27) {
@@ -297,25 +319,34 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
         }
         break;
     case MENU:
-        if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
+        if (historiaActiva) break;
 
+        if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
             //esto es el rango para el "boton" de 1 jugador
             if (mouseX >= -5.5f && mouseX <= -0.6f && mouseY >= -4.45f && mouseY <= 0.125f) {
                 modoUnJugador = true;
                 std::cout << "se ha seleccionado modo 1 jugador" << std::endl;
-                estado = JUEGO;
                 mundo.inicializa(estado);
                 ETSIDI::stopMusica();
                 ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
+
+                // ACTIVACIÓN DE HISTORIA (En lugar de estado = JUEGO)
+                historia.inicializa();
+                historiaActiva = true;
+
             }
             //esto es el rango para el "boton" de 2 jugadores
             else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
                 modoUnJugador = false;
                 std::cout << "se ha seleccionado modo 2 jugador" << std::endl;
-                estado = JUEGO;
                 mundo.inicializa(estado);
                 ETSIDI::stopMusica();
                 ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
+
+                // ACTIVACIÓN DE HISTORIA
+                historia.inicializa();
+                historiaActiva = true;
+
             }
             // --- BOTÓN INSTRUCCIONES ---
             else if (mouseX >= -2.175f && mouseX <= 2.125f && mouseY >= -7.2f && mouseY <= -4.825f) {
