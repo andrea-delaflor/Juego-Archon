@@ -11,6 +11,14 @@ Coordinador::Coordinador() :
 
 void Coordinador::dibuja()
 {
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Esto hace que las imágenes no se pixelen al hacerse grandes
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     // RESET DE ESTADO: Obligamos a OpenGL a volver al color blanco puro
     // y a reactivar la iluminación antes de dibujar nada más.
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -56,6 +64,34 @@ void Coordinador::dibuja()
     case MENU:
         if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
+            // Configuración de estilo
+            ETSIDI::setTextColor(1, 1, 1); // Blanco puro
+            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
+
+            // Párrafo 1
+            ETSIDI::printxy("En 2026, al digitalizar los planos de la ETSIDI se descubre", -5, 3);
+            ETSIDI::printxy("que sus cimientos seguian un antiguo patron oculto.", -5, 2);
+            ETSIDI::printxy("Los conductos de ventilación eran canales de una fuerza misteriosa bajo Madrid.", -5, 1);
+
+            // Párrafo 2
+            ETSIDI::printxy("Una secta de monjes ha convertido la escuela en un campo", -5, -1);
+            ETSIDI::printxy("de batalla mistico. El suelo determina el poder:", -5, -2);
+            ETSIDI::printxy("Blanco para ALUMNOS y Negro para PROFESORES.", -5, -3);
+
+            // Párrafo 3: La regla 
+            
+            ETSIDI::printxy("Si luchas en tu color, los obstaculos y proyectiles enemigos", -5, -5);
+            ETSIDI::printxy("solo te haran la MITAD DE DAÑO.", -5, -6);
+
+            // Cierre épico
+            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 12);
+            ETSIDI::printxy("¿Quién restaurará el orden: los alumnos con ingenio iluminado,", -5, -8);
+            ETSIDI::printxy("o los profesores con ciencias oscuras ? ", -5, -9);
+
+            // Instrucción para continuar
+            ETSIDI::setFont("fuentes/bitwise.ttf", 10);
+            ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
+
         }
         else {
             glMatrixMode(GL_PROJECTION);
@@ -353,7 +389,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 std::cout << "Entrando al Grimorio........ " << std::endl;
                 estado = INSTRUCCIONES;
                 paginaInstrucciones = 1; //lo ponemos a 1 para no empezar en la hoja 2
-                fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
             }
         }
         break;
@@ -516,14 +552,27 @@ void Coordinador::teclaEspecial(int key) {
     else if (estado == INSTRUCCIONES) {
 
         // Si pulsamos DERECHA y estamos en la hoja 1, pasamos a la hoja 2
-        if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
-            paginaInstrucciones = 2;
-            fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
+        if (key == GLUT_KEY_RIGHT) {
+            if (paginaInstrucciones == 1) {
+                paginaInstrucciones = 2;
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+            }
+            else if (paginaInstrucciones == 2) { // si estamos en la hoja 2, pasamos a la hoja 3
+                paginaInstrucciones = 3;
+                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", 0, 0, 20, 20);
+            }
         }
-        // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
-        else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
-            paginaInstrucciones = 1;
-            fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
+
+        // --- IR HACIA ATRÁS (Izquierda) ---
+        else if (key == GLUT_KEY_LEFT) {
+            if (paginaInstrucciones == 3) { // Si estamos en la hoja 3, volvemos a la hoja 2
+                paginaInstrucciones = 2;
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+            }
+            else if (paginaInstrucciones == 2) {
+                paginaInstrucciones = 1; // Si estamos en la hoja 2, volvemos a la hoja 1
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
+            }
         }
     }
 }
