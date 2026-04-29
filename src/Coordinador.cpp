@@ -64,6 +64,34 @@ void Coordinador::dibuja()
     case MENU:
         if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
+            // Configuración de estilo
+            ETSIDI::setTextColor(1, 1, 1); // Blanco puro
+            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
+
+            // Párrafo 1
+            ETSIDI::printxy("En 2026, al digitalizar los planos de la ETSIDI se descubre", -5, 3);
+            ETSIDI::printxy("que sus cimientos seguian un antiguo patron oculto.", -5, 2);
+            ETSIDI::printxy("Los conductos de ventilación eran canales de una fuerza misteriosa bajo Madrid.", -5, 1);
+
+            // Párrafo 2
+            ETSIDI::printxy("Una secta de monjes ha convertido la escuela en un campo", -5, -1);
+            ETSIDI::printxy("de batalla mistico. El suelo determina el poder:", -5, -2);
+            ETSIDI::printxy("Blanco para ALUMNOS y Negro para PROFESORES.", -5, -3);
+
+            // Párrafo 3: La regla 
+            
+            ETSIDI::printxy("Si luchas en tu color, los obstaculos y proyectiles enemigos", -5, -5);
+            ETSIDI::printxy("solo te haran la MITAD DE DAÑO.", -5, -6);
+
+            // Cierre épico
+            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 12);
+            ETSIDI::printxy("¿Quién restaurará el orden: los alumnos con ingenio iluminado,", -5, -8);
+            ETSIDI::printxy("o los profesores con ciencias oscuras ? ", -5, -9);
+
+            // Instrucción para continuar
+            ETSIDI::setFont("fuentes/bitwise.ttf", 10);
+            ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
+
         }
         else {
             glMatrixMode(GL_PROJECTION);
