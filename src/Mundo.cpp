@@ -410,8 +410,17 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             hechizoSeleccionado = nullptr; // Limpiamos la selección
             seleccionada = nullptr;        // Quitamos la selección del Mago
 
+            comprobarVictoria();  
+
+            // Solo cambiamos turno si no ha terminado la partida
+            if (faseActual != FIN_PARTIDA) {
+                faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
+            }
+
+            /*
             // Cambio de turno automático tras la magia
             faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
+            */
         }
         glutPostRedisplay();
         return;
