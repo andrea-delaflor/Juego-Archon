@@ -11,6 +11,14 @@ Coordinador::Coordinador() :
 
 void Coordinador::dibuja()
 {
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Esto hace que las imágenes no se pixelen al hacerse grandes
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     // RESET DE ESTADO: Obligamos a OpenGL a volver al color blanco puro
     // y a reactivar la iluminación antes de dibujar nada más.
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -516,14 +524,27 @@ void Coordinador::teclaEspecial(int key) {
     else if (estado == INSTRUCCIONES) {
 
         // Si pulsamos DERECHA y estamos en la hoja 1, pasamos a la hoja 2
-        if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
-            paginaInstrucciones = 2;
-            fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+        if (key == GLUT_KEY_RIGHT) {
+            if (paginaInstrucciones == 1) {
+                paginaInstrucciones = 2;
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+            }
+            else if (paginaInstrucciones == 2) { // si estamos en la hoja 2, pasamos a la hoja 3
+                paginaInstrucciones = 3;
+                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", 0, 0, 20, 20);
+            }
         }
-        // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
-        else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
-            paginaInstrucciones = 1;
-            fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
+
+        // --- IR HACIA ATRÁS (Izquierda) ---
+        else if (key == GLUT_KEY_LEFT) {
+            if (paginaInstrucciones == 3) { // Si estamos en la hoja 3, volvemos a la hoja 2
+                paginaInstrucciones = 2;
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+            }
+            else if (paginaInstrucciones == 2) {
+                paginaInstrucciones = 1; // Si estamos en la hoja 2, volvemos a la hoja 1
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
+            }
         }
     }
 }
