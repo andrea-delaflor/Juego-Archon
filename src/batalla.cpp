@@ -106,6 +106,15 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
     else {
         std::cout << "Arena normal, sin obstaculos." << std::endl;
     }
+
+    mostrandoPreview = true; // Bloqueamos el inicio
+
+    // Seleccionamos la imagen previa según el tipo de arena
+    if (tipoArena == 0) imagenCarga = new ETSIDI::Sprite("imagenes/historiacancha.png", -0.5, 0, 26, 20);
+    else if (tipoArena == 1) imagenCarga = new ETSIDI::Sprite("imagenes/historiadespacho.png", -0.5, 0, 26, 20);
+    else if (tipoArena == 2) imagenCarga = new ETSIDI::Sprite("imagenes/historiaaula.png", -0.5, 0, 26, 20);
+    else imagenCarga = new ETSIDI::Sprite("imagenes/historiacafeteria.png", -0.5, 0, 26, 20);
+
 }
 
 // DIBUJA: Pinta todo en la pantalla
@@ -118,6 +127,15 @@ void Batalla::dibuja() {
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
+
+    if (mostrandoPreview) {
+        imagenCarga->draw();
+
+        ETSIDI::setTextColor(1, 1, 1);
+        ETSIDI::setFont("fuentes/bitwise.ttf", 12);
+        ETSIDI::printxy("PULSA ENTER PARA EMPEZAR EL COMBATE", -4, -8);
+        return; // Salimos para no dibujar el resto del escenario ni personajes
+    }
 
     // Dibuja el fondo de la arena que haya tocado esta vez
     glEnable(GL_TEXTURE_2D);
@@ -275,6 +293,9 @@ void Batalla::dibuja() {
 
 // MUEVE: Aquí irá la física de la pelea en el futuro
 void Batalla::mueve() {
+
+    if (mostrandoPreview) return; // Bloquea todo el movimiento
+
     float dt = 0.05f; // Ajusta según la velocidad de tu timer
 
 
@@ -498,8 +519,14 @@ void Batalla::mueve() {
 
 
 void Batalla::tecla(unsigned char key) {
-   // float vel = 0.5f; //Esto es lo q se traslada la pieza por pulsación tecla
-    
+   
+    if (mostrandoPreview) {
+        if (key == 13) { // 13 es la tecla ENTER
+            mostrandoPreview = false;
+            delete imagenCarga; // Liberamos memoria al terminar de usarla
+        }
+        return; // Mientras esté la preview, no permitimos atacar
+    }
 
     // JUGADOR 1
     if (key == 'w' || key == 'W') pos1.y += velJ1;

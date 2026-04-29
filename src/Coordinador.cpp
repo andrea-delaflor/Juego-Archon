@@ -64,6 +64,8 @@ void Coordinador::dibuja()
     case MENU:
         if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
+            
+            /*
             // Configuración de estilo
             ETSIDI::setTextColor(1, 1, 1); // Blanco puro
             ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
@@ -91,7 +93,7 @@ void Coordinador::dibuja()
             // Instrucción para continuar
             ETSIDI::setFont("fuentes/bitwise.ttf", 10);
             ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
-
+            */
         }
         else {
             glMatrixMode(GL_PROJECTION);
@@ -575,7 +577,7 @@ void Coordinador::teclaEspecial(int key) {
             }
         }
     }
-}
+
         if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
             paginaInstrucciones = 2;
             fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
@@ -585,5 +587,5 @@ void Coordinador::teclaEspecial(int key) {
             paginaInstrucciones = 1;
             fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
         }
-    }
+    
 }
