@@ -69,5 +69,9 @@ private:
 
     float congelarDisparoJ1 = 0.0f; // Tiempo que falta para poder volver a disparar
     float congelarDisparoJ2 = 0.0f; // Tiempo que falta para poder volver a disparar
+
+
+    bool mostrandoPreview; // Controla si estamos viendo la imagen de carga
+    ETSIDI::Sprite* imagenCarga;
    
 };

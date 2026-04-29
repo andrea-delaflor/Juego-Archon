@@ -64,6 +64,8 @@ void Coordinador::dibuja()
     case MENU:
         if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
+            
+            /*
             // Configuración de estilo
             ETSIDI::setTextColor(1, 1, 1); // Blanco puro
             ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
@@ -91,7 +93,7 @@ void Coordinador::dibuja()
             // Instrucción para continuar
             ETSIDI::setFont("fuentes/bitwise.ttf", 10);
             ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
-
+            */
         }
         else {
             glMatrixMode(GL_PROJECTION);
@@ -555,11 +557,11 @@ void Coordinador::teclaEspecial(int key) {
         if (key == GLUT_KEY_RIGHT) {
             if (paginaInstrucciones == 1) {
                 paginaInstrucciones = 2;
-                fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
             }
             else if (paginaInstrucciones == 2) { // si estamos en la hoja 2, pasamos a la hoja 3
                 paginaInstrucciones = 3;
-                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", -0.5, 0, 26, 20);
+                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", 0, 0, 20, 20);
             }
         }
 
@@ -567,12 +569,23 @@ void Coordinador::teclaEspecial(int key) {
         else if (key == GLUT_KEY_LEFT) {
             if (paginaInstrucciones == 3) { // Si estamos en la hoja 3, volvemos a la hoja 2
                 paginaInstrucciones = 2;
-                fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
             }
             else if (paginaInstrucciones == 2) {
                 paginaInstrucciones = 1; // Si estamos en la hoja 2, volvemos a la hoja 1
-                fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
             }
         }
     }
+
+        if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
+            paginaInstrucciones = 2;
+            fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
+        }
+        // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
+        else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
+            paginaInstrucciones = 1;
+            fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
+        }
+    
 }
