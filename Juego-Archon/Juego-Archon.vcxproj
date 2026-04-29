@@ -30,6 +30,7 @@
     <ClCompile Include="..\src\FenixL.cpp" />
     <ClCompile Include="..\src\GolemL.cpp" />
     <ClCompile Include="..\src\Hechizo.cpp" />
+    <ClCompile Include="..\src\Historia.cpp" />
     <ClCompile Include="..\src\Interaccion.cpp" />
     <ClCompile Include="..\src\ListadeHechizos.cpp" />
     <ClCompile Include="..\src\MagoL.cpp" />
@@ -56,6 +57,7 @@
     <ClInclude Include="..\src\FenixL.h" />
     <ClInclude Include="..\src\GolemL.h" />
     <ClInclude Include="..\src\Hechizo.h" />
+    <ClInclude Include="..\src\Historia.h" />
     <ClInclude Include="..\src\Interaccion.h" />
     <ClInclude Include="..\src\ListadeHechizos.h" />
     <ClInclude Include="..\src\MagoL.h" />
