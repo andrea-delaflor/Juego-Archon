@@ -126,6 +126,10 @@ public:
   
     
 private:
+
+    bool mostrandoHistoria = false;
+    ETSIDI::Sprite* imagenHistoria = nullptr;
+
     Tablero tablero;
     float valorLuz = 0.5f;
     float angulo = 0.0f;

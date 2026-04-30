@@ -34,6 +34,9 @@ public:
     Pieza* getPiezaJ1() { return l1; } 
     Pieza* getPiezaJ2() { return l2; }
 private:
+
+    bool iaActiva = false; // Por defecto es falso
+
     Pieza* l1;
     Pieza* l2;
     int ventaja; // 0: Neutral, 1: Alumnos(Luz), 2: Profes(Oscuridad), 3: PowerPoint

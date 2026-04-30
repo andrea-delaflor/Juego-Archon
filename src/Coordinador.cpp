@@ -63,9 +63,9 @@ void Coordinador::dibuja()
         break;
 
     case MENU:
-        if (historiaActiva) {
+        /*if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
-            
+            */
             /*
             // Configuración de estilo
             ETSIDI::setTextColor(1, 1, 1); // Blanco puro
@@ -94,7 +94,7 @@ void Coordinador::dibuja()
             // Instrucción para continuar
             ETSIDI::setFont("fuentes/bitwise.ttf", 10);
             ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
-            */
+            
         }
         else {
             glMatrixMode(GL_PROJECTION);
@@ -106,7 +106,7 @@ void Coordinador::dibuja()
             glEnable(GL_TEXTURE_2D);
             fondo.draw();
             glDisable(GL_TEXTURE_2D);
-        }
+        }*/
         break;
 
     case JUEGO:

@@ -534,22 +534,6 @@ void Batalla::tecla(unsigned char key) {
     if (key == 'a' || key == 'A') pos1.x -= velJ1;
     if (key == 'd' || key == 'D') pos1.x += velJ1;
 
-    // Disparos y Controles
-    if (key == ' ') {
-        if (congelarDisparoJ1 <= 0.0f) {
-            generarDisparo(true); //pulsando espacio jugador 1 usa su poder
-            congelarDisparoJ1 = 0.5f; // Medio segundo de recarga
-        }
-    }
-        
-       
-    if (key == 13) {
-        if (congelarDisparoJ2 <= 0.0f) {
-			generarDisparo(false); //pulsando enter jugador 2 usa su poder
-            congelarDisparoJ2 = 0.5f; // Medio segundo de recarga
-        }
-    }
-    if (key == 'e' || key == 'E') { terminado = true; empate = true; }
 
     // Límites de la pantalla 
     if (pos1.x > 9.5f) pos1.x = 9.5f;
@@ -557,7 +541,18 @@ void Batalla::tecla(unsigned char key) {
     if (pos1.y > 9.5f) pos1.y = 9.5f;
     if (pos1.y < -9.5f) pos1.y = -9.5f;
 
-    // Para el Jugador 1
+    // Disparos y Controles JUGADOR 1
+    if (key == ' ') {
+        if (congelarDisparoJ1 <= 0.0f) {
+            generarDisparo(true); //pulsando espacio jugador 1 usa su poder
+            congelarDisparoJ1 = 0.5f; // Medio segundo de recarga
+        }
+    }
+              
+   
+    //if (key == 'e' || key == 'E') { terminado = true; empate = true; }
+
+        
     if ((key == 't' || key == 'T') && l1) {                       //vamos a utilizar las mismas teclas para activar los poderes, asi es mas facil de jugar
         if (l1->obtenerArma() == TipoArma::ESCUDO) {
             l1->activarEscudo();
@@ -570,33 +565,76 @@ void Batalla::tecla(unsigned char key) {
             }
         }
     }
+    if (iaActiva) return;
 
-    // Para el Jugador 2
+    // Disparos y Controles JUGADOR 2
+
+    //  BLOQUEO PARA JUGADOR 2 cuando esta la IA 
+    // Si la IA está activa o la pieza l2 es de la OSCURIDAD, no dejamos pasar el código
+    if (iaActiva || (l2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
+        // Solo permitimos la tecla de salida si quieres
+        if (key == 'e' || key == 'E') { terminado = true; empate = true; }
+
+        // Ejecutamos los límites de la pantalla para el J1 y SALIMOS
+        if (pos1.x > 9.5f) pos1.x = 9.5f;
+        if (pos1.x < -9.5f) pos1.x = -9.5f;
+        if (pos1.y > 9.5f) pos1.y = 9.5f;
+        if (pos1.y < -9.5f) pos1.y = -9.5f;
+
+        return; 
+    }
+
+    // --- JUGADOR 2 (SOLO HUMANOS) ---
+    // Este código ya no se ejecutará si arriba se hizo el 'return'
+    if (key == 13) { // Tecla ENTER
+        if (congelarDisparoJ2 <= 0.0f) {
+            generarDisparo(false); 
+            congelarDisparoJ2 = 0.5f;
+        }
+    }
+
     if ((key == 'y' || key == 'Y') && l2) {
         if (l2->obtenerArma() == TipoArma::ESCUDO) {
-            l2->activarEscudo();
+            l2->activarEscudo(); 
         }
         else {
-            l2->iniciarAnimacion(); // Esto es para el Troll y su código
-            if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) {
-                l1->getVida().damage(l2->obtenerPoderAtaque());
+            l2->iniciarAnimacion(); 
+            if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) { 
+                l1->getVida().damage(l2->obtenerPoderAtaque()); 
                 hp1 = l1->getVida().getActual();
             }
         }
     }
 
+    // Límites de la pantalla para el J1
+    if (pos1.x > 9.5f) pos1.x = 9.5f;
+    if (pos1.x < -9.5f) pos1.x = -9.5f;
+    if (pos1.y > 9.5f) pos1.y = 9.5f;
+    if (pos1.y < -9.5f) pos1.y = -9.5f;
+
 }
 
 void Batalla::teclaEspecial(int key) {
-    //float vel = 0.5f;
+    // 1. Si la IA está realizando su turno lógico, bloqueamos todo
+    if (iaActiva) return;
 
-   // JUGADOR 2
+    // 2. Obtener la pieza que corresponde al Jugador 2 (IA/Oscuridad)
+    // Suponiendo que tienes un puntero a la pieza de la derecha llamado 'rival' o 'p2'
+    if (l2 == nullptr) return;
+
+    // 3. ¡ESTA ES LA CLAVE!: Si la pieza es del bando OSCURIDAD, el teclado se ignora.
+    // Así, aunque pulses las flechas, no entrará en los 'if' de movimiento.
+    if (l2->obtenerBando() == Bando::OSCURIDAD) {
+        return;
+    }
+
+    // 4. Si llegamos aquí, es porque es un humano controlando la pieza
     if (key == GLUT_KEY_UP)    pos2.y += velJ2;
     if (key == GLUT_KEY_DOWN)  pos2.y -= velJ2;
     if (key == GLUT_KEY_LEFT)  pos2.x -= velJ2;
     if (key == GLUT_KEY_RIGHT) pos2.x += velJ2;
 
-    // Límites de la pantalla 
+    // Límites de la pantalla (se mantienen igual)
     if (pos2.x > 9.5f) pos2.x = 9.5f;
     if (pos2.x < -9.5f) pos2.x = -9.5f;
     if (pos2.y > 9.5f) pos2.y = 9.5f;
