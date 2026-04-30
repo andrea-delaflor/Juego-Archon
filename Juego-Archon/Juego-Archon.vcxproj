@@ -44,6 +44,7 @@
     <ClCompile Include="..\src\TrollO.cpp" />
     <ClCompile Include="..\src\Vector2D.cpp" />
     <ClCompile Include="..\src\Vida.cpp" />
+    <ClCompile Include="IA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ArqueraL.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="..\src\TrollO.h" />
     <ClInclude Include="..\src\Vector2D.h" />
     <ClInclude Include="..\src\Vida.h" />
+    <ClInclude Include="IA.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
