@@ -69,10 +69,14 @@ void Mundo::inicializa(int estado) {
     case 1:
         break;
     case 2: // JUEGO
+      //  mostrandoHistoria = true; // Bloqueamos el tablero al arrancar
+        // Cargamos la imagen de historia general
+       // imagenHistoria = new ETSIDI::Sprite("imagenes/historiainicio.png", 0, 0, 14, 12);
+
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
 
-		// PIEZAS DEL BANDO DE LA LUZ!!
+        // PIEZAS DEL BANDO DE LA LUZ!!
 
         // EMPEZAMOS CON LA FILA 0 (aqui iran el mago y las piezas no peon == golem)
         piezasLuz.push_back(new ArqueraL(Vector2D(0, 0)));
@@ -89,7 +93,7 @@ void Mundo::inicializa(int estado) {
         for (int i = 0; i < 9; i++) {
             piezasLuz.push_back(new GolemL(Vector2D(1, i)));
         }
-		
+
         //PIEZAS DEL BANDO DE LA OSCURIDAD
 
         // EMPEZAMOS CON LA FILA 8 (aqui iran el mago y las piezas no peon == troll)
@@ -108,25 +112,25 @@ void Mundo::inicializa(int estado) {
             piezasOscuridad.push_back(new TrollO(Vector2D(7, i)));
         }
 
-		// Inicializar libros de hechizos 
+        // Inicializar libros de hechizos 
         // Luz
         libroLuz.push_back(new HechizoTeleport());
         libroLuz.push_back(new HechizoHeal());
         libroLuz.push_back(new HechizoShiftTime());
-		libroLuz.push_back(new HechizoExchange());
+        libroLuz.push_back(new HechizoExchange());
         libroLuz.push_back(new HechizoImprison());
         libroLuz.push_back(new HechizoRevive());
-		libroLuz.push_back(new HechizoSummon());
-        
+        libroLuz.push_back(new HechizoSummon());
+
         // Oscuridad
         libroOscuridad.push_back(new HechizoTeleport());
         libroOscuridad.push_back(new HechizoHeal());
         libroOscuridad.push_back(new HechizoShiftTime());
-		libroOscuridad.push_back(new HechizoExchange());
+        libroOscuridad.push_back(new HechizoExchange());
         libroOscuridad.push_back(new HechizoImprison());
         libroOscuridad.push_back(new HechizoRevive());
-		libroOscuridad.push_back(new HechizoSummon());
-       
+        libroOscuridad.push_back(new HechizoSummon());
+
 
         for (auto p : piezasLuz) {
             tablero.colocarPieza((int)p->obtenerPosicion().x, (int)p->obtenerPosicion().y, p);
@@ -211,10 +215,27 @@ void Mundo::dibuja(int estado) {
         break;
 
     case 1:
-        tablero.dibuja(1.0f);
         break;
 
     case 2:
+       /*if (mostrandoHistoria) {
+            // Configuramos una vista ortogonal simple para la imagen
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluOrtho2D(-7.0, 7.0, -7.0, 7.0);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+
+            if (imagenHistoria != nullptr) { // <--- Seguridad extra
+                imagenHistoria->draw();
+            }
+
+            ETSIDI::setTextColor(1, 1, 1);
+            ETSIDI::setFont("fuentes/bitwise.ttf", 16);
+            ETSIDI::printxy("PULSA ENTER PARA EMPEZAR LA AVENTURA", -3.5f, -6.0f);
+            return; // Salimos aquí para no dibujar el tablero por debajo[cite: 2]
+        }*/ 
+
         tablero.dibuja(valorLuz);
 
         // 1. Al seleccionar una pieza nos de opciones de sus movimientos posibles
@@ -263,6 +284,18 @@ void Mundo::dibuja(int estado) {
 
 
 void Mundo::teclahechizos(unsigned char key) {
+    /*
+	// Si estamos mostrando la historia, solo permitimos avanzar o saltarla
+    if (mostrandoHistoria) {
+        if (key == 13 || key == ' ') { // Enter o Espacio
+            mostrandoHistoria = false;
+            if (imagenHistoria) {
+                delete imagenHistoria;
+                imagenHistoria = nullptr;
+            }
+        }
+        return;
+    }*/
 
     // Si pulsamos '0' y NO estamos en medio de un proceso de Revive, cancelamos
     if (key == '0' && (hechizoSeleccionado == nullptr)) {

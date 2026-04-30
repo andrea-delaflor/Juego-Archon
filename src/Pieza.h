@@ -85,6 +85,7 @@ public:
         encarcelada = estado;
         luzDeCaptura = luz;
     }
+    void establecerVelocidad(float v) {  velocidad = v; }
 
     // GESTIÓN DE VIDA ÚNICA
     //funcion damage desde vida se repite

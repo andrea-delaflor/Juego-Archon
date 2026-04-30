@@ -66,7 +66,7 @@ void Coordinador::dibuja()
         if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
             
-            /*
+            
             // Configuración de estilo
             ETSIDI::setTextColor(1, 1, 1); // Blanco puro
             ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
@@ -94,7 +94,7 @@ void Coordinador::dibuja()
             // Instrucción para continuar
             ETSIDI::setFont("fuentes/bitwise.ttf", 10);
             ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
-            */
+            
         }
         else {
             glMatrixMode(GL_PROJECTION);
