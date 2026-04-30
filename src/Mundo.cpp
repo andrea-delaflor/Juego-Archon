@@ -388,13 +388,15 @@ void Mundo::teclahechizos(unsigned char key) {
 }
 
 void Mundo::clickRaton(int button, int state, int x, int y) {
-    if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
+    if ((x != -1 && y != -1) && (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN)) return;
 
     //Preguntamos tamaño real pnatalla
     int ancho = glutGet(GLUT_WINDOW_WIDTH);
     int alto = glutGet(GLUT_WINDOW_HEIGHT);
 
-    raton.actualizaPosicion(x, y, ancho, alto);
+    if (x != -1 && y != -1) {
+        raton.actualizaPosicion(x, y, ancho, alto);
+    }
     Vector2D c = raton.casilla;
 
     if (c.x == -1) return;
@@ -974,4 +976,12 @@ void Mundo::dibujarGrimorio() {
         }
     }
     glEnable(GL_TEXTURE_2D);
+}
+void Mundo::clickIA(int cx, int cy) {
+    // se fuerza la casilla
+    raton.casilla.x = (float)cx;
+    raton.casilla.y = (float)cy;
+
+    // se ejecuta el click de la ia, le paso el -1 como bandera
+    this->clickRaton(0, 0, -1, -1);
 }

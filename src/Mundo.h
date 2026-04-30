@@ -17,6 +17,7 @@
 #include "TrollO.h"
 #include "ListadeHechizos.h"
 #include <vector>
+#include "IA.h"
 
 
 
@@ -120,6 +121,9 @@ public:
 
         std::cout << "Shift Time: Angulo desplazado. Nueva luz: " << valorLuz << std::endl;
     }
+    void clickIA(int casillaX, int casillaY);
+
+  
     
 private:
     Tablero tablero;

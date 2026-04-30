@@ -1,6 +1,7 @@
 #include "Coordinador.h"
 #include <iostream>
 
+
 Coordinador::Coordinador() :
     fondo("imagenes/fondoinicio.png", 0, 0, 20, 20)
 {
@@ -430,9 +431,38 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
 }
 
 void Coordinador::mueve() {
+    float dt = 0.05f;
     switch (estado) {
     case JUEGO:
         mundo.mueve();
+
+        //logica ia para el tablero
+        if (modoUnJugador && mundo.faseActual == Mundo::TURNO_OSCURIDAD) {
+
+            
+            // Si hay una pieza moviéndose o un hechizo activo, esperamos.
+            if (mundo.seleccionada != nullptr && mundo.seleccionada->estaAnimando()) {
+                return;
+            }
+
+            timerIA += dt;
+
+            //la ia ejecuta esto
+            if (timerIA > 1.2f) { 
+                std::vector<Vector2D> mov = IA::decidirMovimientoTablero(&mundo);
+
+                if (mov.size() == 2) {
+                    // La IA "clica" el origen
+                    mundo.clickIA((int)mov[0].x, (int)mov[0].y);
+
+                    // La IA seleccina el destino 
+                    mundo.clickIA((int)mov[1].x, (int)mov[1].y);
+
+                    std::cout << "IA ejecutando movimiento automático..." << std::endl;
+                }
+                timerIA = 0; // Resetear para el próximo movimiento
+            }
+        }
 
         if (mundo.hayCombate && mundo.seleccionada != nullptr && !mundo.seleccionada->estaAnimando()) {
             float luzActual = mundo.getValorLuz();
@@ -487,6 +517,13 @@ void Coordinador::mueve() {
 
     case BATALLA:
         batalla.mueve();
+
+        //modo ia para la batalla
+        if (modoUnJugador) {
+            // Suponiendo que tienes métodos getPiezaLuz y getPiezaOscuridad en Batalla
+            // o que puedes acceder a l1 (humano) y l2 (IA)
+            IA::ejecutarAccionBatalla(&batalla, batalla.getPiezaJ2(), batalla.getPiezaJ1(), dt);
+        }
 
         if (batalla.combateTerminado()) {
             estado = JUEGO;
