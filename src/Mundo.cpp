@@ -69,9 +69,9 @@ void Mundo::inicializa(int estado) {
     case 1:
         break;
     case 2: // JUEGO
-        mostrandoHistoria = true; // Bloqueamos el tablero al arrancar
+      //  mostrandoHistoria = true; // Bloqueamos el tablero al arrancar
         // Cargamos la imagen de historia general
-        imagenHistoria = new ETSIDI::Sprite("imagenes/historiainicio.png", 0, 0, 14, 12);
+       // imagenHistoria = new ETSIDI::Sprite("imagenes/historiainicio.png", 0, 0, 14, 12);
 
         faseActual = TURNO_LUZ;
         seleccionada = nullptr;
@@ -218,7 +218,7 @@ void Mundo::dibuja(int estado) {
         break;
 
     case 2:
-        if (mostrandoHistoria) {
+       /*if (mostrandoHistoria) {
             // Configuramos una vista ortogonal simple para la imagen
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -234,7 +234,8 @@ void Mundo::dibuja(int estado) {
             ETSIDI::setFont("fuentes/bitwise.ttf", 16);
             ETSIDI::printxy("PULSA ENTER PARA EMPEZAR LA AVENTURA", -3.5f, -6.0f);
             return; // Salimos aquí para no dibujar el tablero por debajo[cite: 2]
-        }
+        }*/ 
+
         tablero.dibuja(valorLuz);
 
         // 1. Al seleccionar una pieza nos de opciones de sus movimientos posibles
@@ -283,7 +284,7 @@ void Mundo::dibuja(int estado) {
 
 
 void Mundo::teclahechizos(unsigned char key) {
-
+    /*
 	// Si estamos mostrando la historia, solo permitimos avanzar o saltarla
     if (mostrandoHistoria) {
         if (key == 13 || key == ' ') { // Enter o Espacio
@@ -294,7 +295,7 @@ void Mundo::teclahechizos(unsigned char key) {
             }
         }
         return;
-    }
+    }*/
 
     // Si pulsamos '0' y NO estamos en medio de un proceso de Revive, cancelamos
     if (key == '0' && (hechizoSeleccionado == nullptr)) {

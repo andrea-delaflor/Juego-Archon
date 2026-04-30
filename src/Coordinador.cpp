@@ -63,10 +63,10 @@ void Coordinador::dibuja()
         break;
 
     case MENU:
-        /*if (historiaActiva) {
+        if (historiaActiva) {
             historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
-            */
-            /*
+            
+            
             // Configuración de estilo
             ETSIDI::setTextColor(1, 1, 1); // Blanco puro
             ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
@@ -106,7 +106,7 @@ void Coordinador::dibuja()
             glEnable(GL_TEXTURE_2D);
             fondo.draw();
             glDisable(GL_TEXTURE_2D);
-        }*/
+        }
         break;
 
     case JUEGO:
