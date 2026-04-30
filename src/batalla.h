@@ -29,7 +29,10 @@ public:
     Pieza* obtenerPerdedor() const { return perdedor; }
     bool esEmpate() const { return empate; }
 
-   
+    void generarDisparo(bool esJugador1);
+
+    Pieza* getPiezaJ1() { return l1; } 
+    Pieza* getPiezaJ2() { return l2; }
 private:
     Pieza* l1;
     Pieza* l2;
@@ -53,7 +56,7 @@ private:
     int indiceArenaActual;                // Nos dice en qué arena de la lista estamos peleando ahora
 
     std::list<Proyectil*> proyectiles;
-    void generarDisparo(bool esJugador1);
+   // void generarDisparo(bool esJugador1);
     std::list<Obstaculo*> obstaculos; // Lista donde guardaremos los que van cayendo
     bool arenaConObstaculos;          // ¿Tiene o no tiene trampas esta arena?
     float temporizadorObstaculos;     // Reloj para saber cuándo tirar el siguiente objeto

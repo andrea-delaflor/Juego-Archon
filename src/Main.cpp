@@ -48,6 +48,7 @@ void glueRatonPasivo(int x, int y) {
 
 
 int main(int argc, char* argv[]) {
+    srand(time(NULL));// esto es para que la ia no haga siempre lo mismo
     //Inicializamos GLUT y creamos la ventana
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
