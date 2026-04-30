@@ -31,6 +31,7 @@
     <ClCompile Include="..\src\GolemL.cpp" />
     <ClCompile Include="..\src\Hechizo.cpp" />
     <ClCompile Include="..\src\Historia.cpp" />
+    <ClCompile Include="..\src\IA.cpp" />
     <ClCompile Include="..\src\Interaccion.cpp" />
     <ClCompile Include="..\src\ListadeHechizos.cpp" />
     <ClCompile Include="..\src\MagoL.cpp" />
@@ -44,7 +45,6 @@
     <ClCompile Include="..\src\TrollO.cpp" />
     <ClCompile Include="..\src\Vector2D.cpp" />
     <ClCompile Include="..\src\Vida.cpp" />
-    <ClCompile Include="IA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ArqueraL.h" />
@@ -59,6 +59,7 @@
     <ClInclude Include="..\src\GolemL.h" />
     <ClInclude Include="..\src\Hechizo.h" />
     <ClInclude Include="..\src\Historia.h" />
+    <ClInclude Include="..\src\IA.h" />
     <ClInclude Include="..\src\Interaccion.h" />
     <ClInclude Include="..\src\ListadeHechizos.h" />
     <ClInclude Include="..\src\MagoL.h" />
@@ -74,7 +75,6 @@
     <ClInclude Include="..\src\TrollO.h" />
     <ClInclude Include="..\src\Vector2D.h" />
     <ClInclude Include="..\src\Vida.h" />
-    <ClInclude Include="IA.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
