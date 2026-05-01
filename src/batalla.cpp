@@ -571,17 +571,10 @@ void Batalla::tecla(unsigned char key) {
 
     //  BLOQUEO PARA JUGADOR 2 cuando esta la IA 
     // Si la IA está activa o la pieza l2 es de la OSCURIDAD, no dejamos pasar el código
-    if (iaActiva || (l2 && l2->obtenerBando() == Bando::OSCURIDAD)) {
-        // Solo permitimos la tecla de salida si quieres
-        if (key == 'e' || key == 'E') { terminado = true; empate = true; }
-
-        // Ejecutamos los límites de la pantalla para el J1 y SALIMOS
-        if (pos1.x > 9.5f) pos1.x = 9.5f;
-        if (pos1.x < -9.5f) pos1.x = -9.5f;
-        if (pos1.y > 9.5f) pos1.y = 9.5f;
-        if (pos1.y < -9.5f) pos1.y = -9.5f;
-
-        return; 
+    if (iaActiva) {
+        if (l2 && l2->obtenerBando() == Bando::OSCURIDAD) {
+            return; // Solo aquí salimos sin leer el resto de teclas
+        }
     }
 
     // --- JUGADOR 2 (SOLO HUMANOS) ---
@@ -615,16 +608,11 @@ void Batalla::tecla(unsigned char key) {
 }
 
 void Batalla::teclaEspecial(int key) {
-    // 1. Si la IA está realizando su turno lógico, bloqueamos todo
-    if (iaActiva) return;
-
-    // 2. Obtener la pieza que corresponde al Jugador 2 (IA/Oscuridad)
-    // Suponiendo que tienes un puntero a la pieza de la derecha llamado 'rival' o 'p2'
     if (l2 == nullptr) return;
 
-    // 3. ¡ESTA ES LA CLAVE!: Si la pieza es del bando OSCURIDAD, el teclado se ignora.
-    // Así, aunque pulses las flechas, no entrará en los 'if' de movimiento.
-    if (l2->obtenerBando() == Bando::OSCURIDAD) {
+    // CAMBIO AQUÍ: Solo bloqueamos si la IA está activa. 
+    // Si iaActiva es false, permitimos que el humano use las flechas.
+    if (iaActiva && l2->obtenerBando() == Bando::OSCURIDAD) {
         return;
     }
 

@@ -479,6 +479,7 @@ void Coordinador::mueve() {
             ETSIDI::playMusica("sonidos/pantallabatalla.wav", true);
 
             batalla.inicializa(mundo.atacante, mundo.defensor, mundo.tipoArenaCombate, ventaja);
+            batalla.setIA(modoUnJugador);
         }
 
         // Comprobamos si hay ganador y quien 
@@ -517,6 +518,7 @@ void Coordinador::mueve() {
 
     case BATALLA:
         batalla.mueve();
+      
 
         //modo ia para la batalla
         if (modoUnJugador) {
