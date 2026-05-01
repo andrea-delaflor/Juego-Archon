@@ -381,7 +381,7 @@ void Batalla::mueve() {
                 tipoObj = TipoObstaculo::DANO_VELA; // Casilla Blanca
             }
             else if (indiceArenaActual == 1) {
-                tipoObj = TipoObstaculo::DANO_CALABAZA; // Casilla Negra
+                tipoObj = TipoObstaculo::DANO_CALAVERA; // Casilla Negra
             }
             else if (indiceArenaActual == 2) {
                 // Casilla Variable -> Usamos el que tocó por sorteo al empezar la pelea
@@ -423,7 +423,7 @@ void Batalla::mueve() {
                 if (ventaja == 2 && l1->obtenerBando() == Bando::OSCURIDAD) j1TieneVentaja = true;
             }
 
-            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALAVERA) {
                 float danioBase = 10.0f;
                 if (j1TieneVentaja) danioBase = 5.0f;
                 if (!l1->tieneEscudoActivo() && !invulnerableJ1) {
@@ -453,7 +453,7 @@ void Batalla::mueve() {
                 if (ventaja == 2 && l2->obtenerBando() == Bando::OSCURIDAD) j2TieneVentaja = true;
             }
 
-            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALABAZA) {
+            if ((*it)->getTipo() == TipoObstaculo::DANO_VELA || (*it)->getTipo() == TipoObstaculo::DANO_CALAVERA) {
                 float danioBase = 10.0f;
                 if (j2TieneVentaja) danioBase = 5.0f;
                 // l2 comprueba su propio escudo e invulnerabilidad

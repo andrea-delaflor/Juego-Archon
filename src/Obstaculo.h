@@ -3,7 +3,7 @@
 #include "Pieza.h"
 
 // Los 5 tipos de objetos que pueden caer
-enum class TipoObstaculo { DANO_VELA, DANO_CALABAZA, VELOCIDAD, CONGELACION, AUMENTO_DANO };
+enum class TipoObstaculo { DANO_VELA, DANO_CALAVERA, VELOCIDAD, CONGELACION, AUMENTO_DANO };
 
 class Obstaculo {
 public:

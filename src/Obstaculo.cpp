@@ -11,8 +11,8 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
         spriteObs = ETSIDI::Sprite("imagenes/vela.png", 0, 0, 0.8f, 1.8f);
         spriteObs.setCenter(0.4f, 0.9f); // El centro es siempre la MITAD del ancho y la MITAD del alto
     }
-    else if (tipo == TipoObstaculo::DANO_CALABAZA) {
-        spriteObs = ETSIDI::Sprite("imagenes/calabaza.png", 0, 0, 1.2f, 1.2f);
+    else if (tipo == TipoObstaculo::DANO_CALAVERA) {
+        spriteObs = ETSIDI::Sprite("imagenes/calavera.png", 0, 0, 1.2f, 1.2f);
         spriteObs.setCenter(0.6f, 0.6f);
     }
     else if (tipo == TipoObstaculo::VELOCIDAD) {
@@ -20,11 +20,11 @@ Obstaculo::Obstaculo(Vector2D pos, Vector2D vel, TipoObstaculo t) : spriteObs("i
        spriteObs.setCenter(0.75f, 0.75f);
     }
     else if (tipo == TipoObstaculo::CONGELACION) {
-        spriteObs = ETSIDI::Sprite("imagenes/armas/laser.png", 0, 0, 1.5f, 1.5f);
+        spriteObs = ETSIDI::Sprite("imagenes/CubosHielo.png", 0, 0, 1.5f, 1.5f);
         spriteObs.setCenter(0.75f, 0.75f);
     }
     else if (tipo == TipoObstaculo::AUMENTO_DANO) {
-        spriteObs = ETSIDI::Sprite("imagenes/armas/rayolaser.png", 0, 0, 1.5f, 1.5f);
+        spriteObs = ETSIDI::Sprite("imagenes/granada.png", 0, 0, 1.5f, 1.5f);
         spriteObs.setCenter(0.75f, 0.75f);
     }
 
