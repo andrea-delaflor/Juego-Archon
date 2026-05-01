@@ -518,6 +518,7 @@ void Coordinador::mueve() {
 
     case BATALLA:
         batalla.mueve();
+
       
 
         //modo ia para la batalla
