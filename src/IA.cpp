@@ -43,46 +43,47 @@ std::vector<Vector2D> IA::decidirMovimientoTablero(Mundo* mundo) {
 }
 
 void IA::ejecutarAccionBatalla(Batalla* batalla, Pieza* ia, Pieza* humano, float dt) {
-    // PUNTO DE CONTROL 1: ¿Llegan los punteros?
     if (!ia || !humano || !batalla) return;
 
-    // PUNTO DE CONTROL 2: ¿El bando es correcto?
-    // Si tus piezas de IA son del bando LUZ por error, aquí se detendría.
-    if (ia->obtenerBando() == Bando::LUZ) return;
+    // 1. Obtener las referencias a las posiciones reales de la batalla
+    Vector2D& pIA = batalla->obtenerPos2(); // Referencia a pos2
+    Vector2D& pH = batalla->obtenerPos1();  // Referencia a pos1
 
-    // 1. Obtener datos básicos
-    Vector2D posIA = ia->obtenerPosicion();
-    Vector2D posH = humano->obtenerPosicion();
-    Vector2D dir = posH - posIA;
+    Vector2D dir = pH - pIA;
     double dist = dir.modulo();
 
-    // 2. FORZAR MOVIMIENTO (Prueba diagnóstica)
-    // Vamos a ignorar el "alcance" por un momento para ver si se mueven.
-    if (dist > 0.1) {
+    // 2. Lógica de acercamiento según el arma
+    bool necesitaAcercarse = (ia->obtenerArma() == TipoArma::ESCUDO ||
+        ia->obtenerArma() == TipoArma::CUERPO_A_CUERPO);
+
+    // Si tiene escudo, busca distancia casi 0 para el daño por contacto
+    double distObjetivo = necesitaAcercarse ? 0.6 : (ia->obtenerAlcance() * 0.7);
+
+    if (dist > distObjetivo) {
         Vector2D dN = dir.unitario();
-
-        // REVISIÓN CRÍTICA: La velocidad.
-        // Si ia->obtenerVelocidad() devuelve 0, 'paso' será (0,0).
         double vel = ia->obtenerVelocidad();
-        if (vel <= 0) vel = 20.0; // Forzamos una velocidad si la pieza tiene 0
+        if (vel <= 0) vel = 20.0; // Seguro por si la pieza tiene velocidad 0
 
-        Vector2D paso = dN * (vel * dt);
-
-        // 3. ACTUALIZACIÓN DE POSICIÓN
-        Vector2D nuevaPos = posIA + paso;
-
-        // ¿Cómo se llama tu función exactamente? 
-        // Asegúrate de que sea la que realmente cambia las variables x e y del personaje.
-        ia->establecerPosicion(nuevaPos);
+        // 3. ACTUALIZACIÓN: Esto moverá la pieza en la pantalla
+        pIA = pIA + dN * (vel * dt);
     }
 
-    // 4. DISPARO
+    // 4. Lógica de ataque
     if (dist <= ia->obtenerAlcance()) {
-        static float cooldown = 0;
-        if (cooldown <= 0) {
-            batalla->generarDisparo(false); // false para J2 (IA)
-            cooldown = 1.5f;
+        if (necesitaAcercarse) {
+            if (ia->obtenerArma() == TipoArma::ESCUDO) {
+                ia->activarEscudo(); // El daño por contacto lo hará Batalla::mueve()[cite: 1]
+            }
+            ia->iniciarAnimacion();
         }
-        cooldown -= dt;
+        else {
+            // Lógica de disparo para arqueros/magos
+            static float cd = 0;
+            if (cd <= 0) {
+                batalla->generarDisparo(false);
+                cd = 1.5f;
+            }
+            cd -= dt;
+        }
     }
 }

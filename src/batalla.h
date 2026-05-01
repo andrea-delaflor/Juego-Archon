@@ -35,6 +35,8 @@ public:
     Pieza* getPiezaJ2() { return l2; }
 
     void setIA(bool activa) { iaActiva = activa; }
+    Vector2D& obtenerPos1() { return pos1; } // Devolvemos referencia (&) para poder modificarla
+    Vector2D& obtenerPos2() { return pos2; }
 private:
 
     bool iaActiva = false; // Por defecto es falso
