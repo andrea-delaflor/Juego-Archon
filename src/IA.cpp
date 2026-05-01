@@ -43,45 +43,60 @@ std::vector<Vector2D> IA::decidirMovimientoTablero(Mundo* mundo) {
 }
 
 void IA::ejecutarAccionBatalla(Batalla* batalla, Pieza* ia, Pieza* humano, float dt) {
-    if (!ia || !humano || !batalla) return;
+	if (!ia || !humano || !batalla) return; // Seguridad: si alguno es nullptr, no hacemos nada
 
-    // 1. Obtener las referencias a las posiciones reales de la batalla
-    Vector2D& pIA = batalla->obtenerPos2(); // Referencia a pos2
-    Vector2D& pH = batalla->obtenerPos1();  // Referencia a pos1
-
+    // Obtener referencias y datos básicos
+    Vector2D& pIA = batalla->obtenerPos2();
+    Vector2D& pH = batalla->obtenerPos1();
     Vector2D dir = pH - pIA;
     double dist = dir.modulo();
+    Vector2D dN = dir.unitario();
 
-    // 2. Lógica de acercamiento según el arma
-    bool necesitaAcercarse = (ia->obtenerArma() == TipoArma::ESCUDO ||
-        ia->obtenerArma() == TipoArma::CUERPO_A_CUERPO);
+	// LÓGICA DE TIEMPO (Ciclo de 4 segundos) para crear patron de movimiento y pausa
+    float tiempoTotal = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; 
+    // fmod nos da el resto. Aquí el ciclo dura 4 segundos:
+    float ciclo = fmod(tiempoTotal, 4.0f);
 
-    // Si tiene escudo, busca distancia casi 0 para el daño por contacto
-    double distObjetivo = necesitaAcercarse ? 0.6 : (ia->obtenerAlcance() * 0.7);
+    // 2.5 segundos se mueve, 1.5 segundos se para
+    bool debeMoverse = (ciclo < 2.5f);
 
-    if (dist > distObjetivo) {
-        Vector2D dN = dir.unitario();
-        double vel = ia->obtenerVelocidad();
-        if (vel <= 0) vel = 20.0; // Seguro por si la pieza tiene velocidad 0
+    // VELOCIDAD Y TIPO DE PIEZA
+    double velIA = ia->obtenerVelocidad();
+    if (velIA <= 0) velIA = 25.0;
+    bool esCerca = (ia->obtenerArma() == TipoArma::ESCUDO || ia->obtenerArma() == TipoArma::CUERPO_A_CUERPO);
 
-        // 3. ACTUALIZACIÓN: Esto moverá la pieza en la pantalla
-        pIA = pIA + dN * (vel * dt);
-    }
-
-    // 4. Lógica de ataque
-    if (dist <= ia->obtenerAlcance()) {
-        if (necesitaAcercarse) {
-            if (ia->obtenerArma() == TipoArma::ESCUDO) {
-                ia->activarEscudo(); // El daño por contacto lo hará Batalla::mueve()[cite: 1]
-            }
-            ia->iniciarAnimacion();
+    // EJECUCIÓN DEL MOVIMIENTO
+    if (debeMoverse) {
+        if (esCerca) {
+            // Persecución si es de cuerpo a cuerpo
+            if (dist > 0.5) pIA = pIA + dN * (velIA * dt);
         }
         else {
-            // Lógica de disparo para arqueros/magos
-            static float cd = 0;
+            // Movimiento táctico si es de proyectil
+            double alcance = ia->obtenerAlcance();
+            if (dist < (alcance * 0.4)) pIA = pIA - dN * (velIA * dt); // Retrocede
+            else if (dist > (alcance * 0.8)) pIA = pIA + dN * (velIA * dt); // Avanza
+        }
+    }
+    
+
+    //  LÍMITES DE PANTALLA 
+    if (pIA.x > 8.0f)  pIA.x = 8.0f;
+    if (pIA.x < -8.0f) pIA.x = -8.0f;
+    if (pIA.y > 8.0f)  pIA.y = 8.0f;
+    if (pIA.y < -8.0f) pIA.y = -8.0f;
+
+    // 6. ATAQUE (La IA puede seguir disparando aunque esté parada)
+    if (dist <= ia->obtenerAlcance()) {
+        if (esCerca) {
+            if (ia->obtenerArma() == TipoArma::ESCUDO) ia->activarEscudo(); 
+                ia->iniciarAnimacion();
+        }
+        else {
+			static float cd = 0; // Cooldown para evitar disparos continuos
             if (cd <= 0) {
-                batalla->generarDisparo(false);
-                cd = 1.5f;
+                batalla->generarDisparo(false); 
+                    cd = 1.5f;
             }
             cd -= dt;
         }
