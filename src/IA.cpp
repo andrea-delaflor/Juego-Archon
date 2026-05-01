@@ -43,50 +43,46 @@ std::vector<Vector2D> IA::decidirMovimientoTablero(Mundo* mundo) {
 }
 
 void IA::ejecutarAccionBatalla(Batalla* batalla, Pieza* ia, Pieza* humano, float dt) {
-    // Solo ejecutar si la pieza 'ia' es realmente del bando OSCURIDAD
+    // PUNTO DE CONTROL 1: ¿Llegan los punteros?
+    if (!ia || !humano || !batalla) return;
+
+    // PUNTO DE CONTROL 2: ¿El bando es correcto?
+    // Si tus piezas de IA son del bando LUZ por error, aquí se detendría.
     if (ia->obtenerBando() == Bando::LUZ) return;
-    
-    if (!ia || !humano) return;
 
-    Vector2D pIA = ia->obtenerPosicion();
-    Vector2D pHumano = humano->obtenerPosicion();
-    float distanciaX = (float)(pHumano.x - pIA.x);
-    float absDist = std::abs(distanciaX);
+    // 1. Obtener datos básicos
+    Vector2D posIA = ia->obtenerPosicion();
+    Vector2D posH = humano->obtenerPosicion();
+    Vector2D dir = posH - posIA;
+    double dist = dir.modulo();
 
-    // 1. LÓGICA DE MOVIMIENTO Y ATAQUE
-    float velIA = ia->obtenerVelocidad(); 
+    // 2. FORZAR MOVIMIENTO (Prueba diagnóstica)
+    // Vamos a ignorar el "alcance" por un momento para ver si se mueven.
+    if (dist > 0.1) {
+        Vector2D dN = dir.unitario();
 
-        if (ia->obtenerArma() == TipoArma::CUERPO_A_CUERPO) {
-            if (absDist > 1.8f) {
-                // Movimiento: actualizamos la posición lógica
-                float nuevaX = pIA.x + (distanciaX > 0 ? velIA : -velIA) * dt;
-                ia->establecerPosicion(Vector2D(nuevaX, pIA.y));
-            }
-            else {
-                ia->iniciarAnimacion();
-                    // Uso correcto de la clase estática Interaccion[cite: 21]
-                    if (Interaccion::colisionCuerpoACuerpo(pIA, pHumano, ia->obtenerAlcance())) {
-                        humano->getVida().damage((int)(ia->obtenerPoderAtaque() * dt)); 
-                    }
-            }
+        // REVISIÓN CRÍTICA: La velocidad.
+        // Si ia->obtenerVelocidad() devuelve 0, 'paso' será (0,0).
+        double vel = ia->obtenerVelocidad();
+        if (vel <= 0) vel = 20.0; // Forzamos una velocidad si la pieza tiene 0
+
+        Vector2D paso = dN * (vel * dt);
+
+        // 3. ACTUALIZACIÓN DE POSICIÓN
+        Vector2D nuevaPos = posIA + paso;
+
+        // ¿Cómo se llama tu función exactamente? 
+        // Asegúrate de que sea la que realmente cambia las variables x e y del personaje.
+        ia->establecerPosicion(nuevaPos);
+    }
+
+    // 4. DISPARO
+    if (dist <= ia->obtenerAlcance()) {
+        static float cooldown = 0;
+        if (cooldown <= 0) {
+            batalla->generarDisparo(false); // false para J2 (IA)
+            cooldown = 1.5f;
         }
-        else {
-            // Lógica para arqueros o magos
-            if (absDist < 5.0f) { // Demasiado cerca, retroceder
-                float nuevaX = pIA.x + (distanciaX > 0 ? -velIA : velIA) * dt;
-                ia->establecerPosicion(Vector2D(nuevaX, pIA.y)); 
-            }
-            else if (absDist <= ia->obtenerAlcance()) {
-                ia->iniciarAnimacion(); // O disparar proyectil si tienes la función
-            }
-        }
-
-    // 2. GESTIÓN DE ESCUDO (FenixL o similares)
-    ia->actualizarEscudo(dt);
-        if (ia->obtenerArma() == TipoArma::ESCUDO && ia->obtenerVida() < 30) {
-            ia->activarEscudo(); 
-        }
-
-    // 3. ACTUALIZACIÓN DE ANIMACIÓN VISUAL
-    ia->actualizar(0.005f); 
+        cooldown -= dt;
+    }
 }

@@ -33,6 +33,8 @@ public:
 
     Pieza* getPiezaJ1() { return l1; } 
     Pieza* getPiezaJ2() { return l2; }
+
+    void setIA(bool activa) { iaActiva = activa; }
 private:
 
     bool iaActiva = false; // Por defecto es falso
