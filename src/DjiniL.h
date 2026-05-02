@@ -16,7 +16,7 @@ public:
             5.0f,   // velocidad
             20,     // poder de ataque
             1.0f,   // velocidad de ataque
-            3.0f,   // alcance
+            70.0f,   // alcance
             4,      // rango de movimiento
             TipoArma::RAYO_LASER,
             posInicial)

@@ -16,7 +16,7 @@ public:
             4.0f,   // velocidad
             30,     // poder de ataque
             0.8f,   // velocidad de ataque
-            2.0f,   // alcance
+            75.0f,   // alcance
             4,      // rango de movimiento
             TipoArma::BOLA_DE_FUEGO,
             posInicial)

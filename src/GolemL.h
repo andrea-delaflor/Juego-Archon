@@ -19,7 +19,7 @@ public:
             1.5f,   // esta es la vel
             30,     // la fuerza de golpeo
             0.8f,   // la vel de ataque
-            40.0f,  // radio de ataque
+            30.0f,  // radio de ataque
             2,      // rango de movimiento
             TipoArma::CUERPO_A_CUERPO,
             pos)
