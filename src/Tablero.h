@@ -28,6 +28,8 @@ public:
     // Punto de poder : E5, A5, I5, E1, E9
     bool esPowerPoint(int i, int j);
 
+    void vaciarCasilla(int i, int j);
+
 private:
     Pieza* casillas[9][9]; //Matriz de punteros --> la usamos para determinar entre casilla ocupada y libre
 

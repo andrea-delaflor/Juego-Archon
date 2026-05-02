@@ -41,9 +41,10 @@ void Pieza::actualizar(float velocidadtrayectoria) {
     float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
 
     if (dist > 0.01f) {
+    
         // En lugar de dt, usamos un valor fijo pequeño para que se mueva
         // cada vez que se dibuja. 
-        //float velocidadAnimacion = 0.0005f;
+     
         
         posicionVisual.x += (float)(dir.x * velocidadtrayectoria);
         posicionVisual.y += (float)(dir.y * velocidadtrayectoria);

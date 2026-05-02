@@ -364,6 +364,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
             //esto es el rango para el "boton" de 1 jugador
             if (mouseX >= -5.5f && mouseX <= -0.6f && mouseY >= -4.45f && mouseY <= 0.125f) {
                 modoUnJugador = true;
+                mundo.modoIA = true;
                 std::cout << "se ha seleccionado modo 1 jugador" << std::endl;
                 mundo.inicializa(estado);
                 ETSIDI::stopMusica();
@@ -377,6 +378,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
             //esto es el rango para el "boton" de 2 jugadores
             else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
                 modoUnJugador = false;
+                mundo.modoIA = false;
                 std::cout << "se ha seleccionado modo 2 jugador" << std::endl;
                 mundo.inicializa(estado);
                 ETSIDI::stopMusica();

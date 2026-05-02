@@ -2,7 +2,7 @@
 
 void DjiniL::dibuja() {
     // Sincronización de la animación interna
-    actualizar(0.005f);
+    actualizar(0.015f);
 
     if (sprite != nullptr) {
         Vector2D vPos = obtenerPosicionVisual();

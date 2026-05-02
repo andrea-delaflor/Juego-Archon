@@ -178,3 +178,9 @@ void Tablero::dibuja(float luminosidad) {
     }
     glColor3f(1.0f, 1.0f, 1.0f);
 }
+
+void Tablero::vaciarCasilla(int i, int j) {
+    if (posicionValida(i, j)) {
+        casillas[i][j] = nullptr;
+    }
+}
