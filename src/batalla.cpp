@@ -543,58 +543,56 @@ void Batalla::tecla(unsigned char key) {
 
     // Disparos y Controles JUGADOR 1
     if (key == ' ') {
-        if (congelarDisparoJ1 <= 0.0f) {
-            generarDisparo(true); //pulsando espacio jugador 1 usa su poder
-            congelarDisparoJ1 = 0.5f; // Medio segundo de recarga
-        }
-    }
-              
-   
-    //if (key == 'e' || key == 'E') { terminado = true; empate = true; }
+        if (l1) { // Primero aseguramos que el puntero al jugador existe
 
-        
-    if ((key == 't' || key == 'T') && l1) {                       //vamos a utilizar las mismas teclas para activar los poderes, asi es mas facil de jugar
-        if (l1->obtenerArma() == TipoArma::ESCUDO) {
-            l1->activarEscudo();
-        }
-        else {
-            l1->iniciarAnimacion(); // Esto es para el Golem y su llave
-            if (Interaccion::colisionCuerpoACuerpo(pos1, pos2, l1->obtenerAlcance())) {
-                l2->getVida().damage(l1->obtenerPoderAtaque());
-                hp2 = l2->getVida().getActual();
+            //Si el arma es de proyectiles (Bruja, Dragón, etc.)
+            if (l1->obtenerArma() != TipoArma::ESCUDO && l1->obtenerArma() != TipoArma::CUERPO_A_CUERPO) {
+                if (congelarDisparoJ1 <= 0.0f) {
+                    generarDisparo(true);
+                    congelarDisparoJ1 = 0.5f;
+                }
+            }
+            //Si el arma es el Escudo
+            else if (l1->obtenerArma() == TipoArma::ESCUDO) {
+                l1->activarEscudo();
+            }
+            //Si es cuerpo a cuerpo (Golem)
+            else {
+                l1->iniciarAnimacion();
+                if (Interaccion::colisionCuerpoACuerpo(pos1, pos2, l1->obtenerAlcance())) {
+                    l2->getVida().damage(l1->obtenerPoderAtaque());
+                    hp2 = l2->getVida().getActual();
+                }
             }
         }
     }
-    if (iaActiva) return;
+    if (iaActiva) return; //  BLOQUEO PARA JUGADOR 2 cuando esta la IA 
 
-    // Disparos y Controles JUGADOR 2
+    // Disparos y Controles JUGADOR 2 
 
-    //  BLOQUEO PARA JUGADOR 2 cuando esta la IA 
-    // Si la IA está activa o la pieza l2 es de la OSCURIDAD, no dejamos pasar el código
-    if (iaActiva) {
-        if (l2 && l2->obtenerBando() == Bando::OSCURIDAD) {
-            return; // Solo aquí salimos sin leer el resto de teclas
-        }
-    }
-
-    // --- JUGADOR 2 (SOLO HUMANOS) ---
-    // Este código ya no se ejecutará si arriba se hizo el 'return'
+    // JUGADOR 2 (SOLO HUMANOS) 
     if (key == 13) { // Tecla ENTER
-        if (congelarDisparoJ2 <= 0.0f) {
-            generarDisparo(false); 
-            congelarDisparoJ2 = 0.5f;
-        }
-    }
+        if (l2) { //Verificamos que el Jugador 2 existe
 
-    if ((key == 'y' || key == 'Y') && l2) {
-        if (l2->obtenerArma() == TipoArma::ESCUDO) {
-            l2->activarEscudo(); 
-        }
-        else {
-            l2->iniciarAnimacion(); 
-            if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) { 
-                l1->getVida().damage(l2->obtenerPoderAtaque()); 
-                hp1 = l1->getVida().getActual();
+            //Si el arma es de proyectiles (Bruja, Dragón, etc.)
+            if (l2->obtenerArma() != TipoArma::ESCUDO && l2->obtenerArma() != TipoArma::CUERPO_A_CUERPO) {
+                if (congelarDisparoJ2 <= 0.0f) {
+                    generarDisparo(false); // Disparo del J2
+                    congelarDisparoJ2 = 0.5f;
+                }
+            }
+            //Si el arma es el Escudo
+            else if (l2->obtenerArma() == TipoArma::ESCUDO) {
+                l2->activarEscudo();
+            }
+            //Si es cuerpo a cuerpo
+            else {
+                l2->iniciarAnimacion();
+                // Comprobamos colisión de pos2 contra pos1
+                if (Interaccion::colisionCuerpoACuerpo(pos2, pos1, l2->obtenerAlcance())) {
+                    l1->getVida().damage(l2->obtenerPoderAtaque());
+                    hp1 = l1->getVida().getActual(); // Actualizamos vida visual del J1
+                }
             }
         }
     }

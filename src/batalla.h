@@ -37,6 +37,11 @@ public:
     void setIA(bool activa) { iaActiva = activa; }
     Vector2D& obtenerPos1() { return pos1; } // Devolvemos referencia (&) para poder modificarla
     Vector2D& obtenerPos2() { return pos2; }
+
+    void actualizarVidaVisual() {
+        if (l1) hp1 = l1->obtenerVida(); // Sincroniza la variable hp1 con la vida real
+        if (l2) hp2 = l2->obtenerVida(); // Sincroniza la variable hp2 con la vida real
+    }
 private:
 
     bool iaActiva = false; // Por defecto es falso

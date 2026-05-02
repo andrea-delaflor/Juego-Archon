@@ -54,9 +54,8 @@ void IA::ejecutarAccionBatalla(Batalla* batalla, Pieza* ia, Pieza* humano, float
 
 	// LÓGICA DE TIEMPO (Ciclo de 4 segundos) para crear patron de movimiento y pausa
     float tiempoTotal = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; 
-    // fmod nos da el resto. Aquí el ciclo dura 4 segundos:
-    float ciclo = fmod(tiempoTotal, 4.0f);
-
+    // El ciclo dura 4 segundos:
+	float ciclo = fmod(tiempoTotal, 4.0f); // fmod para repetir cada 4 segundos
     // 2.5 segundos se mueve, 1.5 segundos se para
     bool debeMoverse = (ciclo < 2.5f);
 
@@ -70,33 +69,54 @@ void IA::ejecutarAccionBatalla(Batalla* batalla, Pieza* ia, Pieza* humano, float
         if (esCerca) {
             // Persecución si es de cuerpo a cuerpo
             if (dist > 0.5) pIA = pIA + dN * (velIA * dt);
+
         }
         else {
             // Movimiento táctico si es de proyectil
             double alcance = ia->obtenerAlcance();
-            if (dist < (alcance * 0.4)) pIA = pIA - dN * (velIA * dt); // Retrocede
-            else if (dist > (alcance * 0.8)) pIA = pIA + dN * (velIA * dt); // Avanza
+
+            if (dist < (alcance * 0.5)) pIA = pIA - dN * (velIA * dt); // Retrocede
+
+            else if (dist > (alcance * 0.9)) pIA = pIA + dN * (velIA * dt); // Avanza
+        
         }
     }
     
-
     //  LÍMITES DE PANTALLA 
     if (pIA.x > 8.0f)  pIA.x = 8.0f;
     if (pIA.x < -8.0f) pIA.x = -8.0f;
     if (pIA.y > 8.0f)  pIA.y = 8.0f;
     if (pIA.y < -8.0f) pIA.y = -8.0f;
 
-    // 6. ATAQUE (La IA puede seguir disparando aunque esté parada)
+    // ATAQUE (La IA puede seguir disparando aunque esté parada)
     if (dist <= ia->obtenerAlcance()) {
         if (esCerca) {
-            if (ia->obtenerArma() == TipoArma::ESCUDO) ia->activarEscudo(); 
-                ia->iniciarAnimacion();
+            if (ia->obtenerArma() == TipoArma::ESCUDO) {
+                ia->activarEscudo();
+                // El daño por escudo lo hace automáticamente Batalla::mueve
+            }
+            else {
+                // LÓGICA DE DAÑO PARA GOLPE FÍSICO 
+                static float cdGolpe = 0; // Para que no quite vida en cada frame
+                if (cdGolpe <= 0) {
+                    ia->iniciarAnimacion(); 
+                        // Verificamos si el golpe alcanza al humano
+                        if (Interaccion::colisionCuerpoACuerpo(pIA, pH, ia->obtenerAlcance())) {
+                           // Restamos vida al objeto Vida del humano
+                            humano->getVida().damage(ia->obtenerPoderAtaque()); 
+                            // Sincronizamos la vida de la batalla
+                            batalla->actualizarVidaVisual();
+                        }
+                    cdGolpe = 1.0f; // Tiempo entre golpes
+                }
+                cdGolpe -= dt;
+            }
         }
         else {
-			static float cd = 0; // Cooldown para evitar disparos continuos
+			static float cd = 1.5f; // Cooldown para evitar disparos continuos
             if (cd <= 0) {
                 batalla->generarDisparo(false); 
-                    cd = 1.5f;
+                cd = 1.5f;
             }
             cd -= dt;
         }
