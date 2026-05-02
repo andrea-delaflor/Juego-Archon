@@ -4,6 +4,8 @@
 #include "Vector2D.h"
 #include <iostream>
 #include "Movimiento.h"
+#include <algorithm> // Para std::shuffle
+#include <random>
 
 Mundo::Mundo() {
     modoMagiaActivo = false;
@@ -173,8 +175,16 @@ void Mundo::mueve() {
     case ANIMANDO_MOVIMIENTO:
         if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
 
-            if (hayCombate) {
-                // El Coordinador detectará el combate
+            if (defensor != nullptr) {
+                // AHORA SÍ activamos el combate, justo antes de que el Coordinador actúe
+                hayCombate = true;
+                tipoArenaCombate = tablero.obtenerTipoArena((int)defensor->obtenerPosicion().x,
+                    (int)defensor->obtenerPosicion().y, valorLuz);
+
+                // Pausa dramática opcional para que se vea a la Bruja "encima" del enemigo
+                static int delay = 0;
+                if (delay < 30) { delay++; return; } // Espera medio segundo
+                delay = 0;
             }
             else {
                 if (seleccionada->obtenerBando() == Bando::LUZ) {
@@ -192,7 +202,19 @@ void Mundo::mueve() {
         break;
 
     case TURNO_LUZ:
+        break;
     case TURNO_OSCURIDAD:
+    {
+        if (modoIA) {
+            static int delayIA = 0;
+            delayIA++;
+            if (delayIA > 90) {
+                ejecutarIA(); // O la lógica de decisión que tengas aquí
+                delayIA = 0;
+            }
+        }
+        break;
+    }
     case FIN_PARTIDA:
         break;
     }
@@ -1017,4 +1039,99 @@ void Mundo::clickIA(int cx, int cy) {
 
     // se ejecuta el click de la ia, le paso el -1 como bandera
     this->clickRaton(0, 0, -1, -1);
+}
+
+void Mundo::ejecutarIA() {
+    // 1. FILTRO DE SEGURIDAD
+    // Suponiendo que tienes una variable 'numJugadores' o 'modoIA'
+    if (!modoIA) {
+        return; // Si modoIA es false, salimos inmediatamente[cite: 1]
+    }
+
+    if (piezasOscuridad.empty()) return;
+
+    // 1. MEZCLAR LAS PIEZAS PRIMERO
+    // Creamos una copia para no alterar el vector original permanentemente
+    std::vector<Pieza*> misPiezas = piezasOscuridad;
+    for (int i = (int)misPiezas.size() - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        Pieza* temp = misPiezas[i];
+        misPiezas[i] = misPiezas[j];
+        misPiezas[j] = temp;
+    }
+
+    Pieza* piezaFinal = nullptr;
+    Vector2D destinoFinal = { -1, -1 };
+
+    // 2. BUSCAR ATAQUE POR PIEZA
+    // Al estar la lista mezclada, la primera pieza que encontremos con un ataque 
+    // será una elección justa y aleatoria entre todas.
+    for (Pieza* p : misPiezas) {
+        if (p->estaEncarcelada()) continue;
+
+        std::vector<Vector2D> movs = p->obtenerMovimientosValidos(&tablero);
+        std::vector<Vector2D> ataquesDeEstaPieza;
+
+        for (auto& m : movs) {
+            Pieza* ocu = tablero.obtenerOcupante((int)m.x, (int)m.y);
+            if (ocu != nullptr && ocu->obtenerBando() == Bando::LUZ) {
+                ataquesDeEstaPieza.push_back(m);
+            }
+        }
+
+        // Si esta pieza tiene ataques, elegimos uno de los suyos y terminamos la búsqueda
+        if (!ataquesDeEstaPieza.empty()) {
+            piezaFinal = p;
+            destinoFinal = ataquesDeEstaPieza[rand() % ataquesDeEstaPieza.size()];
+            std::cout << "IA agresiva elige a " << piezaFinal->obtenerNombre() << " para atacar." << std::endl;
+            break;
+        }
+    }
+
+    // 3. SI NADIE PUDO ATACAR, HACEMOS MOVIMIENTO LIBRE
+    if (piezaFinal == nullptr) {
+        for (Pieza* p : misPiezas) {
+            if (p->estaEncarcelada()) continue;
+
+            std::vector<Vector2D> movs = p->obtenerMovimientosValidos(&tablero);
+            std::vector<Vector2D> movimientosVacios;
+
+            for (auto& m : movs) {
+                if (tablero.obtenerOcupante((int)m.x, (int)m.y) == nullptr) {
+                    movimientosVacios.push_back(m);
+                }
+            }
+
+            if (!movimientosVacios.empty()) {
+                piezaFinal = p;
+                // Prioridad simple: si alguno es PowerPoint, lo tomamos
+                bool powerFound = false;
+                for (auto& mv : movimientosVacios) {
+                    if (tablero.esPowerPoint((int)mv.x, (int)mv.y)) {
+                        destinoFinal = mv;
+                        powerFound = true;
+                        break;
+                    }
+                }
+                if (!powerFound) {
+                    destinoFinal = movimientosVacios[rand() % movimientosVacios.size()];
+                }
+                break;
+            }
+        }
+    }
+
+    // 4. EJECUCIÓN 
+    if (piezaFinal != nullptr && destinoFinal.x != -1) {
+        Vector2D actual = piezaFinal->obtenerPosicion();
+        atacante = piezaFinal;
+        defensor = tablero.obtenerOcupante((int)destinoFinal.x, (int)destinoFinal.y);
+
+        tablero.vaciarCasilla((int)actual.x, (int)actual.y);
+        tablero.colocarPieza((int)destinoFinal.x, (int)destinoFinal.y, piezaFinal);
+
+        seleccionada = piezaFinal;
+        faseActual = ANIMANDO_MOVIMIENTO;
+        actualizarVidaPiezas();
+    }
 }

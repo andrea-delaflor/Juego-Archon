@@ -2,7 +2,7 @@
 
 void TrollO::dibuja() {
 
-    actualizar(0.0005f);
+    actualizar(0.0015f);
 
     if (sprite != nullptr) {
 

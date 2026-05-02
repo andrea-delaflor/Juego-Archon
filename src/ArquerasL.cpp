@@ -1,7 +1,7 @@
 ﻿#include "ArqueraL.h"
 
 void ArqueraL::dibuja() {
-    actualizar(0.0005f); // Para la suavidad del movimiento visual
+    actualizar(0.0015f); // Para la suavidad del movimiento visual
 
     if (sprite != nullptr) {
         Vector2D vPos = obtenerPosicionVisual();

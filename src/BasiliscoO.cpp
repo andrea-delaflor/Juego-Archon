@@ -1,7 +1,7 @@
 ﻿#include "BasiliscoO.h"
 
 void BasiliscoO::dibuja() {
-    actualizar(0.0005f);
+    actualizar(0.0015f);
 
     if (sprite != nullptr) {
         Vector2D vPos = obtenerPosicionVisual();

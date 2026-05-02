@@ -1,6 +1,6 @@
 #include"FenixL.h"
 void FenixL::dibuja() {
-    actualizar(0.005f);
+    actualizar(0.015f);
     if (sprite != nullptr) {
         
         Vector2D vPos = obtenerPosicionVisual();

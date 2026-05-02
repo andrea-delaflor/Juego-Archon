@@ -123,8 +123,9 @@ public:
     }
     void clickIA(int casillaX, int casillaY);
 
-  
-    
+    bool modoIA; // Flag para activar/desactivar la IA internamente
+    void ejecutarIA();
+
 private:
 
     bool mostrandoHistoria = false;
@@ -163,5 +164,7 @@ private:
     void dibujarCarceles();
     void dibujarInterfazSuperior();
     void dibujarGrimorio();
+
+ 
     
 };
