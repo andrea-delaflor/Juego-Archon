@@ -599,35 +599,34 @@ void Coordinador::teclaEspecial(int key) {
         if (key == GLUT_KEY_RIGHT) {
             if (paginaInstrucciones == 1) {
                 paginaInstrucciones = 2;
-                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
             }
-            else if (paginaInstrucciones == 2) { // si estamos en la hoja 2, pasamos a la hoja 3
+			else if (paginaInstrucciones == 2) { // Pasamos de la hoja 2 a la hoja 3
                 paginaInstrucciones = 3;
-                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", 0, 0, 20, 20);
+                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", -0.5, 0, 26, 20);
+            }
+			else if (paginaInstrucciones == 3) { // Pasamos de la hoja 3 a la hoja 4
+                paginaInstrucciones = 4;
+                fondo = ETSIDI::Sprite("imagenes/instruccionesataques.png", -0.5, 0, 26, 20);
+                
             }
         }
 
         // --- IR HACIA ATRÁS (Izquierda) ---
         else if (key == GLUT_KEY_LEFT) {
-            if (paginaInstrucciones == 3) { // Si estamos en la hoja 3, volvemos a la hoja 2
-                paginaInstrucciones = 2;
-                fondo = ETSIDI::Sprite("imagenes/personajes.png", 0, 0, 20, 20);
+			if (paginaInstrucciones == 4) { // Para volver de la hoja 4 a la hoja 3
+                paginaInstrucciones = 3;
+                fondo = ETSIDI::Sprite("imagenes/instruccioneshechizo.png", -0.5, 0, 26, 20);
             }
-            else if (paginaInstrucciones == 2) {
-                paginaInstrucciones = 1; // Si estamos en la hoja 2, volvemos a la hoja 1
-                fondo = ETSIDI::Sprite("imagenes/comojugar.png", 0, 0, 20, 20);
+			else if (paginaInstrucciones == 3) { // Para volver de la hoja 3 a la hoja 2
+                paginaInstrucciones = 2;
+                fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
+            }
+			else if (paginaInstrucciones == 2) { // Para volver de la hoja 2 a la hoja 1
+                paginaInstrucciones = 1;
+                fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
             }
         }
     }
-
-        if (key == GLUT_KEY_RIGHT && paginaInstrucciones == 1) {
-            paginaInstrucciones = 2;
-            fondo = ETSIDI::Sprite("imagenes/personajes.png", -0.5, 0, 26, 20);
-        }
-        // Si pulsamos IZQUIERDA y estamos en la hoja 2, volvemos a la hoja 1
-        else if (key == GLUT_KEY_LEFT && paginaInstrucciones == 2) {
-            paginaInstrucciones = 1;
-            fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
-        }
     
 }
