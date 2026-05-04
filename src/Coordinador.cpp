@@ -3,7 +3,8 @@
 
 
 Coordinador::Coordinador() :
-    fondo("imagenes/fondoinicio.png", 0, 0, 20, 20)
+    fondo("imagenes/fondoinicio.png", 0, 0, 20, 20),
+    pantallahistoria("imagenes/historiainicio.png", 0, 0, 20, 20)
 {
     estado = INICIO;
     mundo.inicializa(estado);
@@ -63,50 +64,30 @@ void Coordinador::dibuja()
         break;
 
     case MENU:
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-10, 10, -10, 10);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f); // Reset de color para que las imágenes se vean bien
+
         if (historiaActiva) {
-            historia.dibuja(); // Esto tiene que pintar pantallahistoria.png
-            
-            
-            // Configuración de estilo
-            ETSIDI::setTextColor(1, 1, 1); // Blanco puro
-            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 14); 
-
-            // Párrafo 1
-            ETSIDI::printxy("En 2026, al digitalizar los planos de la ETSIDI se descubre", -5, 3);
-            ETSIDI::printxy("que sus cimientos seguian un antiguo patron oculto.", -5, 2);
-            ETSIDI::printxy("Los conductos de ventilación eran canales de una fuerza misteriosa bajo Madrid.", -5, 1);
-
-            // Párrafo 2
-            ETSIDI::printxy("Una secta de monjes ha convertido la escuela en un campo", -5, -1);
-            ETSIDI::printxy("de batalla mistico. El suelo determina el poder:", -5, -2);
-            ETSIDI::printxy("Blanco para ALUMNOS y Negro para PROFESORES.", -5, -3);
-
-            // Párrafo 3: La regla 
-            
-            ETSIDI::printxy("Si luchas en tu color, los obstaculos y proyectiles enemigos", -5, -5);
-            ETSIDI::printxy("solo te haran la MITAD DE DAÑO.", -5, -6);
-
-            // Cierre épico
-            ETSIDI::setFont("fuentes/GalaferaMedium.ttf", 12);
-            ETSIDI::printxy("¿Quién restaurará el orden: los alumnos con ingenio iluminado,", -5, -8);
-            ETSIDI::printxy("o los profesores con ciencias oscuras ? ", -5, -9);
-
-            // Instrucción para continuar
-            ETSIDI::setFont("fuentes/bitwise.ttf", 10);
-            ETSIDI::printxy("PULSA ENTER PARA CONTINUAR", -3, -10);
-            
+            // 2. Si la historia está activa, dibujamos el Sprite de la historia[cite: 5, 6]
+            pantallahistoria.draw();
         }
         else {
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluOrtho2D(-10, 10, -10, 10);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-
-            glEnable(GL_TEXTURE_2D);
+            // 3. Si no, dibujamos el fondo del menú y las opciones de texto
             fondo.draw();
-            glDisable(GL_TEXTURE_2D);
+
+            
+            
+
+           
         }
+
+        glDisable(GL_TEXTURE_2D);
         break;
 
     case JUEGO:
@@ -266,23 +247,22 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case MENU:
-        // 1. Si la historia está en pantalla, el usuario solo puede pulsar ESPACIO
+        // 1. Si la historia está en pantalla, el usuario solo puede pulsar ESPACIO para jugar
         if (historiaActiva) {
             if (key == ' ') {
-                historia.siguiente();
-                if (historia.esFin()) {
-                    historiaActiva = false;
-                    estado = JUEGO; // El cambio de estado SOLO ocurre aquí
-                    mundo.inicializa(estado);
+                historiaActiva = false; // Quitamos la imagen[cite: 6]
+                estado = JUEGO;         // Cambiamos al tablero
+                mundo.inicializa(estado);
 
-                    ETSIDI::stopMusica();
-                    ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
-                }
+                ETSIDI::stopMusica();
+                ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
             }
-            // Este 'return' o 'break' es vital: impide que el programa lea el '1' o '2'
-            // mientras el usuario está intentando pasar la historia con el espacio.
+            // Este 'return' impide que se procesen otras teclas mientras se ve la historia
             return;
         }
+
+       
+        break;
 
         // 2. Si NO hay historia (menú principal), elegimos el modo
         if (key == '1' || key == '2') {
@@ -291,7 +271,7 @@ void Coordinador::tecla(unsigned char key) {
             else modoUnJugador = false;
 
             // ACTIVAMOS LA HISTORIA
-            historia.inicializa();
+           
             historiaActiva = true;
 
             // ¡CUIDADO! Aquí NO debe haber "estado = JUEGO"
@@ -371,7 +351,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
 
                 // ACTIVACIÓN DE HISTORIA (En lugar de estado = JUEGO)
-                historia.inicializa();
+                
                 historiaActiva = true;
 
             }
@@ -385,7 +365,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 ETSIDI::playMusica("sonidos/pantallatablero.wav", true);
 
                 // ACTIVACIÓN DE HISTORIA
-                historia.inicializa();
+                
                 historiaActiva = true;
 
             }
