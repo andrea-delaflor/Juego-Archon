@@ -122,7 +122,7 @@ void Mundo::inicializa(int estado) {
         libroLuz.push_back(new HechizoExchange());
         libroLuz.push_back(new HechizoImprison());
         libroLuz.push_back(new HechizoRevive());
-        libroLuz.push_back(new HechizoSummon());
+        //libroLuz.push_back(new HechizoSummon());
 
         // Oscuridad
         libroOscuridad.push_back(new HechizoTeleport());
@@ -131,7 +131,7 @@ void Mundo::inicializa(int estado) {
         libroOscuridad.push_back(new HechizoExchange());
         libroOscuridad.push_back(new HechizoImprison());
         libroOscuridad.push_back(new HechizoRevive());
-        libroOscuridad.push_back(new HechizoSummon());
+        //libroOscuridad.push_back(new HechizoSummon());
 
 
         for (auto p : piezasLuz) {
@@ -507,14 +507,14 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                     seleccionada = piezaEnCasilla;
 
                     if (seleccionada->esLider()) {
-                        std::cout << "Lider seleccionado. Pulsa 1-7 para magia o mueve." << std::endl;
+                        std::cout << "Lider seleccionado. Pulsa 1-6 para magia o mueve." << std::endl;
                         std::cout << "1.Teleport: mueve una pieza aliada a otra casilla válida." << std::endl;
                         std::cout << "2.Heal: cura completamente a una pieza aliada." << std::endl;
                         std::cout << "3.Shift Time: cambia el valor de luz del mundo." << std::endl;
                         std::cout << "4.Exchange: intercambia la posición de dos piezas." << std::endl;
                         std::cout << "5.Imprison: encarcela a una pieza enemiga." << std::endl;
                         std::cout << "6.Revive: revive a una pieza del cementerio." << std::endl;
-                        std::cout << "7.Summon: invoca una nueva pieza temporalmente en el tablero." << std::endl;
+                        //std::cout << "7.Summon: invoca una nueva pieza temporalmente en el tablero." << std::endl;
                         modoMagiaActivo = true;
                     }
                     return;
@@ -915,7 +915,7 @@ void Mundo::dibujarGrimorio() {
                 ETSIDI::printxy(texto.c_str(), 2.2f, yPos);
             }
             ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::printxy("PULSA 1 a 7", 2.2f, -5.5f);
+            ETSIDI::printxy("PULSA 1 a 6", 2.2f, -5.5f);
         }
         // 4. Lista del Revive (Solo si es Revive)
         else if (esRevive) {

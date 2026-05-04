@@ -213,10 +213,12 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     mundo->setIndiceSeleccionado(-1); // Reseteamos el índice
 }
 
+
 // 7. SUMMON
 /*
 Consiste en hacer aparecer a un golem/troll en una casilla vacia
 */
+/*
 void HechizoSummon::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
     Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
@@ -249,5 +251,5 @@ void HechizoSummon::aplicar(Mundo* mundo, Vector2D destino) {
     mundo->setModoMagia(false);
 
 }
-
+*/
 
