@@ -491,7 +491,8 @@ void Coordinador::mueve() {
                 estado = VICTORIA_ALUMNOS;
                 ETSIDI::playMusica("sonidos/cantocelestial.wav", false);  //el false es para que suena solo una vez
                 if (modoUnJugador) {
-                    fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
+                    //fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
+                    fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
                 }
                 else {
                     fondo = ETSIDI::Sprite("imagenes/victoriaalumnos.png", 0, 0, 20, 20);
@@ -502,7 +503,8 @@ void Coordinador::mueve() {
                 estado = VICTORIA_PROFESORES;
                 ETSIDI::playMusica("sonidos/cantocelestial.wav", false);
                 if (modoUnJugador) {
-                    fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
+                    //fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
+                    fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
                 } else {
                     fondo = ETSIDI::Sprite("imagenes/victoriaprofes.png", 0, 0, 20, 20);
                 }
