@@ -74,8 +74,11 @@ void Coordinador::dibuja()
         glColor3f(1.0f, 1.0f, 1.0f); // Reset de color para que las imágenes se vean bien
 
         if (historiaActiva) {
-            // 2. Si la historia está activa, dibujamos el Sprite de la historia[cite: 5, 6]
+            // 2. Si la historia está activa, dibujamos el Sprite de la historia
             pantallahistoria.draw();
+            ETSIDI::setTextColor(1, 1, 1);
+            ETSIDI::setFont("fuentes/bitwise.ttf", 12);
+            ETSIDI::printxy("PULSA ENTER PARA EMPEZAR EL COMBATE", -4, -8);
         }
         else {
             // 3. Si no, dibujamos el fondo del menú y las opciones de texto
