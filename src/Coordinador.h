@@ -2,7 +2,7 @@
 #include "mundo.h"
 #include "ETSIDI.h"
 #include "batalla.h"
-#include "Historia.h"
+
 
 class Coordinador { 
 public:
@@ -23,9 +23,10 @@ private:
     Mundo mundo;
     Batalla batalla;
     ETSIDI::Sprite fondo;
+    ETSIDI::Sprite pantallahistoria;
 
     bool historiaActiva; // FUNDAMENTAL
-    Historia historia;
+  
 
     //estos dos bool actuan como un sensor de detectar el raton
     bool hoverReanudar = false;
