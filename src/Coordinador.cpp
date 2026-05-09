@@ -241,7 +241,7 @@ void Coordinador::dibuja()
 void Coordinador::tecla(unsigned char key) {
     switch (estado) {
     case INICIO:
-        if (key == 13) {
+        if (key == 13) { // Si pulsamos ENTER
             estado = MENU;
             fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
             ETSIDI::stopMusica();
@@ -252,7 +252,7 @@ void Coordinador::tecla(unsigned char key) {
     case MENU:
         // 1. Si la historia está en pantalla, el usuario solo puede pulsar ESPACIO para jugar
         if (historiaActiva) {
-            if (key == ' ') {
+            if (key == 13) { // Si pulsamos ENTER
                 historiaActiva = false; // Quitamos la imagen[cite: 6]
                 estado = JUEGO;         // Cambiamos al tablero
                 mundo.inicializa(estado);
