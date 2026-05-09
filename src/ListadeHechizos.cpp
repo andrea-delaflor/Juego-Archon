@@ -8,7 +8,7 @@
 void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
     Tablero& tablero = mundo->getTablero();
 
-    // IMPORTANTE: Buscamos qué hay en las coordenadas del clic AQUÍ dentro
+    // Buscamos qué hay en las coordenadas del clic AQUÍ dentro
     Pieza* piezaEnClick = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
 
     // PASO 1: Seleccionar la pieza (seleccionada es nullptr porque lo pusimos así en la tecla)
@@ -18,7 +18,6 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
             if (piezaEnClick->obtenerBando() == mundo->bandoActual()) { // ¿Es nuestra?
                 if (!piezaEnClick->esLider()) { // ¿No es el mago?
 
-                    // ASIGNACIÓN CRUCIAL
                     mundo->seleccionada = piezaEnClick;
 
                     std::cout << "PIEZA SELECCIONADA: " << piezaEnClick->obtenerNombre() << std::endl;
@@ -52,8 +51,7 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
 
             // Marcar como finalizado
             this->usado = true;
-            // IMPORTANTE: No limpies mundo->seleccionada aquí si quieres 
-            // que Mundo::clickRaton lo haga al detectar que estaUsado() es true
+
             std::cout << "Hechizo ejecutado con exito." << std::endl;
         }
         else {
@@ -63,24 +61,24 @@ void HechizoTeleport::aplicar(Mundo* mundo, Vector2D destino) {
 }
 
 // 2. HEAL
-//Cura a las piezas del MISMO bando a su vida max
+// Cura a las piezas del MISMO bando a su vida max
 void HechizoHeal::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
     if (p == nullptr) {
-        //si la casilla no tiene pieza---> no es valido hay que esperar que haga click en una casilla con pieza
+        // Si la casilla no tiene pieza---> no es válido hay que esperar que haga click en una casilla con pieza
         std::cout << "Casilla vacia. Selecciona una pieza ALIADA para curarla." << std::endl;
         mundo->setModoMagia(true);   // seguimos esperando
         return;
     }
 
     if (p->obtenerBando() != mundo->bandoActual()) {
-        //si la pieza NO es de NUESTRO bando no se puede avisamos
+        // Si la pieza NO es de NUESTRO bando no se puede avisamos
         std::cout << "No puedes curar a los enemigos! Selecciona una pieza ALIADA." << std::endl;
-        mundo->setModoMagia(true);   // seguimos esperando
+        mundo->setModoMagia(true);   // Seguimos esperando
         return;
     }
 
-    //CURAR
+    // CURAR
     p->getVida().restaurarAlMaximo();
     std::cout << "HEAL: " << p->obtenerNombre() << " ha recuperado toda su vida." << std::endl;
     usado = true;
@@ -96,7 +94,7 @@ void HechizoShiftTime::aplicar(Mundo* mundo, Vector2D destino) {
 
     usado = true;
     mundo->setModoMagia(false);
-    mundo->seleccionada = nullptr; //para bloquear el mago y no se mueva tras conjurar
+    mundo->seleccionada = nullptr; // Para bloquear el mago y no se mueva tras conjurar
 
 }
 
@@ -144,8 +142,8 @@ void HechizoExchange::aplicar(Mundo* mundo, Vector2D destino) {
 void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
     Pieza* p = mundo->getTablero().obtenerOcupante((int)destino.x, (int)destino.y);
 
-    // 1. Comprobamos que haya una pieza
-    // 2. Comprobamos que el bando de esa pieza sea distinto al bandoActual del mundo
+    // Comprobamos que haya una pieza
+    // Comprobamos que el bando de esa pieza sea distinto al bandoActual del mundo
     if (p != nullptr && p->obtenerBando() != mundo->bandoActual()) {
 
         p->establecerEncarcelada(true, mundo->getValorLuz());
@@ -171,11 +169,11 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
 
     if (cementerio.empty()) {
         std::cout << "Cementerio vacio. Cancelando hechizo..." << std::endl;
-        mundo->setModoMagia(false); // <--- IMPORTANTE: Desbloquea el mundo
+        mundo->setModoMagia(false); // Desbloquea el mundo
         return;
     }
 
-    // --- MODO EJECUCIÓN (Clic en suelo vacío) ---
+    // MODO EJECUCIÓN (Clic en suelo vacío)
     int idx = mundo->getIndiceSeleccionado();
     if (idx < 0 || idx >= (int)cementerio.size()) idx = 0;
 
@@ -186,7 +184,7 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     if (tablero.obtenerOcupante((int)destino.x, (int)destino.y) != nullptr) {
         std::cout << "Casilla ocupada. Elige una casilla VACIA para revivir a: "
             << cementerio[idx]->obtenerNombre() << std::endl;
-        mundo->setModoMagia(true);  // seguimos esperando
+        mundo->setModoMagia(true);  // Seguimos esperando
         return;
     }
 
@@ -197,7 +195,7 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     p->restaurarVidaCompleta();
     p->establecerViva(true);
 
-    //Colocamos pieza revivida en el tablero
+    // Colocamos pieza revivida en el tablero
     p->forzarPosicionVisual(destino);
     tablero.colocarPieza((int)destino.x, (int)destino.y, p);
 
@@ -207,49 +205,10 @@ void HechizoRevive::aplicar(Mundo* mundo, Vector2D destino) {
     std::cout << "REVIVE: " << p->obtenerNombre() << " resucitado." << std::endl;
     std::cout << "Ha vuelto en (" << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
     
-    // --- DESBLOQUEO DEL JUEGO ---
+    // DESBLOQUEO DEL JUEGO 
     usado = true; 
     mundo->setModoMagia(false);       // Cerramos el modo magia
     mundo->setIndiceSeleccionado(-1); // Reseteamos el índice
 }
 
-
-// 7. SUMMON
-/*
-Consiste en hacer aparecer a un golem/troll en una casilla vacia
-*/
-/*
-void HechizoSummon::aplicar(Mundo* mundo, Vector2D destino) {
-    Tablero& tablero = mundo->getTablero();
-    Pieza* ocupante = tablero.obtenerOcupante((int)destino.x, (int)destino.y);
-
-    // Casilla ocupada → avisar y esperar
-    if (ocupante != nullptr) {
-        std::cout << "La casilla esta ocupada. Elige una casilla VACIA para invocar." << std::endl;
-        mundo->setModoMagia(true);
-        return;
-    }
-
-    // Casilla vacía → invocar pieza según bando
-    Pieza* nuevaPieza = nullptr;
-
-    if (mundo->bandoActual() == Bando::LUZ) {
-        nuevaPieza = new GolemL(destino);
-        mundo->getPiezasLuz().push_back(nuevaPieza);
-        std::cout << "SUMMON: Golem invocado en ("
-            << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
-    }
-    else {
-        nuevaPieza = new TrollO(destino);
-        mundo->getPiezasOscuridad().push_back(nuevaPieza);
-        std::cout << "SUMMON: Troll invocado en ("
-            << (int)destino.x << "," << (int)destino.y << ")." << std::endl;
-    }
-
-    tablero.colocarPieza((int)destino.x, (int)destino.y, nuevaPieza);
-    usado = true;
-    mundo->setModoMagia(false);
-
-}
-*/
 

@@ -60,11 +60,3 @@ public:
     void aplicar(Mundo* mundo, Vector2D destino) override;
 };
 
-// 7. SUMMON: Invoca un elemental (Lógica simplificada)
-/*
-class HechizoSummon : public Hechizo {
-public:
-    HechizoSummon() : Hechizo("Summon") {}
-    void aplicar(Mundo* mundo, Vector2D destino) override;
-};
-*/

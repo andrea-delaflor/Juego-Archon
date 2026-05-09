@@ -34,7 +34,7 @@ void DjiniL::dibujaEnBatalla(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glColor3ub(255, 255, 255);
 
-    sprite->setPos(0.0f, 0.0f);  // ← siempre en el origen
+    sprite->setPos(0.0f, 0.0f);  // Siempre en el origen
     sprite->setSize(0.9f, 0.9f);
     sprite->draw();
 }

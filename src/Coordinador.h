@@ -18,20 +18,19 @@ public:
 
 private:
     Estado estado;
-    Estado estadoAnterior; //necesitamos esto para despues de la pausa volver al estado en el que estabamos
-    int paginaInstrucciones = 1; //esto lo añado poruq en Intrucciones quiero dos hojas
+    Estado estadoAnterior; // Necesitamos esto para despues de la pausa volver al estado en el que estabamos
+    int paginaInstrucciones = 1; // Esto lo añado poruq en Intrucciones quiero dos hojas
     Mundo mundo;
     Batalla batalla;
     ETSIDI::Sprite fondo;
     ETSIDI::Sprite pantallahistoria;
 
-    bool historiaActiva; // FUNDAMENTAL
-  
+    bool historiaActiva;   
 
-    //estos dos bool actuan como un sensor de detectar el raton
+    // Estos dos bool actuan como un sensor de detectar el raton
     bool hoverReanudar = false;
     bool hoverAbandonar = false;
-    bool modoUnJugador = false; //esto lo vamos a utilizar para saber si estamos en modo 1 o 2 jugadores
+    bool modoUnJugador = false; // Esto lo vamos a utilizar para saber si estamos en modo 1 o 2 jugadores
 
     float timerIA = 0.0f;
     

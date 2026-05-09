@@ -3,7 +3,6 @@
 #include "Vector2D.h"
 #include <vector>
 
-// Forward declarations
 class Mundo;
 class Batalla;
 class Pieza;
@@ -17,5 +16,5 @@ public:
     static void ejecutarAccionBatalla(Batalla* batalla, Pieza* iaPieza, Pieza* rivalPieza, float dt);
 
 private:
-    static float congelarAtaque; //esto es para que no dispare continuamente
+    static float congelarAtaque; //eEsto es para que no dispare continuamente
 };

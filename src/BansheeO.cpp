@@ -31,7 +31,7 @@ void BansheeO::dibuja() {
 }
 
 void BansheeO::dibujaEnBatalla() {
-    // 1. Dibujamos el sprite de la Banshee centrado
+    // Dibujamos el sprite de la Banshee centrado
     glPushMatrix();
 
     glEnable(GL_TEXTURE_2D);
@@ -42,7 +42,7 @@ void BansheeO::dibujaEnBatalla() {
     sprite->draw();
     glPopMatrix();
 
-    // 2. Dibujamos el escudo 
+    // Dibujamos el escudo 
     if (tieneEscudoActivo()) {
         glPushMatrix();
         

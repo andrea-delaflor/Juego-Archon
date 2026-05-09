@@ -103,7 +103,7 @@ void Mundo::inicializa(int estado) {
         piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 1)));
         piezasOscuridad.push_back(new BansheeO(Vector2D(8, 2)));
         piezasOscuridad.push_back(new DragonO(Vector2D(8, 3)));
-        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4))); //  El es el principal lo ponemos en el medio en el punto de poder!!
+        piezasOscuridad.push_back(new BrujaO(Vector2D(8, 4))); //  El es el principal lo ponemos en el medio en el punto de poder
         piezasOscuridad.push_back(new DragonO(Vector2D(8, 5)));
         piezasOscuridad.push_back(new BansheeO(Vector2D(8, 6)));
         piezasOscuridad.push_back(new BasiliscoO(Vector2D(8, 7)));
@@ -122,7 +122,6 @@ void Mundo::inicializa(int estado) {
         libroLuz.push_back(new HechizoExchange());
         libroLuz.push_back(new HechizoImprison());
         libroLuz.push_back(new HechizoRevive());
-        //libroLuz.push_back(new HechizoSummon());
 
         // Oscuridad
         libroOscuridad.push_back(new HechizoTeleport());
@@ -131,7 +130,6 @@ void Mundo::inicializa(int estado) {
         libroOscuridad.push_back(new HechizoExchange());
         libroOscuridad.push_back(new HechizoImprison());
         libroOscuridad.push_back(new HechizoRevive());
-        //libroOscuridad.push_back(new HechizoSummon());
 
 
         for (auto p : piezasLuz) {
@@ -176,7 +174,7 @@ void Mundo::mueve() {
         if (seleccionada != nullptr && !seleccionada->estaAnimando()) {
 
             if (defensor != nullptr) {
-                // AHORA SÍ activamos el combate, justo antes de que el Coordinador actúe
+                // Activamos el combate justo antes de que el Coordinador actúe
                 hayCombate = true;
                 tipoArenaCombate = tablero.obtenerTipoArena((int)defensor->obtenerPosicion().x,
                     (int)defensor->obtenerPosicion().y, valorLuz);
@@ -196,7 +194,7 @@ void Mundo::mueve() {
                     std::cout << "--> TURNO DE LA LUZ" << std::endl;
                 }
                 seleccionada = nullptr;
-                comprobarVictoria(); //para saber ganador
+                comprobarVictoria(); // Para saber ganador
             }
         }
         break;
@@ -240,24 +238,7 @@ void Mundo::dibuja(int estado) {
         break;
 
     case 2:
-       /*if (mostrandoHistoria) {
-            // Configuramos una vista ortogonal simple para la imagen
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluOrtho2D(-7.0, 7.0, -7.0, 7.0);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-
-            if (imagenHistoria != nullptr) { // <--- Seguridad extra
-                imagenHistoria->draw();
-            }
-
-            ETSIDI::setTextColor(1, 1, 1);
-            ETSIDI::setFont("fuentes/bitwise.ttf", 16);
-            ETSIDI::printxy("PULSA ENTER PARA EMPEZAR LA AVENTURA", -3.5f, -6.0f);
-            return; // Salimos aquí para no dibujar el tablero por debajo[cite: 2]
-        }*/ 
-
+      
         tablero.dibuja(valorLuz);
 
         // 1. Al seleccionar una pieza nos de opciones de sus movimientos posibles
@@ -306,19 +287,7 @@ void Mundo::dibuja(int estado) {
 
 
 void Mundo::teclahechizos(unsigned char key) {
-    /*
-	// Si estamos mostrando la historia, solo permitimos avanzar o saltarla
-    if (mostrandoHistoria) {
-        if (key == 13 || key == ' ') { // Enter o Espacio
-            mostrandoHistoria = false;
-            if (imagenHistoria) {
-                delete imagenHistoria;
-                imagenHistoria = nullptr;
-            }
-        }
-        return;
-    }*/
-
+    
     // Si pulsamos '0' y NO estamos en medio de un proceso de Revive, cancelamos
     if (key == '0' && (hechizoSeleccionado == nullptr)) {
         modoMagiaActivo = false;      
@@ -365,7 +334,7 @@ void Mundo::teclahechizos(unsigned char key) {
         return; // Bloqueamos el resto de teclas mientras hay hechizo activo ----> SUPER IMPORTANTE PORQUE SINO NO DEJA SELECC MUERTOS
     }
 
-    //solo TRUE si lider selecc ---> mago o bruja
+    // Sólo TRUE si el líder está seleccionado (mago o bruja)
     if (seleccionada == nullptr || !seleccionada->esLider()) return;
 
     auto& libro = (faseActual == TURNO_LUZ) ? libroLuz : libroOscuridad;
@@ -384,7 +353,7 @@ void Mundo::teclahechizos(unsigned char key) {
     if (key == '3') {
         h->aplicar(this, Vector2D(0, 0));
 
-         // al no hacer click en el tablero no es automatico el cambio de turno qu ehay en la funcion click raton
+         // Al no hacer click en el tablero no es automatico el cambio de turno qu ehay en la funcion click raton
         if (h->estaUsado()) {
             setModoMagia(false);
             hechizoSeleccionado = nullptr;
@@ -394,7 +363,7 @@ void Mundo::teclahechizos(unsigned char key) {
         return;
     }
 
-    // Para hechizo REVIVE ---> te muestra piezas muertas y te da a elegir
+    // Para hechizo REVIVE te muestra piezas muertas y te da a elegir
     if (key == '6') {
         bool esLuz = (faseActual == TURNO_LUZ);
         auto& cementerio = esLuz ? cementerioLuz : cementerioOscuridad;
@@ -424,7 +393,7 @@ void Mundo::teclahechizos(unsigned char key) {
     modoMagiaActivo = true;
     
     if (key == '1') {
-        hechizoSeleccionado = h; // h es el hechizo Teleport que has buscado
+        hechizoSeleccionado = h; // "h" es el hechizo Teleport que has buscado
         modoMagiaActivo = true;
 
         this->seleccionada = nullptr;
@@ -445,7 +414,7 @@ void Mundo::teclahechizos(unsigned char key) {
 void Mundo::clickRaton(int button, int state, int x, int y) {
     if ((x != -1 && y != -1) && (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN)) return;
 
-    //Preguntamos tamaño real pnatalla
+    // Preguntamos tamaño real pnatalla
     int ancho = glutGet(GLUT_WINDOW_WIDTH);
     int alto = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -456,7 +425,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
     if (c.x == -1) return;
 
-    // --- LÓGICA DE APLICAR HECHIZO ---
+    // LÓGICA DE APLICAR HECHIZO 
     if (modoMagiaActivo && hechizoSeleccionado != nullptr) {
         // 1. Llamamos a la lógica interna del hechizo
         hechizoSeleccionado->aplicar(this, raton.casilla);
@@ -469,16 +438,12 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
             comprobarVictoria();  
 
-            // Solo cambiamos turno si no ha terminado la partida
+            // Sólo cambiamos turno si no ha terminado la partida
             if (faseActual != FIN_PARTIDA) {
                 faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
             }
 
-            /*
-            // Cambio de turno automático tras la magia
-            faseActual = (faseActual == TURNO_LUZ) ? TURNO_OSCURIDAD : TURNO_LUZ;
-            */
-        }
+          }
         glutPostRedisplay();
         return;
     }
@@ -501,7 +466,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
 
                     if (piezaEnCasilla->estaEncarcelada()) {
                         std::cout << "¡ESTA PIEZA ESTA ENCARCELADA! No puede moverse hasta que cambie el ciclo." << std::endl;
-                        return; // Importante: salimos para que 'seleccionada' siga siendo nullptr
+                        return; // Salimos para que 'seleccionada' siga siendo nullptr
                     }
 
                     seleccionada = piezaEnCasilla;
@@ -514,7 +479,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
                         std::cout << "4.Exchange: intercambia la posición de dos piezas." << std::endl;
                         std::cout << "5.Imprison: encarcela a una pieza enemiga." << std::endl;
                         std::cout << "6.Revive: revive a una pieza del cementerio." << std::endl;
-                        //std::cout << "7.Summon: invoca una nueva pieza temporalmente en el tablero." << std::endl;
+
                         modoMagiaActivo = true;
                     }
                     return;
@@ -537,6 +502,7 @@ void Mundo::clickRaton(int button, int state, int x, int y) {
             }
 
             if (esDestinoValido) {
+
                 // Si movemos físicamente al mago, cancelamos el modo magia por si lo había activado
                 modoMagiaActivo = false;
                 Pieza* piezaDestino = tablero.obtenerOcupante((int)c.x, (int)c.y);
@@ -616,7 +582,7 @@ void Mundo::finalizaCombate(Pieza* ganador, Pieza* perdedor, bool empate) {
     Vector2D casillaCombate = atacante->obtenerPosicion();
     Bando turnoAtacante = atacante->obtenerBando();
 
-    // COMPORTAMIENTO SEGURO!
+    // COMPORTAMIENTO SEGURO
     if (empate) {
         // 1. Vaciamos la casilla del tablero (la dejamos vacía)
         tablero.colocarPieza((int)casillaCombate.x, (int)casillaCombate.y, nullptr);
@@ -662,7 +628,7 @@ void Mundo::comprobarVictoria() {
     bool pierdeLuz = false;
     bool pierdeOscuridad = false;
 
-    //Forma de ganar --> eliminar todas las piezas o dejar solo una encarcelada
+    //Forma de ganar: eliminar todas las piezas o dejar solo una encarcelada
     if (piezasLuz.empty() || (piezasLuz.size() == 1 && piezasLuz[0]->estaEncarcelada())) { 
         pierdeLuz = true;
     }
@@ -672,7 +638,7 @@ void Mundo::comprobarVictoria() {
     }
 
     // Comprobamos si alguien ha perdido por estas reglas
-    if (pierdeLuz && pierdeOscuridad) { //El empate es muy raro pero puede ocurrir (batalla final tablero contrarreloj)
+    if (pierdeLuz && pierdeOscuridad) { // El empate es muy raro pero puede ocurrir (batalla final tablero contrarreloj)
         ganadorPartida = 3;
         faseActual = FIN_PARTIDA;
         return;
@@ -688,7 +654,7 @@ void Mundo::comprobarVictoria() {
         return;
     }
 
-    //Forma de ganar consigiendo estar en los puento de poder ----> hay q comprobar las coordenadas
+    //Forma de ganar consigiendo estar en los puento de poder: hay que comprobar las coordenadas
     Vector2D puntosPoder[5] = {
         Vector2D(4, 4), // Centro exacto
         Vector2D(4, 0), // Abajo
@@ -719,36 +685,26 @@ void Mundo::comprobarVictoria() {
 }
 
 
-
-
-
-
-
-
-//********************************************************
-///encapsular funciones para mundo::dibuja mas legible:
-//*********************************************************
-
 void Mundo::dibujarCajasMovimiento() {
     if (seleccionada == nullptr) return;
 
-    //Aqui calculamos los posibles movimientos de la pieza seleccionada
+    //Aquí calculamos los posibles movimientos de la pieza seleccionada
     std::vector<Vector2D> movimientosValidos = seleccionada->obtenerMovimientosValidos(&tablero);
 
     //Configuramos OpenGL para debujar lineas
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(3.0f); // este es el grosor de la linea por si queremos mas o menos
-    glColor3f(0.2f, 1.0f, 0.2f); //este color es verde fosforito pero lo podemos cambiar
+    glLineWidth(3.0f); // Éste es el grosor de la linea por si queremos mas o menos
+    glColor3f(0.2f, 1.0f, 0.2f); // Este color es verde fosforito pero lo podemos cambiar
 
-    //Aqui es donde dibujamos el marco del movimiento posible
+    // Aqui es donde dibujamos el marco del movimiento posible
     for (Vector2D mov : movimientosValidos) {
         // Traducimos la coordenada de la matriz a las de OpenGL
         float x_gl = (float)mov.x - 4.0f;
         float y_gl = 4.0f - (float)mov.y;
 
         glBegin(GL_LINE_LOOP);
-        //Usaos el mismo valor que habiamos usado en Tablero.cpp
+        // Usamos el mismo valor que habiamos usado en Tablero.cpp
         glVertex2f(x_gl - 0.48f, y_gl - 0.48f);
         glVertex2f(x_gl + 0.48f, y_gl - 0.48f);
         glVertex2f(x_gl + 0.48f, y_gl + 0.48f);
@@ -771,7 +727,7 @@ void Mundo::dibujarCarceles() {
     for (auto p : piezasLuz) p->dibuja();
     for (auto p : piezasOscuridad) p->dibuja();
 
-    //  CÁRCEL MÁGICA PARA PIEZAS ENCARCELADAS 
+    // CÁRCEL MÁGICA PARA PIEZAS ENCARCELADAS 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
@@ -846,7 +802,7 @@ void Mundo::dibujarInterfazSuperior() { //INTERFAZ DE TURNOS
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // 1. Fondo de la barra superior (de y=5.2 a y=6.0)
+    // Fondo de la barra superior (de y=5.2 a y=6.0)
     glColor4f(0.0f, 0.0f, 0.0f, 0.75f);
     glBegin(GL_QUADS);
     glVertex2f(-6.0f, 4.8f);
@@ -855,7 +811,7 @@ void Mundo::dibujarInterfazSuperior() { //INTERFAZ DE TURNOS
     glVertex2f(-6.0f, 6.0f);
     glEnd();
 
-    // 2. Texto del turno
+    // Texto del turno
     if (faseActual == TURNO_LUZ) {
         ETSIDI::setTextColor(1, 1, 1); // Blanco
         ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
@@ -874,19 +830,19 @@ void Mundo::dibujarInterfazSuperior() { //INTERFAZ DE TURNOS
 void Mundo::dibujarGrimorio() {
     if (!modoMagiaActivo) return;
 
-    // 1. Limpieza de estado
+    // Limpieza de estado
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // --- LÓGICA DE VISIBILIDAD ---
+    // LÓGICA DE VISIBILIDAD
     // Si hay un hechizo seleccionado y NO es Revive, NO dibujamos el panel lateral.
     bool esRevive = (hechizoSeleccionado != nullptr && dynamic_cast<HechizoRevive*>(hechizoSeleccionado) != nullptr);
     bool mostrarPanel = (hechizoSeleccionado == nullptr || esRevive);
 
     if (mostrarPanel) {
-        // 2. Fondo del Grimorio (Solo si no hay hechizo o es Revive)
+        // Fondo del Grimorio (sólo si no hay hechizo o es Revive)
         glColor4f(0.0f, 0.0f, 0.0f, 0.85f);
         glBegin(GL_QUADS);
         glVertex2f(1.8f, -6.0f);
@@ -895,7 +851,7 @@ void Mundo::dibujarGrimorio() {
         glVertex2f(1.8f, 5.0f);
         glEnd();
 
-        // 3. Menú de selección (Solo si no hay hechizo activo)
+        // Menú de selección (sólo si no hay hechizo activo)
         if (hechizoSeleccionado == nullptr) {
             ETSIDI::setTextColor(1, 1, 0);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 20);
@@ -917,7 +873,7 @@ void Mundo::dibujarGrimorio() {
             ETSIDI::setTextColor(1, 1, 1);
             ETSIDI::printxy("PULSA 1 a 6", 2.2f, -5.5f);
         }
-        // 4. Lista del Revive (Solo si es Revive)
+        // Lista del Revive (sólo si es Revive)
         else if (esRevive) {
             ETSIDI::setTextColor(0, 1, 1);
             ETSIDI::setFont("fuentes/Bitwise.ttf", 18);
@@ -935,7 +891,7 @@ void Mundo::dibujarGrimorio() {
         }
     }
 
-    // --- INDICADOR MINIMALISTA (Solo cuando el panel se quita) ---
+    // INDICADOR MINIMALISTA (sólo cuando el panel se quita)
     if (hechizoSeleccionado != nullptr && !esRevive) {
         // Un cartelito pequeño arriba para saber qué estás haciendo sin tapar el tablero
         glColor4f(0.0f, 0.3f, 0.5f, 0.7f);
@@ -951,7 +907,7 @@ void Mundo::dibujarGrimorio() {
         ETSIDI::printxy(info.c_str(), -5.5f, 4.9f);
     }
 
-    // 5. El indicador que sigue al ratón 
+    // El indicador que sigue al ratón 
     if (hechizoSeleccionado != nullptr) {
         ETSIDI::setTextColor(1.0f, 0.0f, 0.0f);
         ETSIDI::setFont("fuentes/games.ttf", 12);
@@ -959,7 +915,7 @@ void Mundo::dibujarGrimorio() {
         ETSIDI::printxy(msg.c_str(), raton.posicion.x + 0.4f, raton.posicion.y + 0.4f);
     }
 
-    // 6. Lógica info de vidas de piezas al cursor del ratón
+    // Lógica info de vidas de piezas al cursor del ratón
 
     Vector2D c = raton.casilla;
     if (c.x != -1) {
@@ -982,7 +938,7 @@ void Mundo::dibujarGrimorio() {
             float x_gl = (float)c.x - 4.0f;
             float y_gl = 4.0f - (float)c.y;
 
-            // --- BLOQUE UNIFICADO ---
+            // BLOQUE UNIFICADO
             // Aplicamos un desplazamiento base para que el conjunto flote sobre la pieza
             glTranslatef(x_gl - 1.8f, y_gl + 1.2f, 0.0f);
 
@@ -991,7 +947,7 @@ void Mundo::dibujarGrimorio() {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            // A. DIBUJO DE LA CAJA (Coordenadas relativas al nuevo origen 0,0)
+            // 1. DIBUJO DE LA CAJA (Coordenadas relativas al nuevo origen 0,0)
             glDisable(GL_TEXTURE_2D);
             glColor4f(1.0f, 1.0f, 1.0f, 0.95f);
             glBegin(GL_QUADS);
@@ -1011,7 +967,7 @@ void Mundo::dibujarGrimorio() {
             glVertex2f(-0.2f, 0.5f);
             glEnd();
 
-            // B. DIBUJO DEL TEXTO (Coordenadas relativas al mismo origen 0,0)
+            // 2. DIBUJO DEL TEXTO (Coordenadas relativas al mismo origen 0,0)
             glEnable(GL_TEXTURE_2D);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
@@ -1033,24 +989,23 @@ void Mundo::dibujarGrimorio() {
     glEnable(GL_TEXTURE_2D);
 }
 void Mundo::clickIA(int cx, int cy) {
-    // se fuerza la casilla
+    // Se fuerza la casilla
     raton.casilla.x = (float)cx;
     raton.casilla.y = (float)cy;
 
-    // se ejecuta el click de la ia, le paso el -1 como bandera
+    // Se ejecuta el click de la ia, le paso el -1 como bandera
     this->clickRaton(0, 0, -1, -1);
 }
 
 void Mundo::ejecutarIA() {
-    // 1. FILTRO DE SEGURIDAD
-    // Suponiendo que tienes una variable 'numJugadores' o 'modoIA'
+    // FILTRO DE SEGURIDAD
     if (!modoIA) {
-        return; // Si modoIA es false, salimos inmediatamente[cite: 1]
+        return; 
     }
 
     if (piezasOscuridad.empty()) return;
 
-    // 1. MEZCLAR LAS PIEZAS PRIMERO
+    // MEZCLAR LAS PIEZAS PRIMERO
     // Creamos una copia para no alterar el vector original permanentemente
     std::vector<Pieza*> misPiezas = piezasOscuridad;
     for (int i = (int)misPiezas.size() - 1; i > 0; i--) {
@@ -1063,9 +1018,8 @@ void Mundo::ejecutarIA() {
     Pieza* piezaFinal = nullptr;
     Vector2D destinoFinal = { -1, -1 };
 
-    // 2. BUSCAR ATAQUE POR PIEZA
-    // Al estar la lista mezclada, la primera pieza que encontremos con un ataque 
-    // será una elección justa y aleatoria entre todas.
+    // BUSCAR ATAQUE POR PIEZA
+
     for (Pieza* p : misPiezas) {
         if (p->estaEncarcelada()) continue;
 
@@ -1088,7 +1042,7 @@ void Mundo::ejecutarIA() {
         }
     }
 
-    // 3. SI NADIE PUDO ATACAR, HACEMOS MOVIMIENTO LIBRE
+    // SI NADIE PUDO ATACAR, HACEMOS MOVIMIENTO LIBRE
     if (piezaFinal == nullptr) {
         for (Pieza* p : misPiezas) {
             if (p->estaEncarcelada()) continue;
@@ -1104,7 +1058,7 @@ void Mundo::ejecutarIA() {
 
             if (!movimientosVacios.empty()) {
                 piezaFinal = p;
-                // Prioridad simple: si alguno es PowerPoint, lo tomamos
+                // Prioridad simple: si alguno es PowerPoint, lo elegimos
                 bool powerFound = false;
                 for (auto& mv : movimientosVacios) {
                     if (tablero.esPowerPoint((int)mv.x, (int)mv.y)) {
@@ -1121,7 +1075,7 @@ void Mundo::ejecutarIA() {
         }
     }
 
-    // 4. EJECUCIÓN 
+    // EJECUCIÓN 
     if (piezaFinal != nullptr && destinoFinal.x != -1) {
         Vector2D actual = piezaFinal->obtenerPosicion();
         atacante = piezaFinal;

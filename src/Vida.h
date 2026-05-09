@@ -11,7 +11,7 @@ private:
    
 
 public:
-    // puntosC: cuánta vida representa cada corazón (ej. 20)
+    // PuntosC: cuánta vida representa cada corazón (ej. 20)
     Vida(int max, float puntosC = 20.0f) :
         spriteCorazon("imagenes/corazonvida.png", 0, 0, 0.5f, 0.5f)
     {

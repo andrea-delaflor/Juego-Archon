@@ -32,7 +32,7 @@ Pieza::Pieza(const std::string& _nombre,
     salud = nullptr; 
 }
 
-//Para ir actualizando la taryectoria
+// Para ir actualizando la taryectoria
 void Pieza::actualizar(float velocidadtrayectoria) {
     // Si la visual es distinta a la lógica, es que debe moverse
     Vector2D dir = posicion - posicionVisual;
@@ -42,16 +42,13 @@ void Pieza::actualizar(float velocidadtrayectoria) {
 
     if (dist > 0.01f) {
     
-        // En lugar de dt, usamos un valor fijo pequeño para que se mueva
-        // cada vez que se dibuja. 
-     
-        
+        // En lugar de dt, usamos un valor fijo pequeño para que se mueva cada vez que se dibuja. 
         posicionVisual.x += (float)(dir.x * velocidadtrayectoria);
         posicionVisual.y += (float)(dir.y * velocidadtrayectoria);
     }
     else {
         posicionVisual = posicion;
-        animando = false; //Con esto mandamos una señal a mundo para que pueda salir del estado ANIMANDO_MOVIMIENTO
+        animando = false; // Con esto mandamos una señal a mundo para que pueda salir del estado ANIMANDO_MOVIMIENTO
     }
 }
 
@@ -69,7 +66,7 @@ void Pieza::establecerPosicion(Vector2D pos) {
     }
 }
 
-// logica del movimiento
+// Lógica del movimiento
 std::vector<Vector2D> Pieza::obtenerMovimientosValidos(Tablero* tablero) {
     Movimiento motor;
     TipoMovimiento miTipo = this->obtenerTipoMovimiento();
@@ -100,17 +97,6 @@ void Pieza::actualizaAnimacionAtaque(float dt) {
     }
 }
 
-// vida y el daño
-
-/*void Pieza::curar(int cantidad) {
-    if (!viva || cantidad <= 0) return;
-
-    vida += cantidad;
-    if (vida > vidaMaxima) {
-        vida = vidaMaxima;
-    }
-}*/
-
 
 void Pieza::establecerViva(bool _viva) {
     viva = _viva;
@@ -124,12 +110,8 @@ void Pieza::restaurarVidaCompleta() {
     encarcelada = false; // Aprovechamos para limpiar estados negativos
 }
 
-/*float Pieza::obtenerBonusCombate(Bando bandoCasilla) {
-    if (bandoCasilla == bando) return 1.25f;
-    return 0.85f;
-}*/
 
-// imprimir
+// Imprimir
 void Pieza::imprimir() {
     std::cout << "Pieza: " << nombre
         << " | Bando: " << (bando == Bando::LUZ ? "LUZ" : "OSCURIDAD")

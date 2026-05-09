@@ -27,6 +27,6 @@ public:
     static bool colisionCuerpoACuerpo(Vector2D posAtacante, Vector2D posDefensor, float alcance) {
         Vector2D dist = posAtacante - posDefensor;
         
-        return dist.modulo() < 2.0f; // distancia para el contacto
+        return dist.modulo() < 2.0f; // Distancia para el contacto
     }
 };

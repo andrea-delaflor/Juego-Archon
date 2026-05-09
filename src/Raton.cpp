@@ -18,17 +18,17 @@ void Raton::actualizaPosicion(int x, int y, int ancho, int alto) {
 }
 
 void Raton::dibuja() {
+
     if (casilla.x == -1) return;
 
-    // Usamos EXACTAMENTE la misma conversión que en tu PiezaTest
     float x_gl = (float)casilla.x - 4.0f;
     float y_gl = 4.0f - (float)casilla.y;
 
-    // Establecemos el color rojo (como hacías con el cian/magenta)
+    // Establecemos el color rojo
     glColor3f(1.0f, 0.0f, 0.0f);
 
-    // Dibujamos el marco. Usamos LINE_LOOP para que sea un recuadro hueco
-    // y se vea el tablero (la imagen/colores) a través.
+    // Dibujamos el marco. Usamos LINE_LOOP para que sea un recuadro hueco y se vea el tablero a través.
+   
     glLineWidth(3.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(x_gl - 0.45f, y_gl - 0.45f);
@@ -36,8 +36,5 @@ void Raton::dibuja() {
     glVertex2f(x_gl + 0.45f, y_gl + 0.45f);
     glVertex2f(x_gl - 0.45f, y_gl + 0.45f);
     glEnd();
-
-    // ESTA LÍNEA ES LA CLAVE: Devolvemos el color a blanco
-    // Si no, el tablero en el siguiente frame se intentará dibujar en rojo
     glColor3f(1.0f, 1.0f, 1.0f);
 }

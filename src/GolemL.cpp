@@ -30,7 +30,7 @@ void GolemL::dibuja() {
 }
 
 void GolemL::dibujaEnBatalla() {
-    // se dibuja el Golem 
+    // Se dibuja el Golem 
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
@@ -42,11 +42,11 @@ void GolemL::dibujaEnBatalla() {
     
     actualizaAnimacionAtaque(0.02f);
 
-    // se dibuja la Llave Inglesa
+    // Se dibuja la Llave Inglesa
     glPushMatrix();
-    // se coloca el arma al lado del gholem
+    // Se coloca el arma al lado del gholem
     glTranslatef(0.6f, 0.3f, 0.0f);
-    // se rota la imagen
+    // Se rota la imagen
     glRotatef(-anguloAtaque, 0, 0, 1);
 
     if (spriteLlave) {

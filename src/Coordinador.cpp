@@ -277,8 +277,7 @@ void Coordinador::tecla(unsigned char key) {
            
             historiaActiva = true;
 
-            // ¡CUIDADO! Aquí NO debe haber "estado = JUEGO"
-            // Si pones estado = JUEGO aquí, ignorarás el orden que acabamos de crear.
+
         }
         break;
 
@@ -344,7 +343,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
         if (historiaActiva) break;
 
         if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
-            //esto es el rango para el "boton" de 1 jugador
+            // Esto es el rango para el "boton" de 1 jugador
             if (mouseX >= -5.5f && mouseX <= -0.6f && mouseY >= -4.45f && mouseY <= 0.125f) {
                 modoUnJugador = true;
                 mundo.modoIA = true;
@@ -358,7 +357,7 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 historiaActiva = true;
 
             }
-            //esto es el rango para el "boton" de 2 jugadores
+            // Esto es el rango para el "boton" de 2 jugadores
             else if (mouseX >= 0.65f && mouseX <= 5.275f && mouseY >= -4.425f && mouseY <= 0.15f) {
                 modoUnJugador = false;
                 mundo.modoIA = false;
@@ -372,11 +371,11 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
                 historiaActiva = true;
 
             }
-            // --- BOTÓN INSTRUCCIONES ---
+            // BOTÓN INSTRUCCIONES
             else if (mouseX >= -2.175f && mouseX <= 2.125f && mouseY >= -7.2f && mouseY <= -4.825f) {
                 std::cout << "Entrando al Grimorio........ " << std::endl;
                 estado = INSTRUCCIONES;
-                paginaInstrucciones = 1; //lo ponemos a 1 para no empezar en la hoja 2
+                paginaInstrucciones = 1; // Lo ponemos a 1 para no empezar en la hoja 2
                 fondo = ETSIDI::Sprite("imagenes/comojugar.png", -0.5, 0, 26, 20);
             }
         }
@@ -385,22 +384,22 @@ void Coordinador::gestionaRaton(int boton, int estadoR, int x, int y) {
         mundo.clickRaton(boton, estadoR, x, y);
         break;
     case PAUSA:
-        //porque queremos que el menu pausa se controle con el raton
+        // Queremos que el menu pausa se controle con el raton
         if (boton == GLUT_LEFT_BUTTON && estadoR == GLUT_DOWN) {
-            //estaba dando errores lo del raton asi que:
+          
             int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
             int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
             
-            //esto como siempre lo de traducir coordenadas a las de OpenGL
+            // Traducimos coordenadas a las de OpenGL
             float mouseX = ((float)x / (float)anchoVentana) * 20.0f - 10.0f;
             float mouseY = ((1.0f - (float)y / (float)altoVentana)) * 20.0f - 10.0f;
 
-            //Con esta función comprobamos que el raton ha hecho click en las coordenadas donde se encuentra nuestro boton verde 
+            // Con esta función comprobamos que el raton ha hecho click en las coordenadas donde se encuentra nuestro boton verde 
             if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
-                estado = estadoAnterior; //ahora vuelve al estado en el que estaba
+                estado = estadoAnterior; // Vuelve al estado en el que estaba
             }
 
-            //lo mismo de arriba pero comprobando si son las coordenadas del botn rojo
+            // Lo mismo de arriba pero comprobando si son las coordenadas del botn rojo
             else if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= -3.0f && mouseY <= -1.0f) {
                 estado = MENU;
                 fondo = ETSIDI::Sprite("imagenes/menuprincipal.png", 0, 0, 20, 20);
@@ -421,7 +420,7 @@ void Coordinador::mueve() {
     case JUEGO:
         mundo.mueve();
 
-        //logica ia para el tablero
+        // Lógica ia para el tablero
         if (modoUnJugador && mundo.faseActual == Mundo::TURNO_OSCURIDAD) {
 
             
@@ -432,7 +431,7 @@ void Coordinador::mueve() {
 
             timerIA += dt;
 
-            //la ia ejecuta esto
+            // La IA ejecuta esto
             if (timerIA > 1.2f) { 
                 std::vector<Vector2D> mov = IA::decidirMovimientoTablero(&mundo);
 
@@ -472,9 +471,8 @@ void Coordinador::mueve() {
             ETSIDI::stopMusica();
             if (mundo.obtenerGanador() == 1) {
                 estado = VICTORIA_ALUMNOS;
-                ETSIDI::playMusica("sonidos/cantocelestial.wav", false);  //el false es para que suena solo una vez
+                ETSIDI::playMusica("sonidos/cantocelestial.wav", false);  // El false es para que suena solo una vez
                 if (modoUnJugador) {
-                    //fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
                     fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
                 }
                 else {
@@ -486,7 +484,6 @@ void Coordinador::mueve() {
                 estado = VICTORIA_PROFESORES;
                 ETSIDI::playMusica("sonidos/cantocelestial.wav", false);
                 if (modoUnJugador) {
-                    //fondo = ETSIDI::Sprite("imagenes/VictoriadeIA.png", 0, 0, 20, 20);
                     fondo = ETSIDI::Sprite("imagenes/victoriacontraIA.png", 0, 0, 20, 20);
                 } else {
                     fondo = ETSIDI::Sprite("imagenes/victoriaprofes.png", 0, 0, 20, 20);
@@ -494,7 +491,6 @@ void Coordinador::mueve() {
                 
             }
             else {
-                //esto seria para lo del empate.....
                 estado = MENU;
                 ETSIDI::playMusica("sonidos/menuppal2.wav", true);
             }
@@ -508,7 +504,7 @@ void Coordinador::mueve() {
 
       
 
-        //modo ia para la batalla
+        // Modo IA para la batalla
         if (modoUnJugador) {
             // Suponiendo que tienes métodos getPiezaLuz y getPiezaOscuridad en Batalla
             // o que puedes acceder a l1 (humano) y l2 (IA)
@@ -537,16 +533,15 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
         mundo.raton.actualizaPosicion(x, y, ancho, alto);
         break;
     case PAUSA:
-    {//como hemos creado variables en un switch hay que poner {}
-        //estaba dando errores lo del raton asi que:
+    { // Como hemos creado variables en un switch hay que poner {}
+    
         int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
         int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
-        //estos es lo de cambio de coordenadas
+        // Cambio de coordenadas
         float mouseX = ((float)x / (float)anchoVentana) * 20.0f - 10.0f;
         float mouseY = ((1.0f - (float)y / (float)altoVentana)) * 20.0f - 10.0f;
         
-        
-        //comprobamos si toca boton verde
+        // Comprobamos si toca boton verde
         if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= 1.0f && mouseY <= 3.0f) {
             hoverReanudar = true;
         }
@@ -554,7 +549,7 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
             hoverReanudar = false;
         }
 
-        //comprobamos si toca boton rojo
+        // Comprobamos si toca boton rojo
         if (mouseX >= -3.0f && mouseX <= 3.0f && mouseY >= -3.0f && mouseY <= -1.0f) {
             hoverAbandonar = true;
         }
@@ -568,7 +563,7 @@ void Coordinador::gestionaRatonPasivo(int x, int y) {
     case BATALLA:
         break;
     }
-    //Forzamos que la caja de texto siga al ratón
+    // Forzamos que la caja de texto siga al ratón
     glutPostRedisplay();
 }
 
@@ -577,7 +572,7 @@ void Coordinador::teclaEspecial(int key) {
     if (estado == BATALLA) {
         batalla.teclaEspecial(key);
     }
-    //añadimos esto para movernos entre las hojas de instrucciones
+    // Añadimos esto para movernos entre las hojas de instrucciones
     else if (estado == INSTRUCCIONES) {
 
         // Si pulsamos DERECHA y estamos en la hoja 1, pasamos a la hoja 2
@@ -597,7 +592,7 @@ void Coordinador::teclaEspecial(int key) {
             }
         }
 
-        // --- IR HACIA ATRÁS (Izquierda) ---
+        // IR HACIA ATRÁS (Izquierda)
         else if (key == GLUT_KEY_LEFT) {
 			if (paginaInstrucciones == 4) { // Para volver de la hoja 4 a la hoja 3
                 paginaInstrucciones = 3;

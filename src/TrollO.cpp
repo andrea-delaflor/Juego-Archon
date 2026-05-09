@@ -45,7 +45,7 @@ void TrollO::dibujaEnBatalla() {
 
     
     glPushMatrix();
-    // mover ka imagen al lado de la anterior
+    // Mover ka imagen al lado de la anterior
     glTranslatef(-0.6f, 0.3f, 0.0f);
     // Rotamos según el ángulo de ataque
     glRotatef(anguloAtaque, 0, 0, 1);

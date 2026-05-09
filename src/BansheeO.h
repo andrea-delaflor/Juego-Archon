@@ -34,7 +34,7 @@ public:
 
     float getRadio() override { return 2.5f; }
 
-    //le indicamos que tipo de moviemiento tiene la pieza
+    // Le indicamos que tipo de moviemiento tiene la pieza
     TipoMovimiento obtenerTipoMovimiento() override { return TipoMovimiento::VOLADOR; }
 
     std::string obtenerNombreSprite() override { return "oscuridad_banshee"; }

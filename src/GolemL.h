@@ -27,7 +27,7 @@ public:
         salud = new Vida(100, 20.0f);
         // CARGAMOS EL SPRITE 
         sprite = new ETSIDI::Sprite("imagenes/alumnos/motostudent2.png", 0, 0, 0.9f, 0.9f);
-        //el sprite del arma
+        // El sprite del arma
         spriteLlave = new ETSIDI::Sprite("imagenes/armas/llaveinglesa.png", 0, 0, 0.8f, 0.8f);
     }
 

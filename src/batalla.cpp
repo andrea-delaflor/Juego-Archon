@@ -54,7 +54,7 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
 
     std::cout << "Iniciando batalla. Ventaja tipo: " << ventaja << std::endl;
 
-    //resetear los poderes cada vez que empieza una pelea
+    // Resetear los poderes cada vez que empieza una pelea
     velJ1 = l1->obtenerVelocidad() * 0.1f;
     velJ2 = l2->obtenerVelocidad() * 0.1f;
     invulnerableJ1 = false; invulnerableJ2 = false;
@@ -79,7 +79,7 @@ void Batalla::inicializa(Pieza* atacante, Pieza* defensor, int tipoArena, int ve
 
     std::cout << "Cargando Arena número: " << indiceArenaActual << std::endl;
 
-    //para no acumular disparos anteiores
+    // Para no acumular disparos anteiores
     for (auto p : proyectiles) delete p;
     proyectiles.clear();
     // Limpiamos la lista de obstáculos de combates anteriores
@@ -146,7 +146,7 @@ void Batalla::dibuja() {
   
     //  JUGADOR 1
     if (l1 != nullptr) {
-        //vamos a forzar la posicionVisual para que coincida sprite con hitbox:
+        // Vamos a forzar la posicionVisual para que coincida sprite con hitbox:
         Vector2D backup1 = l1->obtenerPosicionVisual();
         l1->forzarPosicionVisual(Vector2D(0, 0));
 
@@ -206,9 +206,9 @@ void Batalla::dibuja() {
             glEnable(GL_TEXTURE_2D);
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Restaurar a blanco puro
         }
-        glScalef(2.0f, 2.0f, 1.0f); // ajusta escalas de lo que dibujamos
+        glScalef(2.0f, 2.0f, 1.0f); // Ajusta escalas de lo que dibujamos
 
-        // dibuja la pieza + el arma
+        // Dibuja la pieza + el arma
         l1->dibujaEnBatalla();
         glPopMatrix();
 
@@ -302,7 +302,7 @@ void Batalla::mueve() {
     if (congelarDisparoJ1 > 0) congelarDisparoJ1 -= dt;
     if (congelarDisparoJ2 > 0) congelarDisparoJ2 -= dt;
 
-    if (l1) l1->actualizarEscudo(dt);      //para gestionar los tiempos de los escudos
+    if (l1) l1->actualizarEscudo(dt);      // Para gestionar los tiempos de los escudos
     if (l2) l2->actualizarEscudo(dt);
 
     //LÓGICA DE PROYECTILES
@@ -313,11 +313,11 @@ void Batalla::mueve() {
 
         if ((*it)->esDeJugador1()) {
             Vector2D dist = (*it)->getPos() - pos2;
-            // comprobar si hay escudo en J2
+            // Comprobar si hay escudo en J2
             if (l2 && l2->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
-            // si no hay escudo entra aqui
+            // Si no hay escudo entra aqui
             else if (dist.modulo() < 1.5f) {
                 float factor = 1.0f;
                 
@@ -335,7 +335,7 @@ void Batalla::mueve() {
         }
         else {
             Vector2D dist = (*it)->getPos() - pos1;
-            // comprobar si J1 tiene escudo
+            // Comprobar si J1 tiene escudo
             if (l1 && l1->tieneEscudoActivo() && dist.modulo() < 1.5f) {
                 impactado = true;
             }
@@ -404,7 +404,7 @@ void Batalla::mueve() {
         if (temporizadorBonusJ2 <= 0) { velJ2 = 0.5f; invulnerableJ2 = false; multDanoJ2 = 1.0f; }
     }
 
-    // 2. COLISIÓN DE OBSTÁCULOS
+    // COLISIÓN DE OBSTÁCULOS
     for (auto it = obstaculos.begin(); it != obstaculos.end(); ) {
         (*it)->mueve(dt);
         bool borrar = false;
@@ -473,12 +473,12 @@ void Batalla::mueve() {
             }
             borrar = true;
         }
-        // --- SALIDA DE PANTALLA ---
+        // SALIDA DE PANTALLA
         else if ((*it)->getPos().y < -12.0f) {
             borrar = true;
         }
 
-        // --- LIMPIEZA FINAL DEL CICLO ---
+        // LIMPIEZA FINAL DEL CICLO
         if (borrar) {
             delete* it;
             it = obstaculos.erase(it);
@@ -491,7 +491,7 @@ void Batalla::mueve() {
     static int contadorDano = 0;
     contadorDano++;
 
-    if (contadorDano >= 2) { // se hace daño cada 2 tiempos, que sino es muy fuerte
+    if (contadorDano >= 2) { // Se hace daño cada 2 tiempos, que sino es muy fuerte
 
         
         if (l1 && l2 && l1->tieneEscudoActivo()) {
@@ -507,10 +507,10 @@ void Batalla::mueve() {
                 hp1 = l1->getVida().getActual(); 
             }
         }
-        contadorDano = 0; // se reincia contador
+        contadorDano = 0; // Se reincia contador
     }
 
-    //CONDICIÓN DE VICTORIA
+    // CONDICIÓN DE VICTORIA
     if (l1->getVida().muerto()) { terminado = true; ganador = l2; perdedor = l1; }
     else if (l2->getVida().muerto()) { terminado = true; ganador = l1; perdedor = l2; }
 }
@@ -545,18 +545,18 @@ void Batalla::tecla(unsigned char key) {
     if (key == ' ') {
         if (l1) { // Primero aseguramos que el puntero al jugador existe
 
-            //Si el arma es de proyectiles (Bruja, Dragón, etc.)
+            // Si el arma es de proyectiles (Bruja, Dragón, etc.)
             if (l1->obtenerArma() != TipoArma::ESCUDO && l1->obtenerArma() != TipoArma::CUERPO_A_CUERPO) {
                 if (congelarDisparoJ1 <= 0.0f) {
                     generarDisparo(true);
                     congelarDisparoJ1 = 0.5f;
                 }
             }
-            //Si el arma es el Escudo
+            // Si el arma es el Escudo
             else if (l1->obtenerArma() == TipoArma::ESCUDO) {
                 l1->activarEscudo();
             }
-            //Si es cuerpo a cuerpo (Golem)
+            // Si es cuerpo a cuerpo (Golem)
             else {
                 l1->iniciarAnimacion();
                 if (Interaccion::colisionCuerpoACuerpo(pos1, pos2, l1->obtenerAlcance())) {
@@ -574,14 +574,14 @@ void Batalla::tecla(unsigned char key) {
     if (key == 13) { // Tecla ENTER
         if (l2) { //Verificamos que el Jugador 2 existe
 
-            //Si el arma es de proyectiles (Bruja, Dragón, etc.)
+            // Si el arma es de proyectiles (Bruja, Dragón, etc.)
             if (l2->obtenerArma() != TipoArma::ESCUDO && l2->obtenerArma() != TipoArma::CUERPO_A_CUERPO) {
                 if (congelarDisparoJ2 <= 0.0f) {
                     generarDisparo(false); // Disparo del J2
                     congelarDisparoJ2 = 0.5f;
                 }
             }
-            //Si el arma es el Escudo
+            // Si el arma es el Escudo
             else if (l2->obtenerArma() == TipoArma::ESCUDO) {
                 l2->activarEscudo();
             }
@@ -614,7 +614,7 @@ void Batalla::teclaEspecial(int key) {
         return;
     }
 
-    // 4. Si llegamos aquí, es porque es un humano controlando la pieza
+    // Si llegamos aquí, es porque es un humano controlando la pieza
     if (key == GLUT_KEY_UP)    pos2.y += velJ2;
     if (key == GLUT_KEY_DOWN)  pos2.y -= velJ2;
     if (key == GLUT_KEY_LEFT)  pos2.x -= velJ2;
@@ -633,8 +633,8 @@ void Batalla::generarDisparo(bool esJugador1) {
     // Identificamos la posición del enemigo para apuntar
     Vector2D posEnemigo = esJugador1 ? pos2 : pos1;
 
-    int ataque = p->obtenerPoderAtaque(); //obtenemos el poder de ataque de cada pieza
-     // calculo de la dinamica de movimento del proyectil para que vaya hacia el enemigo
+    int ataque = p->obtenerPoderAtaque(); // Obtenemos el poder de ataque de cada pieza
+     // Calculamos de la dinamica de movimento del proyectil para que vaya hacia el enemigo
     Vector2D direccion = posEnemigo - posDisparo; // Vector que une origen y objetivo
     float distancia = direccion.modulo();         // Calculamos la distancia
 

@@ -66,7 +66,7 @@ public:
     float obtenerVelocidad() const { return velocidad; }
 
     // OBTENER VIDA ÚNICO 
-	//SPARA IMPRIMIR VIDA EN LA PANTALLA, NO PARA GESTIONAR VIDA
+	//PARA IMPRIMIR VIDA EN LA PANTALLA, NO PARA GESTIONAR VIDA
 	int obtenerVida() const { // Devuelve la vida actual o 0 si no hay salud
         return (salud != nullptr) ? salud->getActual() : 0;
     }
@@ -87,15 +87,6 @@ public:
     }
     void establecerVelocidad(float v) {  velocidad = v; }
 
-    // GESTIÓN DE VIDA ÚNICA
-    //funcion damage desde vida se repite
-    /*
-    void recibirDanio(int cantidad) {
-        if (salud != nullptr) {
-            salud->damage(cantidad);
-            if (salud->muerto()) viva = false;
-        }
-    }*/
 
     void restaurarVidaCompleta();
 

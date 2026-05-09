@@ -18,8 +18,9 @@ public:
         //   1 si la casilla es Negra (Arena de oscuridad)
         //   2 si la casilla es Variable (las que cambian de color)
         //   3 si la casilla es un Punto de Poder
-        // =====================================================================
+  
         int obtenerTipoArena(int i, int j, float luminosidad);
+
     // --- FUNCIONES NECESARIAS PARA EL MOVIMIENTO ---
     bool posicionValida(int i, int j);
     Pieza* obtenerOcupante(int i, int j);
@@ -31,7 +32,7 @@ public:
     void vaciarCasilla(int i, int j);
 
 private:
-    Pieza* casillas[9][9]; //Matriz de punteros --> la usamos para determinar entre casilla ocupada y libre
+    Pieza* casillas[9][9]; // La matriz de punteros la usamos para determinar entre casilla ocupada y libre
 
     // Casillas variables: Cruz central + diagonales
     bool esVariable(int i, int j);

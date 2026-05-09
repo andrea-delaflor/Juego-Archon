@@ -159,7 +159,7 @@ private:
 
 
 
-    //organización de codigo en funcion dibuja();
+    // Organización de codigo en funcion dibuja();
     void dibujarCajasMovimiento();
     void dibujarCarceles();
     void dibujarInterfazSuperior();

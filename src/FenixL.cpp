@@ -38,7 +38,7 @@ void FenixL::dibujaEnBatalla() {
     sprite->draw();
     glPopMatrix();
 
-    // se dibuja el escudo 
+    // Se dibuja el escudo 
     if (tieneEscudoActivo()) {
         glPushMatrix();
         glDisable(GL_TEXTURE_2D); 

@@ -36,7 +36,7 @@ public:
 
     float getRadio() override { return 6.0f; }
 
-    //El destructor    
+    // El destructor    
     virtual ~MagoL() {
         if (sprite) delete sprite;
         for (auto h : libroHechizos) {
@@ -61,7 +61,7 @@ public:
         libroHechizos.push_back(new HechizoShiftTime());
         libroHechizos.push_back(new HechizoExchange());
         libroHechizos.push_back(new HechizoImprison());
-        // HECHIZOS PENDIENTES: Añadir aquí el de Summon y Revive 
+        
     }
     
     std::vector<Hechizo*>& getHechizos() { return libroHechizos; }

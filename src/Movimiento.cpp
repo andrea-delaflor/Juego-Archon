@@ -2,17 +2,17 @@
 #include "Pieza.h"
 #include "Tablero.h"
 
-// que trayectoria se usa en funcion de que pieza es
+// ¿Qué trayectoria se usa en funcion de que pieza es?
 TipoTrayectoria Movimiento::obtenerTipoTrayectoria(Pieza* pieza) {
     
     return (TipoTrayectoria)pieza->obtenerTipoMovimiento();
 }
 
-// ── calcularTerrestre ──
+// calcularTerrestre 
 std::vector<Vector2D> Movimiento::calcularTerrestre(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 
-    // Solo 4 direcciones: arriba, abajo, izquierda, derecha
+    // Sólo 4 direcciones: arriba, abajo, izquierda, derecha
     int dirs[4][2] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
 
     for (auto& dir : dirs)
@@ -26,7 +26,7 @@ void Movimiento::expandirDireccion(Pieza* pieza, Tablero* tablero,
     int di, int dj,
     std::vector<Vector2D>& movimientos) {
 
-    // accede a atributos protegidos
+    // Accede a atributos protegidos
     int i = (int)pieza->obtenerPosicion().x;
     int j = (int)pieza->obtenerPosicion().y;
     int rango = pieza->obtenerRangoMovimiento();
@@ -36,32 +36,32 @@ void Movimiento::expandirDireccion(Pieza* pieza, Tablero* tablero,
         int ni = i + di * paso;
         int nj = j + dj * paso;
 
-        // verificamos si la nueva pieza es válida en el tablero
+        // Verificamos si la nueva pieza es válida en el tablero
         if (!tablero->posicionValida(ni, nj)) break;
 
         Pieza* ocupante = tablero->obtenerOcupante(ni, nj);
 
         if (ocupante == nullptr) {
-            // si esta vacía es valida
+            // Si esta vacía es valida
             movimientos.push_back(Vector2D(ni, nj));
         }
         else if (ocupante->obtenerBando() != miBando) {
-            // válida,enemiga bloquea camino,  se para despues de añadir
+            // Válida,enemiga bloquea camino, se para despues de añadir
             movimientos.push_back(Vector2D(ni, nj));
             break;
         }
         else {
-            //  valida, aliada bloquea camino, paramos sin añadir
+            // Válida, aliada bloquea camino, paramos sin añadir
             break;
         }
     }
 }
 
-// ── calcularVolador ───
+// calcularVolador 
 std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 
-    // accede a atributos protegidos 
+    // Accede a atributos protegidos 
     int i = (int)pieza->obtenerPosicion().x;
     int j = (int)pieza->obtenerPosicion().y;
     int rango = pieza->obtenerRangoMovimiento();
@@ -73,7 +73,7 @@ std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero
         for (int dj = -rango; dj <= rango; dj++) {
 
             if (di == 0 && dj == 0) continue;  // Casilla propia
-            if (abs(di) + abs(dj) > rango) continue; // esro lo que hace es q se mueva en casillas reales ---> es decir le da igual la direccion se muve solo las casillas que se tiene que mover, esto lo hacemos porque sino en las diagonales se mueve mas de lo que deberia
+            if (abs(di) + abs(dj) > rango) continue; // Esto lo que hace es q se mueva en casillas reales ---> es decir le da igual la direccion se muve solo las casillas que se tiene que mover, esto lo hacemos porque sino en las diagonales se mueve mas de lo que deberia
 
             int ni = i + di;
             int nj = j + dj;
@@ -91,7 +91,7 @@ std::vector<Vector2D> Movimiento::calcularVolador(Pieza* pieza, Tablero* tablero
     return movimientos;
 }
 
-// ── calcularTeletransporte ────
+// calcularTeletransporte 
 std::vector<Vector2D> Movimiento::calcularTeletransporte(Pieza* pieza, Tablero* tablero) {
     std::vector<Vector2D> movimientos;
 

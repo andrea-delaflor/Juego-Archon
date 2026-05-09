@@ -7,13 +7,13 @@ struct Vector2D
 	double x{};
 	double y{};
 	Vector2D(double _x = 0.0, double _y = 0.0) : x(_x), y(_y) {}
-	double modulo() const; //modulo del vector
-	double argumento() const; //argumento del vector
-	Vector2D unitario() const; //devuelve un vector unitario
-	Vector2D operator - (const Vector2D&) const; //resta de vectores
-	Vector2D operator + (const Vector2D&) const; //suma de vectores
-	double operator *(const Vector2D&) const; // producto escalar
-	Vector2D operator *(double) const; // producto por un escalar
+	double modulo() const; // Modulo del vector
+	double argumento() const; // Argumento del vector
+	Vector2D unitario() const; // Devuelve un vector unitario
+	Vector2D operator - (const Vector2D&) const; // Resta de vectores
+	Vector2D operator + (const Vector2D&) const; // Suma de vectores
+	double operator *(const Vector2D&) const; //  Producto escalar
+	Vector2D operator *(double) const; // Producto por un escalar
 	
 };
 

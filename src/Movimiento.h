@@ -5,7 +5,7 @@
 class Tablero;
 class Pieza;
 
-//esto no sirve para la animacion
+// Esto no sirve para la animacion
 enum class TipoTrayectoria { TERRESTRE, VOLADOR, TELETRANSPORTE };
 
 class Movimiento {
@@ -27,7 +27,7 @@ private:
     // CalcularTerrestre: verifica trayectorias en cruz (arriba, abajo, izquierda, derecha)
     // y se detiene al encontrar una pieza o el borde del tablero
     // Avanza casilla a casilla en una dirección hasta encontrar obstáculo
-    // di = delta columna, dj = delta fila
+
     void expandirDireccion(Pieza* pieza, Tablero* tablero,
         int di, int dj,
         std::vector<Vector2D>& movimientos);
