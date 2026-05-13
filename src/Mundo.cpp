@@ -148,20 +148,24 @@ void Mundo::mueve() {
     valorLuz = (sin(angulo) + 1.0f) / 2.0f;
 
     // 2. LÓGICA DE LIBERACIÓN (IMPRISON)
-    // Recorremos el tablero buscando piezas encarceladas
+    // Detectar si el ciclo ha completado una oscilación completa
+    bool ahoraSubiendo = (sin(angulo) > 0);
+    if (ahoraSubiendo != cicloSubiendo) {
+        if (!ahoraSubiendo) {  // Cruzó de subiendo a bajando = un ciclo completo
+            contadorCiclos++;
+        }
+        cicloSubiendo = ahoraSubiendo;
+    }
+
+    // Liberar piezas encarceladas si ha pasado 1 ciclo completo
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             Pieza* p = tablero.obtenerOcupante(i, j);
             if (p && p->estaEncarcelada()) {
-                // Comparamos la luz actual con la luz que había cuando fue encerrada
-                // Usamos fabsf (valor absoluto) para ver cuánto ha cambiado el tablero
-                float diferencia = fabsf(valorLuz - p->getLuzDeCaptura());
-
-                // Si la diferencia es grande (ej: de 0.1 a 0.9), significa que el ciclo
-                // ha pasado de oscuro a claro (o viceversa) y el hechizo se rompe.
-                if (diferencia > 0.8f) {
-                    p->establecerEncarcelada(false,0.0f);
-                    std::cout << "EL SELLO SE ROMPE: " << p->obtenerNombre() << " es libre." << std::endl;
+                if (contadorCiclos > p->getCicloCaptura()) {
+                    p->establecerEncarcelada(false, 0.0f);
+                    std::cout << p->obtenerNombre()
+                        << " ha sido liberada." << std::endl;
                 }
             }
         }

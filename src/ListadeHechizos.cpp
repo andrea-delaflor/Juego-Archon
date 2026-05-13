@@ -147,6 +147,7 @@ void HechizoImprison::aplicar(Mundo* mundo, Vector2D destino) {
     if (p != nullptr && p->obtenerBando() != mundo->bandoActual()) {
 
         p->establecerEncarcelada(true, mundo->getValorLuz());
+        p->setCicloCaptura(mundo->getContadorCiclos());
 
         std::cout << "IMPRISON: " << p->obtenerNombre() << " ha sido neutralizada." << std::endl;
         usado = true;
