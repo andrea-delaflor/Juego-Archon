@@ -119,6 +119,9 @@ public:
 
     void forzarPosicionVisual(Vector2D pos) { posicionVisual = pos; }
 
+    int getCicloCaptura() const { return cicloCaptura; }
+    void setCicloCaptura(int c) { cicloCaptura = c; }
+
 protected:
     std::string nombre;
     Bando bando;
@@ -142,6 +145,8 @@ protected:
     float bloqueoEscudo = 0.0f;
     float tiempoEscudoActivo = 0.0f;
     bool escudoActivado = false;
+
+    int cicloCaptura = 0;  //Ciclo en el que ficha fue Imprison
 
     // PUNTERO ÚNICO A SALUD
     Vida* salud = nullptr;

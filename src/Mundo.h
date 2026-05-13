@@ -126,6 +126,8 @@ public:
     bool modoIA; // Flag para activar/desactivar la IA internamente
     void ejecutarIA();
 
+    int getContadorCiclos() const { return contadorCiclos; }
+
 private:
 
     bool mostrandoHistoria = false;
@@ -135,6 +137,8 @@ private:
     float valorLuz = 0.5f;
     float angulo = 0.0f;
 	
+    int contadorCiclos = 0;  //Se incrementa cada vez que valorLuz cruza 0.5 bajando
+    bool cicloSubiendo = true; //Detectamos el cambio
 
     bool modoMagiaActivo = false; // Indica si estamos en proceso de lanzar un hechizo
 
