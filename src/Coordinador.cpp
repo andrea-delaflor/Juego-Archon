@@ -250,10 +250,10 @@ void Coordinador::tecla(unsigned char key) {
         break;
 
     case MENU:
-        // 1. Si la historia está en pantalla, el usuario solo puede pulsar ESPACIO para jugar
+        // 1. Si la historia está en pantalla, el usuario solo puede pulsar ENTER para jugar
         if (historiaActiva) {
             if (key == 13) { // Si pulsamos ENTER
-                historiaActiva = false; // Quitamos la imagen[cite: 6]
+                historiaActiva = false; // Quitamos la imagen
                 estado = JUEGO;         // Cambiamos al tablero
                 mundo.inicializa(estado);
 
